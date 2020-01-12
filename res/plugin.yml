@@ -1,0 +1,10 @@
+name: MoeItems
+main: cn.whiteg.moeitems.MoeItems
+version: 1.1
+api-version: 1.13
+author: MoeWhite
+softdepend: [MMOCore,RPGArmour]
+commands:
+  moeitems:
+    description: The is moeitems Command
+    aliases: ['mit']
