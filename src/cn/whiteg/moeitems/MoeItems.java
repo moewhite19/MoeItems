@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems;
 
+import cn.whiteg.moeitems.Listener.PluginListener;
 import cn.whiteg.moeitems.furniture.DeskClock;
 import cn.whiteg.moeitems.furniture.FlowerVase;
 import cn.whiteg.moeitems.furniture.GardenLamp;
@@ -7,6 +8,7 @@ import cn.whiteg.moeitems.furniture.Scarecrow;
 import cn.whiteg.moeitems.hats.*;
 import cn.whiteg.moeitems.items.Artillery;
 import cn.whiteg.moeitems.items.Broom;
+import cn.whiteg.moeitems.items.Creeper;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
 import org.bukkit.Bukkit;
@@ -29,7 +31,7 @@ public class MoeItems extends JavaPlugin {
     public static MoeItems plugin;
     public CommandManage mainCommand;
     public Map<String, Listener> listenerMap = new HashMap<>();
-    List<CustItem> items = new ArrayList<>();
+    private List<CustItem> items = new ArrayList<>();
 
 
     public MoeItems() {
@@ -49,6 +51,7 @@ public class MoeItems extends JavaPlugin {
         getCommand("moeitems").setExecutor(mainCommand);
         logger.info("全部加载完成");
         initItems();
+        regEven(new PluginListener(this));
     }
 
     public void onDisable() {
@@ -77,6 +80,11 @@ public class MoeItems extends JavaPlugin {
         regItem(GardenLamp.get());
         regItem(Artillery.get());
         regItem(Broom.get());
+        regItem(Creeper.get());
+    }
+
+    public List<CustItem> getItems() {
+        return items;
     }
 
     public void clearItems() {

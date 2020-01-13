@@ -9,7 +9,10 @@ import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
 import net.minecraft.server.v1_15_R1.EntityProjectileThrowable;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftArmorStand;
@@ -22,7 +25,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,7 +39,6 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -177,7 +178,9 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 Snowball snowball = loc.getWorld().spawn(spawnLoc,Snowball.class);
                 ((CraftSnowball) snowball).getHandle().setItem(CraftItemStack.asNMSCopy(b));
                 snowball.setVelocity(v);
+                snowball.setCustomName(getDisplayName());
                 p.setCooldown(getMaterial(),30);
+                snowball.setShooter(p);
             }
 //            Bukkit.getScheduler().runTask(RPGArmour.plugin,() -> {
 //                creeper.setVelocity(v);
@@ -194,10 +197,17 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 net.minecraft.server.v1_15_R1.ItemStack i = (net.minecraft.server.v1_15_R1.ItemStack) getItemMethod.invoke(snowball.getHandle());
                 if (bullet.is(CraftItemStack.asBukkitCopy(i))){
                     Location loc = snowball.getLocation();
-                    final EntityExplodeEvent ev = new EntityExplodeEvent(snowball,loc,new ArrayList<>(),3F);
-                    Bukkit.getPluginManager().callEvent(ev);
-                    if (ev.isCancelled()) return;
-                    loc.getWorld().createExplosion(loc,3.5F,false,false);
+//                    WorldSetting ws = MoeAntiBuild.plugin.getWorldSetting(loc.getWorld().getName());
+//                    if (ws != null && ws.SafeTnT){
+//                        loc.getWorld().createExplosion(snowball,2.6F,false,false);
+//                    }else {
+//                        loc.getWorld().createExplosion(snowball,2.6F,true,true);
+//                    }
+                    FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
+                    if (!flag.has(Flags.explode,true)){
+                        return;
+                    }
+                    loc.getWorld().createExplosion(snowball,2.6F,true,true);
                 }
             }catch (IllegalAccessException e){
                 e.printStackTrace();
@@ -223,7 +233,6 @@ public class Artillery extends CustItem_CustModle implements Listener {
             loc.getWorld().dropItem(loc,((ArmorStand) e).getHelmet());
             e.remove();
         }
-
     }
 
 
