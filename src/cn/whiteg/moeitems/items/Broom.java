@@ -20,6 +20,7 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,16 +48,17 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Broom extends CustItem_CustModle implements Listener {
-    final static Broom a;
+    final static Broom o;
+//    final static DataWatcherObject<Byte> marker = EntityArmorStand.b;
 
     static {
-        a = new Broom();
+        o = new Broom();
 
     }
 
     private final float wheelSpeed = 7.8F;
     private final float moveSpeed = 1.9F;
-    private final Entity entity = new Entity();
+    private final BoomEntity entity = new BoomEntity();
     Map<UUID, BroomRun> map = new HashMap<>();
     Map<UUID, BroomRun> seats = new HashMap<>();
 
@@ -71,10 +73,10 @@ public class Broom extends CustItem_CustModle implements Listener {
     }
 
     public static Broom get() {
-        return a;
+        return o;
     }
 
-    public Entity getEntity() {
+    public BoomEntity getEntity() {
         return entity;
     }
 
@@ -82,6 +84,8 @@ public class Broom extends CustItem_CustModle implements Listener {
         BroomRun r = map.get(e.getUniqueId());
         if (r == null){
             r = new BroomRun(e,p);
+//            EntityArmorStand ne = r.ne;
+//            ne.getDataWatcher().set(marker,16);
             return true;
         } else {
             return r.addPlayer(p);
@@ -89,7 +93,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         /*e.addPassenger(p);
         CraftPlayer cp = (CraftPlayer) p;
         EntityPlayer np = cp.getHandle();
-        net.minecraft.server.v1_15_R1.Entity ne = ((CraftEntity) e).getHandle();
+        net.minecraft.server.v1_15_R1.BoomEntity ne = ((CraftEntity) e).getHandle();
         np.fauxSleeping = true;*/
 //        p.sendActionBar("看向地面并按下潜行键离开");
 /*        new BukkitRunnable() {
@@ -97,7 +101,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
             @Override
             public void run() {
-                org.bukkit.entity.Entity ve = p.getVehicle();
+                org.bukkit.entity.BoomEntity ve = p.getVehicle();
                 if (ve == null || !e.getUniqueId().equals(ve.getUniqueId()) || p.isDead() || ve.isDead()){
                     cancel();
                     return;
@@ -187,6 +191,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             if (Seat.get().is(v)){
                 BroomRun r = seats.get(v.getUniqueId());
                 if (r != null){
+                    event.setCancelled(true);
                     r.addPlayer(p);
                 }
             }
@@ -208,7 +213,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             BroomRun r = seats.get(v.getUniqueId());
             if (r != null){
                 CraftLivingEntity cp = (CraftLivingEntity) p;
-                if (cp.getHandle().pitch < 80){
+                if (!cp.isDead() && cp.getHandle().pitch < 80){
                     event.setCancelled(true);
                 } else {
                     r.v1.remove();
@@ -225,7 +230,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         if (e.isDead()) return;
         org.bukkit.entity.Entity damager = event.getDamager();
         if (damager instanceof Player && e instanceof ArmorStand && entity.is(e)){
-            Player p = (Player) damager;
+//            Player p = (Player) damager;
             Location loc = e.getLocation();
 //            FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
 //            if (flag.playerHasHints(p,Flags.riding,true)){
@@ -235,7 +240,7 @@ public class Broom extends CustItem_CustModle implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    public void onLClickEntity(PlayerTeleportEvent event) {
+    public void onTp(PlayerTeleportEvent event) {
         Player p = event.getPlayer();
         org.bukkit.entity.Entity v = p.getVehicle();
         if (Seat.get().is(v)){
@@ -267,7 +272,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getBlockFace() != BlockFace.UP) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getBlockFace() != BlockFace.UP) return;
         Player p = event.getPlayer();
         EquipmentSlot hand = event.getHand();
         ItemStack item;
@@ -305,14 +310,14 @@ public class Broom extends CustItem_CustModle implements Listener {
 //        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         nmsEntity.yaw = yaw;
-
+        event.setCancelled(true);
 
     }
 
-    public class Entity extends CustEntityID implements CustEntityChunkEvent {
+    public class BoomEntity extends CustEntityID implements CustEntityChunkEvent {
 //        Map<UUID, BroomStaus> map = new HashMap<>();
 
-        public Entity() {
+        public BoomEntity() {
             super("broom",ArmorStand.class);
         }
 
@@ -495,6 +500,7 @@ public class Broom extends CustItem_CustModle implements Listener {
                         e.setVelocity(vec);
                         loc = e.getLocation();
                         if (v2 != null){
+//                            if (!e.getPassengers().isEmpty()) e.eject();
                             Vector v = VectorUtils.viewVector(loc).multiply(0.42F);
 
                             net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
@@ -507,8 +513,11 @@ public class Broom extends CustItem_CustModle implements Listener {
 //                            v2.teleport(loc.add(v));
                         } else {
                             net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
+//                            org.bukkit.entity.BoomEntity er = v1.getVehicle();
+//                            if (er == null || er.getUniqueId() != e.getUniqueId()) e.addPassenger(v1);
+//                            nv1.yaw = ne.yaw;
                             nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
-//                            v1.teleport(loc);
+                            v1.teleport(loc);
                         }
 
                     }
@@ -540,6 +549,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
         boolean addPlayer(LivingEntity player) {
             if (v2 == null){
+                if (isExist(player)) return false;
                 ArmorStand s = (ArmorStand) Seat.get().summon(e.getLocation());
                 if (s.isDead()) return false;
                 s.addPassenger(player);
@@ -547,6 +557,17 @@ public class Broom extends CustItem_CustModle implements Listener {
                 return true;
             }
             return false;
+        }
+
+        boolean isExist(Entity player) {
+            Entity v1p = v1.getPassenger();
+            if (v1p != null && v1p.getUniqueId().equals(player.getUniqueId())){
+                return true;
+            }
+            if (v2 == null) return false;
+
+            v1p = v2.getPassenger();
+            return v1p != null && v1p.getUniqueId().equals(player.getUniqueId());
         }
     }
 }

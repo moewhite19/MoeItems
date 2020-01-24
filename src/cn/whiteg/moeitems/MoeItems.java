@@ -6,9 +6,7 @@ import cn.whiteg.moeitems.furniture.FlowerVase;
 import cn.whiteg.moeitems.furniture.GardenLamp;
 import cn.whiteg.moeitems.furniture.Scarecrow;
 import cn.whiteg.moeitems.hats.*;
-import cn.whiteg.moeitems.items.Artillery;
-import cn.whiteg.moeitems.items.Broom;
-import cn.whiteg.moeitems.items.Creeper;
+import cn.whiteg.moeitems.items.*;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
 import org.bukkit.Bukkit;
@@ -81,6 +79,8 @@ public class MoeItems extends JavaPlugin {
         regItem(Artillery.get());
         regItem(Broom.get());
         regItem(Creeper.get());
+        regItem(FireBerry.get());
+        regItem(CherryBomb.get());
     }
 
     public List<CustItem> getItems() {

@@ -96,7 +96,7 @@ public class Creeper extends CustItem_CustModle implements Listener {
         Map<UUID, BukkitTask> taskMap = new HashMap<>();
 
         public CreeperFigurine() {
-            super("Entity",org.bukkit.entity.ArmorStand.class);
+            super("BoomEntity",org.bukkit.entity.ArmorStand.class);
         }
 
         @Override
