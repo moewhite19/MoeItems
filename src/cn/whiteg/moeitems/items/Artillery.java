@@ -3,6 +3,7 @@ package cn.whiteg.moeitems.items;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -37,7 +38,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,19 +45,9 @@ import java.util.UUID;
 
 public class Artillery extends CustItem_CustModle implements Listener {
     private static final Artillery a;
-    private static final Method getItemMethod;
 
     static {
         a = new Artillery();
-        Method m;
-        try{
-            m = EntityProjectileThrowable.class.getDeclaredMethod("getItem");
-            m.setAccessible(true);
-        }catch (NoSuchMethodException e){
-            e.printStackTrace();
-            m = null;
-        }
-        getItemMethod = m;
     }
 
     private final float speed = 1.5F;
@@ -193,26 +183,19 @@ public class Artillery extends CustItem_CustModle implements Listener {
         Projectile p = event.getEntity();
         if (p instanceof Snowball){
             CraftSnowball snowball = (CraftSnowball) p;
-            try{
-                net.minecraft.server.v1_15_R1.ItemStack i = (net.minecraft.server.v1_15_R1.ItemStack) getItemMethod.invoke(snowball.getHandle());
-                if (bullet.is(CraftItemStack.asBukkitCopy(i))){
-                    Location loc = snowball.getLocation();
+            if (bullet.is(EntityUtils.getSnowballItem(snowball))){
+                Location loc = snowball.getLocation();
 //                    WorldSetting ws = MoeAntiBuild.plugin.getWorldSetting(loc.getWorld().getName());
 //                    if (ws != null && ws.SafeTnT){
 //                        loc.getWorld().createExplosion(snowball,2.6F,false,false);
 //                    }else {
 //                        loc.getWorld().createExplosion(snowball,2.6F,true,true);
 //                    }
-                    FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
-                    if (!flag.has(Flags.explode,true)){
-                        return;
-                    }
-                    loc.getWorld().createExplosion(snowball,2.6F,true,true);
+                FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
+                if (!flag.has(Flags.explode,true)){
+                    return;
                 }
-            }catch (IllegalAccessException e){
-                e.printStackTrace();
-            }catch (InvocationTargetException e){
-                e.printStackTrace();
+                loc.getWorld().createExplosion(snowball,2.6F,true,true);
             }
         }
     }
@@ -238,7 +221,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getBlockFace() != BlockFace.UP) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getBlockFace() != BlockFace.UP) return;
         Player p = event.getPlayer();
         EquipmentSlot hand = event.getHand();
         ItemStack item;
