@@ -136,9 +136,9 @@ public class FireBerry extends CustItem_CustModle implements Listener {
         public boolean init(Entity entity) {
             if (entity instanceof ArmorStand && super.init(entity)){
                 ArmorStand e = (ArmorStand) entity;
-                e.setVisible(false);
                 e.setFireTicks(Integer.MAX_VALUE);
                 e.addScoreboardTag("dontsave");
+                e.setVisible(false);
                 EntityUtils.setBoundingBox(e,BoundingBox.of(e.getLocation(),0.43,1.42,0.43));
                 return true;
             }

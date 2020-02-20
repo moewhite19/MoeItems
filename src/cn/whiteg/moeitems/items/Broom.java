@@ -1,10 +1,10 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moetp.utils.EntityTpUtils;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
-import cn.whiteg.rpgArmour.custEntitys.Seat;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.gmail.St3venAU.plugins.ArmorStandTools.Main;
@@ -16,15 +16,12 @@ import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,7 +29,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -60,7 +56,6 @@ public class Broom extends CustItem_CustModle implements Listener {
     private final float moveSpeed = 1.9F;
     private final BoomEntity entity = new BoomEntity();
     Map<UUID, BroomRun> map = new HashMap<>();
-    Map<UUID, BroomRun> seats = new HashMap<>();
 
     private Broom() {
         super(Material.SHEARS,44,"§e魔法扫帚");
@@ -81,14 +76,11 @@ public class Broom extends CustItem_CustModle implements Listener {
     }
 
     public boolean join(ArmorStand e,Player p) {
-        BroomRun r = map.get(e.getUniqueId());
-        if (r == null){
-            r = new BroomRun(e,p);
+        if (getEntity().is(e) && e.getPassengers().isEmpty()){
+            new BroomRun(e,p);
 //            EntityArmorStand ne = r.ne;
 //            ne.getDataWatcher().set(marker,16);
             return true;
-        } else {
-            return r.addPlayer(p);
         }
         /*e.addPassenger(p);
         CraftPlayer cp = (CraftPlayer) p;
@@ -155,6 +147,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
             }
         }.runTaskTimer(RPGArmour.plugin,1,1);*/
+        return false;
     }
 
     public float speedLimiter(float v,float max) {
@@ -186,19 +179,9 @@ public class Broom extends CustItem_CustModle implements Listener {
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
         org.bukkit.entity.Entity e = event.getRightClicked();
         Player p = event.getPlayer();
-        if (e instanceof Player){
-            org.bukkit.entity.Entity v = e.getVehicle();
-            if (Seat.get().is(v)){
-                BroomRun r = seats.get(v.getUniqueId());
-                if (r != null){
-                    event.setCancelled(true);
-                    r.addPlayer(p);
-                }
-            }
-        } else if (e instanceof ArmorStand && entity.is(e)){
+        if (e instanceof ArmorStand && entity.is(e) && e.getPassengers().isEmpty()){
             event.setCancelled(true);
 //            if (p.hasCooldown(getMaterial())) return;
-            if (!e.getPassengers().isEmpty()) return;
             join((ArmorStand) e,p);
         }
     }
@@ -209,15 +192,10 @@ public class Broom extends CustItem_CustModle implements Listener {
         org.bukkit.entity.Entity v = event.getDismounted();
         if (v.isDead()) return;
         org.bukkit.entity.Entity p = event.getEntity();
-        if (p instanceof LivingEntity && v instanceof ArmorStand && Seat.get().is(v)){
-            BroomRun r = seats.get(v.getUniqueId());
-            if (r != null){
-                CraftLivingEntity cp = (CraftLivingEntity) p;
-                if (!cp.isDead() && cp.getHandle().pitch < 80){
-                    event.setCancelled(true);
-                } else {
-                    r.v1.remove();
-                }
+        if (p instanceof LivingEntity && v instanceof ArmorStand && getEntity().is(v)){
+            CraftLivingEntity cp = (CraftLivingEntity) p;
+            if (!cp.isDead() && cp.getHandle().pitch < 80){
+                event.setCancelled(true);
             }
         }
     }
@@ -239,18 +217,16 @@ public class Broom extends CustItem_CustModle implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    public void onTp(PlayerTeleportEvent event) {
-        Player p = event.getPlayer();
-        org.bukkit.entity.Entity v = p.getVehicle();
-        if (Seat.get().is(v)){
-            BroomRun r = seats.get(v.getUniqueId());
-            if (r != null){
-                r.v1.remove();
-            }
-            drop((ArmorStand) v,v.getLocation());
-        }
-    }
+//    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+//    public void onTp(PlayerTeleportEvent event) {
+//        Player p = event.getPlayer();
+//        org.bukkit.entity.Entity v = p.getVehicle();
+//        if (getEntity().is(v)){
+//            if (r != null){
+//                r.stop();
+//            }
+//        }
+//}
 
     @EventHandler(ignoreCancelled = true)
     public void onDroupItem(PlayerDropItemEvent event) {
@@ -400,58 +376,23 @@ public class Broom extends CustItem_CustModle implements Listener {
     public class BroomRun {
         final BukkitTask task;
         ArmorStand e;
-        ArmorStand v1;
-        ArmorStand v2 = null;
         EntityArmorStand ne;
+        LivingEntity p;
 
         public BroomRun(ArmorStand armor,Player p) {
             ne = ((CraftArmorStand) armor).getHandle();
             e = armor;
-            v1 = (ArmorStand) Seat.get().summon(e.getLocation());
-            if (v1.isDead()) throw new IllegalStateException("生成椅子失败");
-            v1.addPassenger(p);
+            e.addPassenger(p);
+//            e.setMarker(true);
             task = new BukkitRunnable() {
                 byte effnum = 0;
 
                 @Override
                 public void run() {
-                    if (e.isDead()){
+                    if (e.isDead() || p.isDead() || p.getVehicle() == null || !p.getVehicle().getUniqueId().equals(e.getUniqueId())){
                         stop();
                     }
-                    if (v2 != null){
-                        if (v2.isDead() || v2.getPassenger() == null){
-                            v2.remove();
-                            v2 = null;
-                        }
-                    }
-
-                    if (v1.isDead()){
-                        if (v2 != null){
-                            setV1(v2);
-                            v2 = null;
-                        } else {
-                            stop();
-                        }
-                    }
-
-                    org.bukkit.entity.Entity p1 = v1.getPassenger();
-                    if (p1 == null){
-                        if (v2 != null){
-                            org.bukkit.entity.Entity v2e = v2.getPassenger();
-                            if (v2e == null){
-                                stop();
-                            } else {
-                                setV1(v2);
-                                v1.remove();
-                                p1 = v2e;
-                                v2 = null;
-                            }
-                        } else {
-                            stop();
-                        }
-                    }
-                    if (p1 instanceof Player){
-                        Player p = (Player) p1;
+                    if (p instanceof Player){
                         EntityLiving np = ((CraftLivingEntity) p).getHandle();
                         float ad = EntityUtils.getAD(p);
                         float ws = EntityUtils.getWS(p);
@@ -486,6 +427,7 @@ public class Broom extends CustItem_CustModle implements Listener {
                             vec.setY(0F);
                             effnum++;
                             if (effnum > 4){
+                                loc.setY(loc.getY() + 1.8D);
                                 loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
                                 effnum = 0;
 /*                        int exp = p.getTotalExperience();
@@ -498,76 +440,39 @@ public class Broom extends CustItem_CustModle implements Listener {
                             }
                         }
                         e.setVelocity(vec);
-                        loc = e.getLocation();
-                        if (v2 != null){
-//                            if (!e.getPassengers().isEmpty()) e.eject();
-                            Vector v = VectorUtils.viewVector(loc).multiply(0.42F);
-
-                            net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
-                            Location loc1 = loc.clone().add(v);
-                            nv1.setLocation(loc1.getX(),loc1.getY(),loc1.getZ(),loc.getYaw(),loc.getPitch());
-
-                            nv1 = ((CraftEntity) v2).getHandle();
-                            loc.subtract(v);
-                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
-//                            v2.teleport(loc.add(v));
-                        } else {
-                            net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
-//                            org.bukkit.entity.BoomEntity er = v1.getVehicle();
-//                            if (er == null || er.getUniqueId() != e.getUniqueId()) e.addPassenger(v1);
-//                            nv1.yaw = ne.yaw;
-                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
-                            v1.teleport(loc);
-                        }
+//                        loc = e.getLocation();
+//                        if (v2 != null){
+////                            if (!e.getPassengers().isEmpty()) e.eject();
+//                            Vector v = VectorUtils.viewVector(loc).multiply(0.42F);
+//
+//                            net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
+//                            Location loc1 = loc.clone().add(v);
+//                            nv1.setLocation(loc1.getX(),loc1.getY(),loc1.getZ(),loc.getYaw(),loc.getPitch());
+//
+//                            nv1 = ((CraftEntity) v2).getHandle();
+//                            loc.subtract(v);
+//                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
+////                            v2.teleport(loc.add(v));
+//                        } else {
+//                            net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
+////                            org.bukkit.entity.BoomEntity er = v1.getVehicle();
+////                            if (er == null || er.getUniqueId() != e.getUniqueId()) e.addPassenger(v1);
+////                            nv1.yaw = ne.yaw;
+//                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
+//                            v1.teleport(loc);
+//                        }
 
                     }
                 }
             }.runTaskTimer(RPGArmour.plugin,1,1);
             map.put(e.getUniqueId(),this);
-            seats.put(v1.getUniqueId(),this);
+//            seats.put(v1.getUniqueId(),this);
         }
 
         void stop() {
             task.cancel();
-            map.remove(e.getUniqueId());
-            seats.remove(v1.getUniqueId());
-            v1.remove();
-            if (v2 != null) v2.remove();
-        }
-
-        public void setV1(ArmorStand v1) {
-            BroomRun r = seats.remove(v1.getUniqueId());
-            seats.put(v1.getUniqueId(),this);
-            this.v1 = v1;
-//            if (r == this){
-//                this.v1 = v1;
-//                seats.put(v1.getUniqueId(),this);
-//            } else {
-//                MoeItems.logger.warning("魔法扫把替换驾驶位置失败");
-//            }
-        }
-
-        boolean addPlayer(LivingEntity player) {
-            if (v2 == null){
-                if (isExist(player)) return false;
-                ArmorStand s = (ArmorStand) Seat.get().summon(e.getLocation());
-                if (s.isDead()) return false;
-                s.addPassenger(player);
-                v2 = s;
-                return true;
-            }
-            return false;
-        }
-
-        boolean isExist(Entity player) {
-            Entity v1p = v1.getPassenger();
-            if (v1p != null && v1p.getUniqueId().equals(player.getUniqueId())){
-                return true;
-            }
-            if (v2 == null) return false;
-
-            v1p = v2.getPassenger();
-            return v1p != null && v1p.getUniqueId().equals(player.getUniqueId());
+            EntityTpUtils.forgeStopRide(p);
+//            e.setMarker(false);
         }
     }
 }

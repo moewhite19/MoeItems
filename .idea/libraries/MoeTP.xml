@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="MoeTP">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../MoeTP/MoeTP.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
