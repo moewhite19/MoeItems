@@ -44,12 +44,6 @@ public class CherryBomb extends CustItem_CustModle implements Listener {
         return o;
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onShor(ProjectileLaunchEvent event) {
-        if (event.getEntity() instanceof Snowball){
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof Snowball)) return;

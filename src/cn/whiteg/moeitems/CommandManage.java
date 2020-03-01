@@ -26,7 +26,7 @@ public class CommandManage extends CommandInterface {
     @Override
     public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args) {
         if (args.length == 0){
-            sender.sendMessage("§2[§bMoeWeb§2]");
+            sender.sendMessage("§2[§bMoeItems§2]");
             return true;
         }
         if (CommandMap.containsKey(args[0])){

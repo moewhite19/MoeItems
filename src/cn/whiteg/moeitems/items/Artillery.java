@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
@@ -9,7 +10,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
-import net.minecraft.server.v1_15_R1.EntityProjectileThrowable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,6 +22,7 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSnowball;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -38,9 +39,9 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class Artillery extends CustItem_CustModle implements Listener {
@@ -58,7 +59,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
     private Artillery() {
         super(Material.BOWL,32,"§e火炮");
         artilleryEntity = new ArtilleryEntity();
-        NamespacedKey key = new NamespacedKey(RPGArmour.plugin,"artillery");
+        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"artillery");
         ShapedRecipe r = new ShapedRecipe(key,createItem());
         r.shape(
                 " B ",
@@ -200,24 +201,18 @@ public class Artillery extends CustItem_CustModle implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onLClickEntity(EntityDamageByEntityEvent event) {
+        //需要领地权限检查
         if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
-        Entity e = event.getEntity();
+        org.bukkit.entity.Entity e = event.getEntity();
         if (e.isDead()) return;
-        Entity damager = event.getDamager();
+        org.bukkit.entity.Entity damager = event.getDamager();
         if (damager instanceof Player && e instanceof ArmorStand && artilleryEntity.is(e)){
-            Player p = (Player) damager;
-            Location loc = e.getLocation();
-            FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
-            if (!flag.playerHasHints(p,Flags.build,true)){
-                return;
-            }
-            loc.getWorld().dropItem(loc,((ArmorStand) e).getHelmet());
-            e.remove();
+            Set<String> s = e.getScoreboardTags();
+            s.add("candestroy");
         }
     }
-
 
     @EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {
@@ -237,9 +232,12 @@ public class Artillery extends CustItem_CustModle implements Listener {
         Location loc = block.getLocation().toCenterLocation();
         loc.setY(loc.getY() + 1);
         if (loc.getBlock().getType() != Material.AIR) return;
-        FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
-        if (!flag.playerHasHints(p,Flags.build,true)){
-            return;
+        Residence res = Residence.getInstance();
+        if (!res.isResAdminOn(p)){
+            FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
+            if (!flag.playerHasHints(p,Flags.place,true)){
+                return;
+            }
         }
         if (item.getAmount() > 1){
             item.setAmount(item.getAmount() - 1);
@@ -248,6 +246,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
         } else {
             pi.setItemInOffHand(null);
         }
+        event.setCancelled(true);
         ArmorStand armorStand = (ArmorStand) artilleryEntity.summon(loc);
         Location ploc = p.getLocation();
         float pitch = -2F;
@@ -269,7 +268,10 @@ public class Artillery extends CustItem_CustModle implements Listener {
         @Override
         public boolean init(Entity entity) {
             if (entity instanceof ArmorStand){
-                entity.getScoreboardTags().add("dontedit");
+                Set<String> s = entity.getScoreboardTags();
+                s.add("dontedit");
+                s.add("candestroy");
+
                 ArmorStand armorStand = (ArmorStand) entity;
                 armorStand.setHelmet(Artillery.get().createItem());
                 armorStand.setVisible(false);

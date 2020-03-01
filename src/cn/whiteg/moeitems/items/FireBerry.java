@@ -1,11 +1,10 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;
-import cn.whiteg.rpgArmour.api.CustItem;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
+import cn.whiteg.rpgArmour.utils.RandomUtil;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,8 +52,8 @@ public class FireBerry extends CustItem_CustModle implements Listener {
         ArmorStand v = (ArmorStand) bootFire.summon(loc);
         v.addPassenger(p);
         new BukkitRunnable() {
-            int tick = 200;
             int rffFlag = 0;
+            Particle[] particles = new Particle[]{Particle.CAMPFIRE_COSY_SMOKE,Particle.CAMPFIRE_SIGNAL_SMOKE};
 
             @Override
             public void run() {
@@ -64,17 +63,17 @@ public class FireBerry extends CustItem_CustModle implements Listener {
                     cancel();
                     return;
                 }
-                tick--;
-                if (tick <= 0){
+                double h = v.getHealth() - 0.3D;
+                if (h <= 0){
                     v.remove();
                     cancel();
                     return;
                 }
+                v.setHealth(h);
                 if (rffFlag >= 3){
                     Location l = v.getLocation();
-                    Particle[] particles = new Particle[]{Particle.CAMPFIRE_COSY_SMOKE,Particle.CAMPFIRE_SIGNAL_SMOKE};
-                    int type = tick % particles.length;
-                    l.getWorld().spawnParticle(particles[type],l,3,0.1,0.2,0.1,0.22);
+                    l.getWorld().spawnParticle(particles[RandomUtil.getRandom().nextInt(particles.length)],l,3,0.1,0.2,0.1,0.22);
+                    rffFlag = 0;
                 } else {
                     rffFlag++;
                 }
@@ -101,7 +100,7 @@ public class FireBerry extends CustItem_CustModle implements Listener {
                 if (vec.getY() < 2.9)
                     vec.setY(vec.getY() + 0.15);
                 v.setVelocity(vec);
-                v.setHealth(((double) tick) * 0.1D);
+//                v.setHealth(((double) tick) * 0.1D);
             }
         }.runTaskTimer(RPGArmour.plugin,1,1);
     }
@@ -112,6 +111,7 @@ public class FireBerry extends CustItem_CustModle implements Listener {
         Entity v = event.getDismounted();
         Entity p = event.getEntity();
         if (p.isDead() || v.isDead()) return;
+        if (p instanceof Player && !((Player) p).isSneaking()) return;
         if (bootFire.is(v)){
             event.setCancelled(true);
         }

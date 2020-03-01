@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems;
 
+import cn.whiteg.moeitems.Listener.BreakArmourStand;
 import cn.whiteg.moeitems.Listener.PluginListener;
 import cn.whiteg.moeitems.furniture.DeskClock;
 import cn.whiteg.moeitems.furniture.FlowerVase;
@@ -50,6 +51,7 @@ public class MoeItems extends JavaPlugin {
         logger.info("全部加载完成");
         initItems();
         regEven(new PluginListener(this));
+        regEven(new BreakArmourStand());
     }
 
     public void onDisable() {
@@ -81,6 +83,9 @@ public class MoeItems extends JavaPlugin {
         regItem(Creeper.get());
         regItem(FireBerry.get());
         regItem(CherryBomb.get());
+        regItem(LightningRod.get());
+        regItem(BigIvan.get());
+//        regItem(PhamtomKiller.get());
     }
 
     public List<CustItem> getItems() {

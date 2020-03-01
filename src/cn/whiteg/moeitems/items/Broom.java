@@ -7,6 +7,9 @@ import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.gmail.St3venAU.plugins.ArmorStandTools.Main;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
 import net.minecraft.server.v1_15_R1.EntityLiving;
@@ -24,8 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -38,10 +39,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Broom extends CustItem_CustModle implements Listener {
     final static Broom o;
@@ -181,6 +179,14 @@ public class Broom extends CustItem_CustModle implements Listener {
         Player p = event.getPlayer();
         if (e instanceof ArmorStand && entity.is(e) && e.getPassengers().isEmpty()){
             event.setCancelled(true);
+            Location loc = e.getLocation();
+            Residence res = Residence.getInstance();
+            if (!res.isResAdminOn(p)){
+                FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
+                if (!flag.playerHasHints(p,Flags.riding,true)){
+                    return;
+                }
+            }
 //            if (p.hasCooldown(getMaterial())) return;
             join((ArmorStand) e,p);
         }
@@ -192,7 +198,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         org.bukkit.entity.Entity v = event.getDismounted();
         if (v.isDead()) return;
         org.bukkit.entity.Entity p = event.getEntity();
-        if (p instanceof LivingEntity && v instanceof ArmorStand && getEntity().is(v)){
+        if (p instanceof Player && ((Player) p).isSneaking() && v instanceof ArmorStand && getEntity().is(v)){
             CraftLivingEntity cp = (CraftLivingEntity) p;
             if (!cp.isDead() && cp.getHandle().pitch < 80){
                 event.setCancelled(true);
@@ -200,22 +206,18 @@ public class Broom extends CustItem_CustModle implements Listener {
         }
     }
 
-    @EventHandler
-    public void onLClickEntity(EntityDamageByEntityEvent event) {
-        //需要领地权限检查
-        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
-        org.bukkit.entity.Entity e = event.getEntity();
-        if (e.isDead()) return;
-        org.bukkit.entity.Entity damager = event.getDamager();
-        if (damager instanceof Player && e instanceof ArmorStand && entity.is(e)){
-//            Player p = (Player) damager;
-            Location loc = e.getLocation();
-//            FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
-//            if (flag.playerHasHints(p,Flags.riding,true)){
-//            }
-            drop((ArmorStand) e,loc);
-        }
-    }
+//    @EventHandler(priority = EventPriority.LOW)
+//    public void onLClickEntity(EntityDamageByEntityEvent event) {
+//        //需要领地权限检查
+//        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+//        org.bukkit.entity.Entity e = event.getEntity();
+//        if (e.isDead()) return;
+//        org.bukkit.entity.Entity damager = event.getDamager();
+//        if (damager instanceof Player && e instanceof ArmorStand && entity.is(e)){
+//            Set<String> s = e.getScoreboardTags();
+//            s.add("candestroy");
+//        }
+//    }
 
 //    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 //    public void onTp(PlayerTeleportEvent event) {
@@ -266,10 +268,14 @@ public class Broom extends CustItem_CustModle implements Listener {
 
         loc.setY(loc.getY() + 1);
         if (loc.getBlock().getType() != Material.AIR) return;
-//        FlagPermissions flag = Residence.getInstance().getPermsByLoc  ForPlayer(loc,p);
-//        if (!flag.playerHasHints(p,Flags.build,true)){
-//            return;
-//        }
+        Residence res = Residence.getInstance();
+        if (!res.isResAdminOn(p)){
+            FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
+            if (!flag.playerHasHints(p,Flags.place,true)){
+                return;
+            }
+        }
+        event.setCancelled(true);
         if (item.getAmount() > 1){
             item.setAmount(item.getAmount() - 1);
         } else if (hand == EquipmentSlot.HAND){
@@ -316,7 +322,9 @@ public class Broom extends CustItem_CustModle implements Listener {
         @Override
         public boolean init(org.bukkit.entity.Entity entity) {
             if (super.init(entity)){
-                entity.getScoreboardTags().add("dontedit");
+                Set<String> s = entity.getScoreboardTags();
+                s.add("dontedit");
+                s.add("candestroy");
                 load(entity);
                 if (entity instanceof ArmorStand){
                     ArmorStand armorStand = (ArmorStand) entity;

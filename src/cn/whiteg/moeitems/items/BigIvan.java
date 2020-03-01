@@ -22,27 +22,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-public class Creeper extends CustItem_CustModle implements Listener {
-    final static Creeper a;
-    private final static int id2 = 25;
+public class BigIvan extends CustItem_CustModle implements Listener {
+    final static BigIvan a;
+    private final static int id2 = 49;
 
     static {
-        a = new Creeper();
+        a = new BigIvan();
     }
 
     private final Figurine creeperEntity = new Figurine();
-    private int fuze = 50;
+    private int fuze = 80;
 
-    private Creeper() {
-        super(Material.BOWL,5,"§2苦力怕");
+    private BigIvan() {
+        super(Material.BOWL,48,"§b大伊万");
         ConfigurationSection c = Setting.getCustItemConfig(this);
         if (c != null){
             fuze = c.getInt("fuze",fuze);
@@ -51,7 +46,7 @@ public class Creeper extends CustItem_CustModle implements Listener {
         }
     }
 
-    public static Creeper get() {
+    public static BigIvan get() {
         return a;
     }
 
@@ -71,9 +66,9 @@ public class Creeper extends CustItem_CustModle implements Listener {
             meta.setCustomModelData(id2);
             item.setItemMeta(meta);
             final Location loc = event.getItemDrop().getLocation();
-            loc.getWorld().playSound(loc,"minecraft:entity.creeper.primed",SoundCategory.MASTER,1.5F,1.5F);
+            loc.getWorld().playSound(loc,"minecraft:entity.creeper.primed",SoundCategory.MASTER,0.5F,0.5F);
             final Vector vector = event.getItemDrop().getVelocity();
-            vector.multiply(2.5);
+            vector.multiply(5);
             Entity entity = creeperEntity.summon(loc);
             entity.setVelocity(vector);
             if (meta.isUnbreakable()){
@@ -93,16 +88,15 @@ public class Creeper extends CustItem_CustModle implements Listener {
     }
 
     public class Figurine extends CustEntityID implements CustEntityChunkEvent {
-        Map<UUID, BukkitTask> taskMap = new HashMap<>();
 
         public Figurine() {
-            super("Creeper",org.bukkit.entity.ArmorStand.class);
+            super("BigIvan",ArmorStand.class);
         }
 
         @Override
         public void load(final Entity entity) {
             if (entity.isDead()) return;
-            EntityUtils.setBoundingBox(entity,BoundingBox.of(entity.getLocation(),0.1D,0.15D,0.1D));
+            EntityUtils.setBoundingBox(entity,BoundingBox.of(entity.getLocation(),0.4D,0.4D,0.4D));
 //            EntityUtils.setEntitySize(entity,0.1F,0.1F);
             Bukkit.getScheduler().runTaskLater(RPGArmour.plugin,() -> {
                 if (entity.isDead()) return;
@@ -112,7 +106,7 @@ public class Creeper extends CustItem_CustModle implements Listener {
                 if (!flag.has(Flags.explode,true)){
                     return;
                 }
-                loc.getWorld().createExplosion(entity,3.2F,true,true);
+                loc.getWorld().createExplosion(entity,32F,true,true);
 //                WorldSetting ws = MoeAntiBuild.plugin.getWorldSetting(loc.getWorld().getName());
 //                if (ws != null && ws.SafeTnT){
 //                    loc.getWorld().createExplosion(entity,3.2F,false,false);
