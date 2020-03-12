@@ -1,7 +1,11 @@
 package cn.whiteg.moeitems;
 
+import cn.whiteg.mmocore.common.PluginBase;
 import cn.whiteg.moeitems.Listener.BreakArmourStand;
+import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
+import cn.whiteg.moeitems.foods.FireBerry;
+import cn.whiteg.moeitems.foods.SaltSodaWater;
 import cn.whiteg.moeitems.furniture.DeskClock;
 import cn.whiteg.moeitems.furniture.FlowerVase;
 import cn.whiteg.moeitems.furniture.GardenLamp;
@@ -10,26 +14,18 @@ import cn.whiteg.moeitems.hats.*;
 import cn.whiteg.moeitems.items.*;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
-import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static cn.whiteg.moeitems.Setting.reload;
 
 
-public class MoeItems extends JavaPlugin {
+public class MoeItems extends PluginBase {
     public static Logger logger;
     public static MoeItems plugin;
     public CommandManage mainCommand;
-    public Map<String, Listener> listenerMap = new HashMap<>();
     private List<CustItem> items = new ArrayList<>();
 
 
@@ -50,14 +46,14 @@ public class MoeItems extends JavaPlugin {
         getCommand("moeitems").setExecutor(mainCommand);
         logger.info("全部加载完成");
         initItems();
-        regEven(new PluginListener(this));
-        regEven(new BreakArmourStand());
+        regListener(new PluginListener(this));
+        regListener(new BreakArmourStand());
+        if (Setting.DEBUG) regListener(new DebugTickListener());
     }
 
     public void onDisable() {
-        unregEven();
+        unregListener();
         //注销注册玩家加入服务器事件
-        listenerMap.clear();
         clearItems();
         logger.info("插件已关闭");
     }
@@ -85,6 +81,10 @@ public class MoeItems extends JavaPlugin {
         regItem(CherryBomb.get());
         regItem(LightningRod.get());
         regItem(BigIvan.get());
+        regItem(SaltSodaWater.get());
+        regItem(WaterGun.get());
+
+//        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
     }
 
@@ -102,68 +102,5 @@ public class MoeItems extends JavaPlugin {
     public void regItem(CustItem item) {
         items.add(item);
         RPGArmour.plugin.getItemManager().regItem(item);
-    }
-
-
-    public void regEven(Listener listener) {
-        regEven(listener.getClass().getName(),listener);
-    }
-
-    public void regEven(String key,Listener listener) {
-        listenerMap.put(key,listener);
-        Bukkit.getPluginManager().registerEvents(listener,plugin);
-    }
-
-    public void unregEven() {
-        Iterator<Map.Entry<String, Listener>> it = listenerMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Listener> set = it.next();
-            Listener listener = set.getValue();
-            if (listener != null){
-                unregListener(listener);
-            }
-        }
-    }
-
-    /**
-     * 卸载事件
-     *
-     * @param Key "卸载"
-     */
-    public void unregEven(String Key) {
-        Listener listenr = listenerMap.remove(Key);
-        if (listenr == null){
-            return;
-        }
-        unregListener(listenr);
-    }
-
-    public void unregListener(Listener listener) {
-        //注销事件
-        Class listenerClass = listener.getClass();
-        try{
-            for (Method method : listenerClass.getMethods()) {
-                if (method.isAnnotationPresent(EventHandler.class)){
-                    Type[] tpyes = method.getGenericParameterTypes();
-                    if (tpyes.length == 1){
-                        Class<?> tc = Class.forName(tpyes[0].getTypeName());
-                        Method tm = tc.getMethod("getHandlerList");
-                        HandlerList handlerList = (HandlerList) tm.invoke(null);
-                        handlerList.unregister(listener);
-                    }
-                }
-            }
-        }catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e){
-            e.printStackTrace();
-        }
-
-        //调用类中的unreg()方法
-        try{
-            Method unreg = listenerClass.getDeclaredMethod("unreg");
-            unreg.setAccessible(true);
-            unreg.invoke(listener);
-        }catch (Exception ignored){
-
-        }
     }
 }

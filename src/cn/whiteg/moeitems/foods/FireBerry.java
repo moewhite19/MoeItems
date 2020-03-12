@@ -1,4 +1,4 @@
-package cn.whiteg.moeitems.items;
+package cn.whiteg.moeitems.foods;
 
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;

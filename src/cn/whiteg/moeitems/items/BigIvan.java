@@ -1,7 +1,6 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.rpgArmour.RPGArmour;
-import cn.whiteg.rpgArmour.Setting;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
@@ -14,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -38,12 +36,12 @@ public class BigIvan extends CustItem_CustModle implements Listener {
 
     private BigIvan() {
         super(Material.BOWL,48,"§b大伊万");
-        ConfigurationSection c = Setting.getCustItemConfig(this);
-        if (c != null){
-            fuze = c.getInt("fuze",fuze);
-        } else {
-            RPGArmour.logger.warning("找不到" + getDisplayName() + "的配置文件");
-        }
+//        ConfigurationSection c = Setting.getCustItemConfig(this);
+//        if (c != null){
+//            fuze = c.getInt("fuze",fuze);
+//        } else {
+//            MoeItems.logger.warning("找不到" + getDisplayName() + "的配置文件");
+//        }
     }
 
     public static BigIvan get() {

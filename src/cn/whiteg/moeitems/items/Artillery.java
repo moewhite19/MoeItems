@@ -22,11 +22,8 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSnowball;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -201,18 +198,18 @@ public class Artillery extends CustItem_CustModle implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onLClickEntity(EntityDamageByEntityEvent event) {
-        //需要领地权限检查
-        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
-        org.bukkit.entity.Entity e = event.getEntity();
-        if (e.isDead()) return;
-        org.bukkit.entity.Entity damager = event.getDamager();
-        if (damager instanceof Player && e instanceof ArmorStand && artilleryEntity.is(e)){
-            Set<String> s = e.getScoreboardTags();
-            s.add("candestroy");
-        }
-    }
+//    @EventHandler(priority = EventPriority.LOW)
+//    public void onLClickEntity(EntityDamageByEntityEvent event) {
+//        //需要领地权限检查
+//        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+//        org.bukkit.entity.Entity e = event.getEntity();
+//        if (e.isDead()) return;
+//        org.bukkit.entity.Entity damager = event.getDamager();
+//        if (damager instanceof Player && e instanceof ArmorStand && artilleryEntity.is(e)){
+//            Set<String> s = e.getScoreboardTags();
+//            s.add("candestroy");
+//        }
+//    }
 
     @EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {

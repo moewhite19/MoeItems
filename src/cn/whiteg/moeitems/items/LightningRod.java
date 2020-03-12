@@ -61,7 +61,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         Location rod = null;
         Location loc = e.getLocation();
         double d = 0;
-        for (Entity entity : e.getNearbyEntities(32,64,32)) {
+        for (Entity entity : e.getNearbyEntities(64,64,64)) {
             if (entity instanceof LivingEntity){
                 LivingEntity le = (LivingEntity) entity;
                 EntityEquipment ee = le.getEquipment();
