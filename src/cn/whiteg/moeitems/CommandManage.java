@@ -1,6 +1,6 @@
 package cn.whiteg.moeitems;
 
-import cn.whiteg.mmocore.CommandInterface;
+import cn.whiteg.mmocore.common.CommandInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;

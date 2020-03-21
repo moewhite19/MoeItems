@@ -1,7 +1,7 @@
 package cn.whiteg.moeitems.commands;
 
 import cn.whiteg.moeitems.MoeItems;
-import cn.whiteg.mmocore.CommandInterface;
+import cn.whiteg.mmocore.common.CommandInterface;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

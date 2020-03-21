@@ -1,6 +1,5 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
@@ -17,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -61,7 +59,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         Location rod = null;
         Location loc = e.getLocation();
         double d = 0;
-        for (Entity entity : e.getNearbyEntities(64,64,64)) {
+        for (Entity entity : e.getNearbyEntities(64,512,64)) {
             if (entity instanceof LivingEntity){
                 LivingEntity le = (LivingEntity) entity;
                 EntityEquipment ee = le.getEquipment();

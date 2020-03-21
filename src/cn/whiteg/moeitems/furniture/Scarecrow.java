@@ -58,7 +58,7 @@ public class Scarecrow extends CustItem_CustModle implements Listener {
             }
         }
         if (e.getType() != EntityType.PHANTOM) return;
-        for (Entity entity : e.getNearbyEntities(64,64,64)) {
+        for (Entity entity : e.getNearbyEntities(64,512D,64)) {
             if (entity instanceof LivingEntity){
                 LivingEntity le = (LivingEntity) entity;
                 EntityEquipment ee = le.getEquipment();

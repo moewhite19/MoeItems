@@ -1,6 +1,5 @@
 package cn.whiteg.moeitems;
 
-import cn.whiteg.mmocore.common.PluginBase;
 import cn.whiteg.moeitems.Listener.BreakArmourStand;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
@@ -83,7 +82,7 @@ public class MoeItems extends PluginBase {
         regItem(BigIvan.get());
         regItem(SaltSodaWater.get());
         regItem(WaterGun.get());
-
+        regItem(GravityStaff.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
     }

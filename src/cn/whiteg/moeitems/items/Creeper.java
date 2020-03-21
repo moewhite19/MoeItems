@@ -108,17 +108,11 @@ public class Creeper extends CustItem_CustModle implements Listener {
                 if (entity.isDead()) return;
                 final Location loc = entity.getLocation();
                 entity.remove();
-                FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
-                if (!flag.has(Flags.explode,true)){
-                    return;
-                }
-                loc.getWorld().createExplosion(entity,3.2F,true,true);
-//                WorldSetting ws = MoeAntiBuild.plugin.getWorldSetting(loc.getWorld().getName());
-//                if (ws != null && ws.SafeTnT){
-//                    loc.getWorld().createExplosion(entity,3.2F,false,false);
-//                } else {
-//                    loc.getWorld().createExplosion(entity,3.2F,true,true);
+//                FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
+//                if (!flag.has(Flags.explode,true)){
+//                    return;
 //                }
+                loc.getWorld().createExplosion(entity,3.2F,true,true);
             },fuze);
         }
 

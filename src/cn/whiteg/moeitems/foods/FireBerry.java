@@ -139,7 +139,7 @@ public class FireBerry extends CustItem_CustModle implements Listener {
                 e.setFireTicks(Integer.MAX_VALUE);
                 e.addScoreboardTag("dontsave");
                 e.setVisible(false);
-                EntityUtils.setBoundingBox(e,BoundingBox.of(e.getLocation(),0.43,1.42,0.43));
+                EntityUtils.setBoundingBox(e,BoundingBox.of(e.getLocation(),0.3,1.42,0.3));
                 return true;
             }
             return false;

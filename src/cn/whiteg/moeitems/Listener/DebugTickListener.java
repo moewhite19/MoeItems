@@ -18,11 +18,12 @@ public class DebugTickListener implements Listener {
         p.sendMessage("点击实体: " + e);
         p.sendMessage("实体类" + e.getClass());
         p.sendMessage("实体标签" + e.getScoreboardTags());
+        p.sendMessage("实体生成原因" + e.getEntitySpawnReason());
+        if (e.fromMobSpawner()) p.sendMessage("实体来自刷怪笼");
         if (e instanceof Minecart){
             p.sendMessage("矿车最大速度" + ((Minecart) e).getMaxSpeed());
             p.sendMessage("矿车重力" + e.hasGravity());
         }
-
     }
 
 //    @EventHandler
