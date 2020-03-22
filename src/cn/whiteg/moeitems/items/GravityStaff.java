@@ -1,6 +1,7 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.mmocore.util.ActionBar;
+import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.Setting;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
@@ -70,8 +71,7 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
                 try{
                     entityList.add(EntityType.valueOf(str.toUpperCase()));
                 }catch (IllegalArgumentException e){
-                    RPGArmour.logger.warning("无效的实体ID: " + str);
-                    e.printStackTrace();
+                    MoeItems.logger.warning("无效的实体ID: " + str);
                 }
             }
 
@@ -243,7 +243,7 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
 
         Staus(Player player,Entity entity,EquipmentSlot hand) {
             this.hand = hand;
-            ActionBar.sendActionBar(player,"控制");
+            player.sendActionBar("控制");
             this.player = player;
             this.entity = entity;
             this.distance = player.getLocation().distance(entity.getLocation());
@@ -294,7 +294,7 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
         }
 
         void stop() {
-            ActionBar.sendActionBar(player,"取消");
+            player.sendActionBar("取消");
             task.cancel();
             map.remove(player.getUniqueId());
         }
