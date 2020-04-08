@@ -1,9 +1,8 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.mmocore.util.ActionBar;
 import cn.whiteg.moeitems.MoeItems;
+import cn.whiteg.moeitems.Setting;
 import cn.whiteg.rpgArmour.RPGArmour;
-import cn.whiteg.rpgArmour.Setting;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.ItemToolUtil;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
@@ -13,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,16 +28,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class GravityStaff extends CustItem_CustModle implements Listener {
     final static private GravityStaff a = new GravityStaff();
-    Map<UUID, Staus> map = new HashMap<>(16);
-    Set<EntityType> entityList = new HashSet<>();
-    Set<Material> blockList = new HashSet<>();
-    double damageRisk = 0.03;
+    private Map<UUID, Staus> map = new HashMap<>(16);
+    private Set<EntityType> entityList = new HashSet<>();
+    private Set<Material> blockList = new HashSet<>();
+    private double damageRisk = 0.03;
 
     public GravityStaff() {
         super(Material.SHEARS,32,"§6重力法杖");
@@ -54,18 +50,18 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
                     blockList.add(Material.valueOf(str.toUpperCase()));
                 }catch (IllegalArgumentException e){
                     RPGArmour.logger.warning("无效的方块ID: " + str);
-                    chan = true;
-                    it.remove();
+//                    chan = true;
+//                    it.remove();
                 }
             }
-            if (chan){
-                c.set("BlockList",l);
-                try{
-                    Setting.getConfig().save(new File(RPGArmour.plugin.getDataFolder(),"config.yml"));
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
+//            if (chan){
+//                c.set("BlockList",l);
+//                try{
+//                    Setting.getConfig().save(new File(RPGArmour.plugin.getDataFolder(),"config.yml"));
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                }
+//            }
             l = c.getStringList("EntityList");
             for (String str : l) {
                 try{
@@ -76,18 +72,19 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
             }
 
             damageRisk = (float) c.getDouble("DamageRisk",damageRisk);
-        } else {
-            FileConfiguration cf = Setting.getConfig();
-            c = cf.createSection("CustItemSetting." + getClass().getSimpleName());
-            c.set("BlockList",Arrays.asList("GRASS_BLOK","STONE"));
-            c.set("EntityList",Arrays.asList("PIG","SLEEP"));
-            try{
-                cf.save(new File(RPGArmour.plugin.getDataFolder(),"config.yml"));
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-
         }
+//        else {
+//            FileConfiguration cf = Setting.getConfig();
+//            c = cf.createSection("CustItemSetting." + getClass().getSimpleName());
+//            c.set("BlockList",Arrays.asList("GRASS_BLOK","STONE"));
+//            c.set("EntityList",Arrays.asList("PIG","SLEEP"));
+//            try{
+//                cf.save(new File(RPGArmour.plugin.getDataFolder(),"config.yml"));
+//            }catch (IOException e){
+//                e.printStackTrace();
+//            }
+//
+//        }
     }
 
     public static GravityStaff get() {

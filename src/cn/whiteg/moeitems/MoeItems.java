@@ -13,6 +13,9 @@ import cn.whiteg.moeitems.hats.*;
 import cn.whiteg.moeitems.items.*;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
+import com.bekvon.bukkit.residence.Residence;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,7 @@ public class MoeItems extends PluginBase {
     public static MoeItems plugin;
     public CommandManage mainCommand;
     private List<CustItem> items = new ArrayList<>();
+    private Residence residence = null;
 
 
     public MoeItems() {
@@ -47,6 +51,10 @@ public class MoeItems extends PluginBase {
         initItems();
         regListener(new PluginListener(this));
         regListener(new BreakArmourStand());
+        Plugin pl = Bukkit.getPluginManager().getPlugin("Residence");
+        if (pl != null){
+            residence = (Residence) pl;
+        }
         if (Setting.DEBUG) regListener(new DebugTickListener());
     }
 
@@ -83,6 +91,7 @@ public class MoeItems extends PluginBase {
         regItem(SaltSodaWater.get());
         regItem(WaterGun.get());
         regItem(GravityStaff.get());
+        regItem(Wrench.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
     }
@@ -101,5 +110,9 @@ public class MoeItems extends PluginBase {
     public void regItem(CustItem item) {
         items.add(item);
         RPGArmour.plugin.getItemManager().regItem(item);
+    }
+
+    public Residence getResidence() {
+        return residence;
     }
 }

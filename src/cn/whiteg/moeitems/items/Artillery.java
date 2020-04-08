@@ -183,7 +183,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
             CraftSnowball snowball = (CraftSnowball) p;
             if (bullet.is(EntityUtils.getSnowballItem(snowball))){
                 Location loc = snowball.getLocation();
-//                FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
+//                FlagPermissions flag = MoeItems.plugin.getResidence().getPermsByLoc(loc);
 //                if (!flag.has(Flags.explode,true)){
 //                    return;
 //                }

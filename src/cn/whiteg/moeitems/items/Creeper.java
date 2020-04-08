@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.Setting;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
@@ -19,6 +20,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -60,6 +62,24 @@ public class Creeper extends CustItem_CustModle implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onFurnChan(FurnaceBurnEvent event) {
+        if (is(event.getFuel())){
+//            MoeItems.logger.info("燃烧时间" + event.getBurnTime());
+            event.setBurnTime(2400);
+//            Block block = event.getBlock();
+//            Location loc = block.getLocation();
+//            Residence res = MoeItems.plugin.getResidence();
+//            if (res != null){
+//                FlagPermissions flag = res.getPermsByLoc(loc);
+//                if (!flag.has(Flags.explode,true)){
+//                    return;
+//                }
+//            }
+//            loc.getWorld().createExplosion(loc,4.5F,true,true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onDrop(PlayerDropItemEvent event) {
         if (event.getPlayer().isSneaking()) return;
         ItemStack item = event.getItemDrop().getItemStack();
@@ -75,6 +95,7 @@ public class Creeper extends CustItem_CustModle implements Listener {
             final Vector vector = event.getItemDrop().getVelocity();
             vector.multiply(2.5);
             Entity entity = creeperEntity.summon(loc);
+            if(entity.isDead()) return;
             entity.setVelocity(vector);
             if (meta.isUnbreakable()){
                 event.setCancelled(true);
@@ -108,10 +129,13 @@ public class Creeper extends CustItem_CustModle implements Listener {
                 if (entity.isDead()) return;
                 final Location loc = entity.getLocation();
                 entity.remove();
-//                FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);
-//                if (!flag.has(Flags.explode,true)){
-//                    return;
-//                }
+                Residence res = MoeItems.plugin.getResidence();
+                if (res != null){
+                    FlagPermissions flag = res.getPermsByLoc(loc);
+                    if (!flag.has(Flags.explode,true)){
+                        return;
+                    }
+                }
                 loc.getWorld().createExplosion(entity,3.2F,true,true);
             },fuze);
         }
