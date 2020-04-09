@@ -14,12 +14,14 @@ import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Piston;
+import org.bukkit.block.data.type.PistonHead;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -42,15 +44,17 @@ public class Wrench extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onRClick(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND) return;
         Block block = event.getClickedBlock();
         if (block == null) return;
         Player player = event.getPlayer();
         if (player.isSneaking()) return;
         ItemStack item = event.getItem();
         if (!is(item)) return;
-        FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(block.getLocation(),player);
-        if (!perm.playerHasHints(player,Flags.build,true)) return;
+        if (!Residence.getInstance().isResAdminOn(player)){
+            FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(block.getLocation(),player);
+            if (!perm.playerHasHints(player,Flags.build,true)) return;
+        }
         BlockData data = block.getBlockData();
         if (data instanceof Piston){
             Piston piston = (Piston) data;
@@ -58,16 +62,14 @@ public class Wrench extends CustItem_CustModle implements Listener {
             chanBlock(block,piston);
         } else if (data instanceof Chest){
             Chest chest = (Chest) data;
-            if (chest.getType() == Chest.Type.SINGLE){
-                chanBlock(block,(Directional) data);
-            }
-        } else if (data instanceof Bed){
+            if (chest.getType() != Chest.Type.SINGLE) return;
+            chanBlock(block,(Directional) data);
+        } else if (data instanceof Bed || data instanceof PistonHead){
             return;
         } else if (data instanceof Directional){
             chanBlock(block,(Directional) data);
         } else if (data instanceof Rotatable){
             rotableBlock(block,(Rotatable) data);
-
         } else return;
         player.sendActionBar("已修改方块");
         event.setCancelled(true);
