@@ -8,8 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,11 +19,10 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class GuisePotion extends CustItem_CustModle implements Listener {
     private static final GuisePotion a;
-    private static DataWatcherObject<Optional<IChatBaseComponent>> entityCustName;
+    //    private static DataWatcherObject<Optional<IChatBaseComponent>> entityCustName;
     private static Field spawnEntityLivingPacketId;
     private static Field spawnEntityLivingPacketType;
     private static Field spawnHumanId;
@@ -49,8 +47,10 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             entityMetaataList.setAccessible(true);
             Field entityCustNameF = net.minecraft.server.v1_15_R1.Entity.class.getDeclaredField("az");
             entityCustNameF.setAccessible(true);
-            entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) entityCustNameF.get(null);
-        }catch (NoSuchFieldException | IllegalAccessException e){
+
+            //未完成
+//            entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) entityCustNameF.get(null);
+        }catch (NoSuchFieldException e){
             e.printStackTrace();
         }
     }
@@ -72,10 +72,11 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         if (!is(event.getItem())) return;
         Player p = event.getPlayer();
         Location ploc = p.getLocation();
-        Entity entity = null;
+        org.bukkit.entity.Entity entity = null;
         double d = 0D;
-        for (Entity e : p.getNearbyEntities(30D,30D,30D)) {
-            if (e instanceof LivingEntity){
+        for (org.bukkit.entity.Entity e : p.getNearbyEntities(30D,30D,30D)) {
+            if (e instanceof Mob){
+                if (e instanceof Player) continue;
                 double ds = ploc.distance(e.getLocation());
                 if (d == 0 || ds < d){
                     entity = e;
@@ -113,7 +114,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         }
     }
 
-    public boolean setGuise(Player player,Entity tager) {
+    public boolean setGuise(Player player,org.bukkit.entity.Entity tager) {
         EntityPlayer np = ((CraftPlayer) player).getHandle();
         try{
             Staus staus = new Staus(player,tager);
@@ -121,7 +122,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             PacketPlayOutEntityDestroy destroyEntity = new PacketPlayOutEntityDestroy(np.getId());
             Object metaPacket = staus.getMetaPacket();
             Object equipmentPacket = staus.getEquipmentPacket();
-            for (Entity entity : player.getWorld().getEntities()) {
+            for (org.bukkit.entity.Entity entity : player.getWorld().getEntities()) {
                 if (entity instanceof Player){
                     Player p = (Player) entity;
                     if (!p.canSee(player)) continue;
@@ -148,7 +149,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         private final PacketPlayOutEntityMetadata metaPacket;
         private net.minecraft.server.v1_15_R1.Entity tager;
 
-        public Staus(Player player,Entity entity) {
+        public Staus(Player player,org.bukkit.entity.Entity entity) {
             this.player = ((CraftPlayer) player).getHandle();
             player.setCustomName(player.getName());
             tager = ((CraftEntity) entity).getHandle();
