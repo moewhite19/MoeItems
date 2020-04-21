@@ -74,7 +74,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         Location ploc = p.getLocation();
         org.bukkit.entity.Entity entity = null;
         double d = 0D;
-        for (org.bukkit.entity.Entity e : p.getNearbyEntities(30D,30D,30D)) {
+        for (org.bukkit.entity.Entity e : p.getNearbyEntities(128D,128D,128D)) {
             if (e instanceof Mob){
                 if (e instanceof Player) continue;
                 double ds = ploc.distance(e.getLocation());
@@ -182,12 +182,14 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
 
         public Object getSpawnPacket() throws IllegalAccessException {
             if (tager instanceof EntityLiving){
-                PacketPlayOutSpawnEntityLiving spawnLivinEntity = new PacketPlayOutSpawnEntityLiving((EntityLiving) tager);
-                spawnEntityLivingPacketId.set(spawnLivinEntity,player.getId());
+                PacketPlayOutSpawnEntityLiving spawnLivinEntity = new PacketPlayOutSpawnEntityLiving(player);
+                spawnEntityLivingPacketType.set(spawnLivinEntity,IRegistry.ENTITY_TYPE.a(tager.getEntityType()));
+//                spawnEntityLivingPacketId.set(spawnLivinEntity,player.getId());
                 return spawnLivinEntity;
             } else {
-                PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(tager);
+                PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(player.getId(),player.getUniqueID(),player.locX(),player.locY(),player.locZ(),0F,0F,tager.getEntityType(),0,new Vec3D(0,0,0));
                 spawnEntityPacketId.set(packet,player.getId());
+
                 return packet;
             }
         }
