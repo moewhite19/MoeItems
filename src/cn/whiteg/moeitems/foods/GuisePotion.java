@@ -103,7 +103,9 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
                 Staus sta = map.get(id);
                 if (sta != null){
                     if (event.getPlayer() != null && event.getPlayer().getEntityId() == id) return;
-                    event.setPacket(sta.getSpawnPacket());
+//                    event.setPacket(sta.getSpawnPacket());
+                    event.setCancelled(true);
+                    event.getChannel().pipeline().writeAndFlush(sta.getSpawnPacket());
                     event.getChannel().pipeline().writeAndFlush(sta.getMetaPacket());
                     event.getChannel().pipeline().writeAndFlush(sta.getEquipmentPacket());
                 }
@@ -159,7 +161,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
 
             entity.setCustomName(player.getName());
             entity.setCustomNameVisible(true);
-            metaPacket = new PacketPlayOutEntityMetadata(this.player.getId(),tager.getDataWatcher(),false);
+            metaPacket = new PacketPlayOutEntityMetadata(this.player.getId(),tager.getDataWatcher(),true);
 
             entity.setCustomName(v1);
             entity.setCustomNameVisible(v2);
