@@ -16,19 +16,20 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GuisePotion extends CustItem_CustModle implements Listener {
     private static final GuisePotion a;
-    //    private static DataWatcherObject<Optional<IChatBaseComponent>> entityCustName;
+    private static DataWatcherObject<Optional<IChatBaseComponent>> entityCustName;
     private static Field spawnEntityLivingPacketId;
     private static Field spawnEntityLivingPacketType;
     private static Field spawnHumanId;
     private static Field spawnEntityPacketId;
     private static Field spawnEntityPacketType;
     private static Field entityMetaataList;
+    private static Field datawatcherItemVault;
+
+    private static DataWatcherObject<Boolean> entityCustomNameVisible;
 
     static {
         a = new GuisePotion();
@@ -45,17 +46,25 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             spawnHumanId.setAccessible(true);
             entityMetaataList = PacketPlayOutEntityMetadata.class.getDeclaredField("b");
             entityMetaataList.setAccessible(true);
-            Field entityCustNameF = net.minecraft.server.v1_15_R1.Entity.class.getDeclaredField("az");
-            entityCustNameF.setAccessible(true);
+            datawatcherItemVault = DataWatcher.Item.class.getDeclaredField("b");
+            datawatcherItemVault.setAccessible(true);
 
             //未完成
-//            entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) entityCustNameF.get(null);
-        }catch (NoSuchFieldException e){
+
+            Field f = net.minecraft.server.v1_15_R1.Entity.class.getDeclaredField("az");
+            f.setAccessible(true);
+            entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) f.get(null);
+
+            f = Entity.class.getDeclaredField("aA");
+            f.setAccessible(true);
+            entityCustomNameVisible = (DataWatcherObject<Boolean>) f.get(null);
+
+        }catch (NoSuchFieldException | IllegalAccessException e){
             e.printStackTrace();
         }
     }
 
-    Map<Integer, Staus> map = Collections.synchronizedMap(new HashMap<>());
+    Map<Integer, GuisePlayer> map = Collections.synchronizedMap(new HashMap<>());
 
 
     private GuisePotion() {
@@ -99,8 +108,9 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         if (map.isEmpty()) return;
         if (event.getPacket() instanceof PacketPlayOutNamedEntitySpawn){
             try{
+                //当服务器给玩家发送玩家生成包时如果玩家有伪装实体则拦截并发送伪装的实体
                 int id = (int) spawnHumanId.get(event.getPacket());
-                Staus sta = map.get(id);
+                GuisePlayer sta = map.get(id);
                 if (sta != null){
                     if (event.getPlayer() != null && event.getPlayer().getEntityId() == id) return;
 //                    event.setPacket(sta.getSpawnPacket());
@@ -119,7 +129,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
     public boolean setGuise(Player player,org.bukkit.entity.Entity tager) {
         EntityPlayer np = ((CraftPlayer) player).getHandle();
         try{
-            Staus staus = new Staus(player,tager);
+            GuisePlayer staus = new GuisePlayer(player,tager);
             Object spawnPacket = staus.getSpawnPacket();
             PacketPlayOutEntityDestroy destroyEntity = new PacketPlayOutEntityDestroy(np.getId());
             Object metaPacket = staus.getMetaPacket();
@@ -146,35 +156,28 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         return false;
     }
 
-    public class Staus {
+    public class GuisePlayer {
         private final EntityPlayer player;
         private final PacketPlayOutEntityMetadata metaPacket;
         private net.minecraft.server.v1_15_R1.Entity tager;
 
-        public Staus(Player player,org.bukkit.entity.Entity entity) {
+        public GuisePlayer(Player player,org.bukkit.entity.Entity entity) {
             this.player = ((CraftPlayer) player).getHandle();
             player.setCustomName(player.getName());
             tager = ((CraftEntity) entity).getHandle();
-
-            String v1 = entity.getCustomName();
-            boolean v2 = entity.isCustomNameVisible();
-
-            entity.setCustomName(player.getName());
-            entity.setCustomNameVisible(true);
             metaPacket = new PacketPlayOutEntityMetadata(this.player.getId(),tager.getDataWatcher(),true);
-
-            entity.setCustomName(v1);
-            entity.setCustomNameVisible(v2);
-//            try{
-//                List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
-//                for (DataWatcher.Item<? extends Object> item : list) {
-//                    if (item.a().equals(entityCustName)){
-//                        item.a(((Object) this.getPlayer().getCustomName()));
-//                    }
-//                }
-//            }catch (IllegalAccessException e){
-//                e.printStackTrace();
-//            }
+            try{
+                List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
+                for (DataWatcher.Item<? extends Object> item : list) {
+                    if (item.a().equals(entityCustName)){
+                        datawatcherItemVault.set(item,Optional.ofNullable(this.player.getCustomName()));
+                    } else if (item.a().equals(entityCustomNameVisible)){
+                        datawatcherItemVault.set(item,true);
+                    }
+                }
+            }catch (IllegalAccessException e){
+                e.printStackTrace();
+            }
 
         }
 
