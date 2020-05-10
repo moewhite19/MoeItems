@@ -10,7 +10,6 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import com.gmail.St3venAU.plugins.ArmorStandTools.Main;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
 import net.minecraft.server.v1_15_R1.EntityLiving;
 import org.bukkit.Location;
@@ -331,8 +330,8 @@ public class Broom extends CustItem_CustModle implements Listener {
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
                     //paper方法
-//            armorStand.setDisabledSlots(EquipmentSlot.HEAD);
-                    Main.nms.setSlotsDisabled(armorStand,true);
+                    armorStand.setDisabledSlots(EquipmentSlot.HEAD);
+//                    Main.nms.setSlotsDisabled(armorStand,true);
                     armorStand.setHelmet(item);
 //                    armorStand.setMarker(true);
                 }

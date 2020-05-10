@@ -1,8 +1,12 @@
 package cn.whiteg.moeitems.foods;
 
 import cn.whiteg.chanlang.LangUtils;
+import cn.whiteg.moeitems.MoeItems;
+import cn.whiteg.moeitems.Setting;
+import cn.whiteg.moepacketapi.MoePacketAPI;
 import cn.whiteg.moepacketapi.api.event.PacketSendEvent;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import io.netty.channel.Channel;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -28,8 +33,8 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
     private static Field spawnEntityPacketType;
     private static Field entityMetaataList;
     private static Field datawatcherItemVault;
-
     private static DataWatcherObject<Boolean> entityCustomNameVisible;
+    private static DataWatcherObject<Byte> entitySitting;
 
     static {
         a = new GuisePotion();
@@ -49,8 +54,6 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             datawatcherItemVault = DataWatcher.Item.class.getDeclaredField("b");
             datawatcherItemVault.setAccessible(true);
 
-            //未完成
-
             Field f = net.minecraft.server.v1_15_R1.Entity.class.getDeclaredField("az");
             f.setAccessible(true);
             entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) f.get(null);
@@ -58,6 +61,10 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             f = Entity.class.getDeclaredField("aA");
             f.setAccessible(true);
             entityCustomNameVisible = (DataWatcherObject<Boolean>) f.get(null);
+
+            f = EntityTameableAnimal.class.getDeclaredField("bw");
+            f.setAccessible(true);
+            entitySitting = (DataWatcherObject<Byte>) f.get(null);
 
         }catch (NoSuchFieldException | IllegalAccessException e){
             e.printStackTrace();
@@ -103,6 +110,15 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         map.remove(event.getPlayer().getEntityId());
     }
 
+    @EventHandler
+    public void onPlayerToggle(PlayerToggleSneakEvent event) {
+        if (map.isEmpty()) return;
+        GuisePlayer state = map.get(event.getPlayer().getEntityId());
+        if (state == null) return;
+        state.setSitting(event.isSneaking());
+        state.sendMetaPacket();
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onSendPack(PacketSendEvent event) {
         if (map.isEmpty()) return;
@@ -113,11 +129,12 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
                 GuisePlayer sta = map.get(id);
                 if (sta != null){
                     if (event.getPlayer() != null && event.getPlayer().getEntityId() == id) return;
-//                    event.setPacket(sta.getSpawnPacket());
                     event.setCancelled(true);
-                    event.getChannel().pipeline().writeAndFlush(sta.getSpawnPacket());
-                    event.getChannel().pipeline().writeAndFlush(sta.getMetaPacket());
-                    event.getChannel().pipeline().writeAndFlush(sta.getEquipmentPacket());
+                    Channel c = event.getChannel();
+                    c.write(sta.getSpawnPacket());
+                    c.write(sta.getMetaPacket());
+                    c.write(sta.getEquipmentPacket());
+                    c.flush();
                 }
             }catch (IllegalAccessException e){
                 e.printStackTrace();
@@ -137,8 +154,8 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             for (org.bukkit.entity.Entity entity : player.getWorld().getEntities()) {
                 if (entity instanceof Player){
                     Player p = (Player) entity;
-                    if (!p.canSee(player)) continue;
                     if (p.equals(player)) continue;
+                    if (!p.canSee(player)) continue;
                     PlayerConnection con = ((CraftPlayer) p).getHandle().playerConnection;
                     con.sendPacket(destroyEntity);
                     con.sendPacket((Packet<?>) spawnPacket);
@@ -166,18 +183,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             player.setCustomName(player.getName());
             tager = ((CraftEntity) entity).getHandle();
             metaPacket = new PacketPlayOutEntityMetadata(this.player.getId(),tager.getDataWatcher(),true);
-            try{
-                List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
-                for (DataWatcher.Item<? extends Object> item : list) {
-                    if (item.a().equals(entityCustName)){
-                        datawatcherItemVault.set(item,Optional.ofNullable(this.player.getCustomName()));
-                    } else if (item.a().equals(entityCustomNameVisible)){
-                        datawatcherItemVault.set(item,true);
-                    }
-                }
-            }catch (IllegalAccessException e){
-                e.printStackTrace();
-            }
+            updateMetaDataWatcher();
 
         }
 
@@ -189,12 +195,10 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             if (tager instanceof EntityLiving){
                 PacketPlayOutSpawnEntityLiving spawnLivinEntity = new PacketPlayOutSpawnEntityLiving(player);
                 spawnEntityLivingPacketType.set(spawnLivinEntity,IRegistry.ENTITY_TYPE.a(tager.getEntityType()));
-//                spawnEntityLivingPacketId.set(spawnLivinEntity,player.getId());
                 return spawnLivinEntity;
             } else {
                 PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(player.getId(),player.getUniqueID(),player.locX(),player.locY(),player.locZ(),0F,0F,tager.getEntityType(),0,new Vec3D(0,0,0));
                 spawnEntityPacketId.set(packet,player.getId());
-
                 return packet;
             }
         }
@@ -208,5 +212,68 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             return new PacketPlayOutEntityEquipment(player.getId(),EnumItemSlot.HEAD,hat);
         }
 
+        @SuppressWarnings("unchecked")
+        public void setSitting(boolean b) {
+            if (tager instanceof EntityTameableAnimal){
+                try{
+                    List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
+                    for (DataWatcher.Item<? extends Object> item : list) {
+                        if (item.a().equals(entitySitting)){
+                            byte var1 = (byte) datawatcherItemVault.get(item);
+                            if (b){
+                                datawatcherItemVault.set(item,(byte) (var1 | 1));
+                            } else {
+                                datawatcherItemVault.set(item,(byte) (var1 & -2));
+                            }
+                        }
+                    }
+                }catch (IllegalAccessException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void updateMetaDataWatcher() {
+            try{
+                List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
+                boolean isTamseable = tager instanceof EntityTameableAnimal;
+                for (DataWatcher.Item<? extends Object> item : list) {
+                    if (Setting.DEBUG){
+                        MoeItems plugin = MoeItems.plugin;
+                        plugin.getLogger().info("dataWatcherType: " + item.a().toString());
+                    }
+                    if (item.a().equals(entityCustName)){
+                        datawatcherItemVault.set(item,Optional.ofNullable(this.player.getCustomName()));
+                    } else if (item.a().equals(entityCustomNameVisible)){
+                        datawatcherItemVault.set(item,true);
+                    } else if (isTamseable && item.a().equals(entitySitting)){
+                        byte var1 = (byte) datawatcherItemVault.get(item);
+                        if (player.isSneaking()){
+                            datawatcherItemVault.set(item,(byte) (var1 | 1));
+                        } else {
+                            datawatcherItemVault.set(item,(byte) (var1 & -2));
+                        }
+                    }
+                }
+            }catch (IllegalAccessException e){
+                e.printStackTrace();
+            }
+        }
+
+        public void sendMetaPacket() {
+            for (org.bukkit.entity.Entity e : player.getBukkitEntity().getWorld().getEntities()) {
+                if (e instanceof Player){
+                    Player ep = (Player) e;
+                    if (ep == player.getBukkitEntity()) continue;
+                    if (ep.canSee(player.getBukkitEntity())){
+                        MoePacketAPI.getInstance().getPlayerPacketManage().sendPacket(ep,metaPacket);
+                        if (Setting.DEBUG){
+                            ep.sendMessage(player.getName() + "刷新了");
+                        }
+                    }
+                }
+            }
+        }
     }
+
 }

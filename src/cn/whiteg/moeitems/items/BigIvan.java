@@ -8,7 +8,6 @@ import cn.whiteg.rpgArmour.utils.EntityUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import com.gmail.St3venAU.plugins.ArmorStandTools.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
@@ -131,8 +131,8 @@ public class BigIvan extends CustItem_CustModle implements Listener {
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
                     //paper方法
-//            armorStand.setDisabledSlots(EquipmentSlot.HEAD);
-                    Main.nms.setSlotsDisabled(armorStand,true);
+                    armorStand.setDisabledSlots(EquipmentSlot.HEAD);
+//                    Main.nms.setSlotsDisabled(armorStand,true);
                     ItemMeta meta = item.getItemMeta();
                     meta.setCustomModelData(id2);
                     item.setItemMeta(meta);
