@@ -50,18 +50,8 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
                     blockList.add(Material.valueOf(str.toUpperCase()));
                 }catch (IllegalArgumentException e){
                     RPGArmour.logger.warning("无效的方块ID: " + str);
-//                    chan = true;
-//                    it.remove();
                 }
             }
-//            if (chan){
-//                c.set("BlockList",l);
-//                try{
-//                    Setting.getConfig().save(new File(RPGArmour.plugin.getDataFolder(),"config.yml"));
-//                }catch (IOException e){
-//                    e.printStackTrace();
-//                }
-//            }
             l = c.getStringList("EntityList");
             for (String str : l) {
                 try{

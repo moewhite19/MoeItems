@@ -170,9 +170,6 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 p.setCooldown(getMaterial(),30);
                 snowball.setShooter(p);
             }
-//            Bukkit.getScheduler().runTask(RPGArmour.plugin,() -> {
-//                creeper.setVelocity(v);
-//            });
         }
     }
 
@@ -183,27 +180,10 @@ public class Artillery extends CustItem_CustModle implements Listener {
             CraftSnowball snowball = (CraftSnowball) p;
             if (bullet.is(EntityUtils.getSnowballItem(snowball))){
                 Location loc = snowball.getLocation();
-//                FlagPermissions flag = MoeItems.plugin.getResidence().getPermsByLoc(loc);
-//                if (!flag.has(Flags.explode,true)){
-//                    return;
-//                }
                 loc.getWorld().createExplosion(snowball,2.6F,true,true);
             }
         }
     }
-
-//    @EventHandler(priority = EventPriority.LOW)
-//    public void onLClickEntity(EntityDamageByEntityEvent event) {
-//        //需要领地权限检查
-//        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
-//        org.bukkit.entity.Entity e = event.getEntity();
-//        if (e.isDead()) return;
-//        org.bukkit.entity.Entity damager = event.getDamager();
-//        if (damager instanceof Player && e instanceof ArmorStand && artilleryEntity.is(e)){
-//            Set<String> s = e.getScoreboardTags();
-//            s.add("candestroy");
-//        }
-//    }
 
     @EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {

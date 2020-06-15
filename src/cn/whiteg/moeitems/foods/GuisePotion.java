@@ -176,15 +176,17 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
     public class GuisePlayer {
         private final EntityPlayer player;
         private final PacketPlayOutEntityMetadata metaPacket;
-        private net.minecraft.server.v1_15_R1.Entity tager;
+        private final Class<? extends Entity> tagerClass;
+        private final EntityTypes<?> entityType;
 
         public GuisePlayer(Player player,org.bukkit.entity.Entity entity) {
             this.player = ((CraftPlayer) player).getHandle();
             player.setCustomName(player.getName());
-            tager = ((CraftEntity) entity).getHandle();
+            Entity tager = ((CraftEntity) entity).getHandle();
+            tagerClass = tager.getClass();
+            entityType = tager.getEntityType();
             metaPacket = new PacketPlayOutEntityMetadata(this.player.getId(),tager.getDataWatcher(),true);
             updateMetaDataWatcher();
-
         }
 
         public EntityPlayer getPlayer() {
@@ -192,12 +194,12 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         }
 
         public Object getSpawnPacket() throws IllegalAccessException {
-            if (tager instanceof EntityLiving){
+            if (EntityLiving.class.isAssignableFrom(tagerClass)){
                 PacketPlayOutSpawnEntityLiving spawnLivinEntity = new PacketPlayOutSpawnEntityLiving(player);
-                spawnEntityLivingPacketType.set(spawnLivinEntity,IRegistry.ENTITY_TYPE.a(tager.getEntityType()));
+                spawnEntityLivingPacketType.set(spawnLivinEntity,IRegistry.ENTITY_TYPE.a(entityType));
                 return spawnLivinEntity;
             } else {
-                PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(player.getId(),player.getUniqueID(),player.locX(),player.locY(),player.locZ(),0F,0F,tager.getEntityType(),0,new Vec3D(0,0,0));
+                PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(player.getId(),player.getUniqueID(),player.locX(),player.locY(),player.locZ(),0F,0F,entityType,0,new Vec3D(0,0,0));
                 spawnEntityPacketId.set(packet,player.getId());
                 return packet;
             }
@@ -214,7 +216,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
 
         @SuppressWarnings("unchecked")
         public void setSitting(boolean b) {
-            if (tager instanceof EntityTameableAnimal){
+            if (EntityTameableAnimal.class.isAssignableFrom(tagerClass)){
                 try{
                     List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
                     for (DataWatcher.Item<? extends Object> item : list) {
@@ -236,7 +238,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         public void updateMetaDataWatcher() {
             try{
                 List<DataWatcher.Item<? extends Object>> list = (List<DataWatcher.Item<? extends Object>>) entityMetaataList.get(metaPacket);
-                boolean isTamseable = tager instanceof EntityTameableAnimal;
+                boolean isTamseable = EntityTameableAnimal.class.isAssignableFrom(tagerClass);
                 for (DataWatcher.Item<? extends Object> item : list) {
                     if (Setting.DEBUG){
                         MoeItems plugin = MoeItems.plugin;

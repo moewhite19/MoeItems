@@ -51,7 +51,7 @@ public class WaterGun extends CustItem_CustModle implements Listener {
     }
 
     @EventHandler()
-    public void onani(PlayerInteractEvent event) {
+    public void onInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK) return;
         final Player player = event.getPlayer();
         final ItemStack item = player.getEquipment().getItemInMainHand();
@@ -64,14 +64,12 @@ public class WaterGun extends CustItem_CustModle implements Listener {
         if (user instanceof Player){
             Player player = (Player) user;
             if (player.hasCooldown(getMaterial())){
-//                player.setCooldown(getMaterial(),5);
                 return;
             }
             player.setCooldown(getMaterial(),5);
         }
         damager = user;
         Location loc = user.getLocation();
-//        loc.setY(loc.getY() - (user instanceof Player ? (((Player) user).isSneaking() ? 0.4D : 0.2D) : 0.3D));
         Vector v = VectorUtils.viewVector(loc);
         v.multiply(2.4F);
         loc.getWorld().playSound(loc,"minecraft:entity.llama.spit",SoundCategory.AMBIENT,1F,1F);

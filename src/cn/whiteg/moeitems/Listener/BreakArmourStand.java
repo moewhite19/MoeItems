@@ -39,7 +39,6 @@ public class BreakArmourStand implements Listener {
             if (as.isVisible()) return;
             Set<String> s = as.getScoreboardTags();
             if (!s.contains("candestroy")) return;
-//            if (!s.contains("dontedit")) return;
             Location loc = e.getLocation();
             org.bukkit.entity.Entity damager = event.getDamager();
             if (damager instanceof Player){
@@ -51,7 +50,6 @@ public class BreakArmourStand implements Listener {
                         return;
                     }
                 }
-
             }
             BreakCustArmourStand ev = new BreakCustArmourStand(e,damager);
             ev.callEvent();

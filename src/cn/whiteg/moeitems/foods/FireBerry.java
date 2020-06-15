@@ -81,9 +81,6 @@ public class FireBerry extends CustItem_CustModle implements Listener {
                 Vector vec = v.getVelocity();
                 float ws = EntityUtils.getWS(p);
                 float ad = EntityUtils.getAD(p);
-//                boolean jump = EntityUtils.getJumping(p);
-//                boolean down = p.isSneaking();
-//                    p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
                 if (ws != 0F){
                     Vector locv = VectorUtils.viewVector(ploc);
                     if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < 0.5){
