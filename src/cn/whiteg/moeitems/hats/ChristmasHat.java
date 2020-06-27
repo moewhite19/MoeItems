@@ -38,8 +38,8 @@ public class ChristmasHat extends CustItem_CustModle {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),"",2,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
-        im.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH,new AttributeModifier(UUID.randomUUID(),"",4,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),getDisplayName(),2,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH,new AttributeModifier(UUID.randomUUID(),getDisplayName(),4,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
         item.setItemMeta(im);
         return item;
     }

@@ -40,7 +40,7 @@ public class CatEarGolden extends CustItem_CustModle {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(UUID.randomUUID(),"",0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(UUID.randomUUID(),getDisplayName(),0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
         item.setItemMeta(im);
         return item;
     }

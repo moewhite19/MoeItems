@@ -9,17 +9,19 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.server.v1_15_R1.EntityArmorStand;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.minecraft.server.v1_16_R1.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSnowball;
-import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -89,7 +91,8 @@ public class Artillery extends CustItem_CustModle implements Listener {
             if (p.isSneaking()){
                 BukkitTask task = movein.get(e.getUniqueId());
                 if (task != null){
-                    p.sendActionBar("§c这个火炮已经在移动了");
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§c这个火炮已经在移动了").create());
+                    //p.sendActionBar("§c这个火炮已经在移动了");
                     return;
                 }
                 Location loc = p.getLocation();
@@ -123,7 +126,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
                         }
                         float yaw = ploc.getYaw();
                         float pitch = fixPitch(ploc.getPitch());
-                        net.minecraft.server.v1_15_R1.Entity nmsEntity = ((CraftEntity) e).getHandle();
+                        net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity) e).getHandle();
                         float mYaw = VectorUtils.getDifferenceAngle(yaw,nmsEntity.yaw);
 //                p.sendActionBar("视角差 " + mYaw);
                         float mPitch = pitch - nmsEntity.pitch;
@@ -139,15 +142,14 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
                     void stop() {
                         if (p.isOnline()){
-                            p.sendActionBar("§b停止移动火炮");
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§b停止移动火炮").create());
                         }
                         movein.remove(e.getUniqueId());
                         cancel();
                     }
                 }.runTaskTimer(RPGArmour.plugin,2L,2L);
                 movein.put(e.getUniqueId(),task);
-
-                p.sendActionBar("§b开始移动火炮");
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§b开始移动火炮").create());
             } else {
                 if (p.hasCooldown(getMaterial())) return;
                 Location loc = e.getLocation();
@@ -179,7 +181,6 @@ public class Artillery extends CustItem_CustModle implements Listener {
         if (p instanceof Snowball){
             CraftSnowball snowball = (CraftSnowball) p;
             if (bullet.is(EntityUtils.getSnowballItem(snowball))){
-                Location loc = snowball.getLocation();
                 loc.getWorld().createExplosion(snowball,2.6F,true,true);
             }
         }
@@ -200,7 +201,12 @@ public class Artillery extends CustItem_CustModle implements Listener {
         if (!is(item)) return;
         Block block = event.getClickedBlock();
         if (block == null) return;
-        Location loc = block.getLocation().toCenterLocation();
+        // Location loc = block.getLocation().toCenterLocation(); Paper方法
+        Location loc = block.getLocation();
+        loc.setX(loc.getBlockX() + 0.5D);
+        loc.setY(loc.getBlockY() + 0.5D);
+        loc.setZ(loc.getBlockZ() + 0.5D);
+
         loc.setY(loc.getY() + 1);
         if (loc.getBlock().getType() != Material.AIR) return;
         Residence res = Residence.getInstance();
@@ -222,7 +228,8 @@ public class Artillery extends CustItem_CustModle implements Listener {
         Location ploc = p.getLocation();
         float pitch = -2F;
         float yaw = ploc.getYaw();
-        armorStand.setDisabledSlots(EquipmentSlot.HEAD);
+        //armorStand.setDisabledSlots(EquipmentSlot.HEAD); //锁住盔甲架 Paper方法
+
         armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         nmsEntity.pitch = pitch;

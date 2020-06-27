@@ -162,7 +162,6 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
                 try{
                     if (e.isDropItems()){
                         FallingBlock entity = loc.getWorld().spawnFallingBlock(loc,block.getBlockData());
-//                        EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.3D,0.3D,0.3D));
                         new Staus(player,entity,hand);
                     }
                     block.setType(Material.AIR);
@@ -170,7 +169,6 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
                         if (hand == EquipmentSlot.HAND)
                             inv.setItemInMainHand(null);
                         else inv.setItemInOffHand(null);
-//                        inv.setItem(hand,null);
                     }
                     event.setCancelled(true);
                 }catch (IllegalArgumentException ex){

@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
@@ -17,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
@@ -104,7 +104,9 @@ public class BigIvan extends CustItem_CustModle implements Listener {
                 if (!flag.has(Flags.explode,true)){
                     return;
                 }
+                //loc.getWorld().createExplosion(entity,32F,true,true);  //Paper方法
                 loc.getWorld().createExplosion(entity,32F,true,true);
+
 //                WorldSetting ws = MoeAntiBuild.plugin.getWorldSetting(loc.getWorld().getName());
 //                if (ws != null && ws.SafeTnT){
 //                    loc.getWorld().createExplosion(entity,3.2F,false,false);
@@ -130,9 +132,8 @@ public class BigIvan extends CustItem_CustModle implements Listener {
                     ArmorStand armorStand = (ArmorStand) entity;
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
-                    //paper方法
-                    armorStand.setDisabledSlots(EquipmentSlot.HEAD);
-//                    Main.nms.setSlotsDisabled(armorStand,true);
+                    //armorStand.setDisabledSlots(EquipmentSlot.HEAD);// Paper方法
+                    EntityUtils.setSlotsDisabled(armorStand,true);
                     ItemMeta meta = item.getItemMeta();
                     meta.setCustomModelData(id2);
                     item.setItemMeta(meta);

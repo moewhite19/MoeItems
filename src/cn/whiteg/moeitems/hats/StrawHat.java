@@ -44,8 +44,8 @@ public class StrawHat extends CustItem_CustModle {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),"",2,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
-        im.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE,new AttributeModifier(UUID.randomUUID(),"",0.25,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),getDisplayName(),2,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE,new AttributeModifier(UUID.randomUUID(),getDisplayName(),0.25,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
         item.setItemMeta(im);
         return item;
     }

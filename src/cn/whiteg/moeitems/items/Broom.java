@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.moetp.utils.EntityTpUtils;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
@@ -10,16 +11,16 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.server.v1_15_R1.EntityArmorStand;
-import net.minecraft.server.v1_15_R1.EntityLiving;
+import net.minecraft.server.v1_16_R1.EntityArmorStand;
+import net.minecraft.server.v1_16_R1.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -82,7 +83,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         /*e.addPassenger(p);
         CraftPlayer cp = (CraftPlayer) p;
         EntityPlayer np = cp.getHandle();
-        net.minecraft.server.v1_15_R1.BoomEntity ne = ((CraftEntity) e).getHandle();
+        net.minecraft.server.v1_16_R1.BoomEntity ne = ((CraftEntity) e).getHandle();
         np.fauxSleeping = true;*/
 //        p.sendActionBar("看向地面并按下潜行键离开");
 /*        new BukkitRunnable() {
@@ -240,7 +241,8 @@ public class Broom extends CustItem_CustModle implements Listener {
         event.getItemDrop().remove();
         Location loc = p.getLocation();
         ArmorStand armorStand = (ArmorStand) entity.summon(loc);
-        armorStand.setDisabledSlots(EquipmentSlot.HEAD);
+        EntityUtils.setSlotsDisabled(armorStand,true);
+
 //        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         nmsEntity.yaw = loc.getYaw();
@@ -263,7 +265,10 @@ public class Broom extends CustItem_CustModle implements Listener {
 
         Block block = event.getClickedBlock();
         if (block == null) return;
-        Location loc = block.getLocation().toCenterLocation();
+        Location loc = block.getLocation();
+        loc.setX(loc.getBlockX() + 0.5D);
+        loc.setY(loc.getBlockY() + 0.5D);
+        loc.setZ(loc.getBlockZ() + 0.5D);
 
         loc.setY(loc.getY() + 1);
         if (loc.getBlock().getType() != Material.AIR) return;
@@ -283,8 +288,8 @@ public class Broom extends CustItem_CustModle implements Listener {
             pi.setItemInOffHand(null);
         }
         loc.setY(loc.getY() + 1);
-        ArmorStand armorStand = (ArmorStand) entity.summon(loc.toCenterLocation());
-        armorStand.setDisabledSlots(EquipmentSlot.HEAD);
+        ArmorStand armorStand = (ArmorStand) entity.summon(loc);
+        EntityUtils.setSlotsDisabled(armorStand,true);
         CraftPlayer cp = (CraftPlayer) p;
         float yaw = cp.getHandle().yaw;
         loc.setYaw(yaw);
@@ -330,7 +335,7 @@ public class Broom extends CustItem_CustModle implements Listener {
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
                     //paper方法
-                    armorStand.setDisabledSlots(EquipmentSlot.HEAD);
+                    EntityUtils.setSlotsDisabled(armorStand,true);
 //                    Main.nms.setSlotsDisabled(armorStand,true);
                     armorStand.setHelmet(item);
 //                    armorStand.setMarker(true);
@@ -452,7 +457,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 ////                            if (!e.getPassengers().isEmpty()) e.eject();
 //                            Vector v = VectorUtils.viewVector(loc).multiply(0.42F);
 //
-//                            net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
+//                            net.minecraft.server.v1_16_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
 //                            Location loc1 = loc.clone().add(v);
 //                            nv1.setLocation(loc1.getX(),loc1.getY(),loc1.getZ(),loc.getYaw(),loc.getPitch());
 //
@@ -461,7 +466,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 //                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
 ////                            v2.teleport(loc.add(v));
 //                        } else {
-//                            net.minecraft.server.v1_15_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
+//                            net.minecraft.server.v1_16_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
 ////                            org.bukkit.entity.BoomEntity er = v1.getVehicle();
 ////                            if (er == null || er.getUniqueId() != e.getUniqueId()) e.addPassenger(v1);
 ////                            nv1.yaw = ne.yaw;

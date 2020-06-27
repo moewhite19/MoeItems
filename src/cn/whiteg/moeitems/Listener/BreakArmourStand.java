@@ -4,6 +4,7 @@ import cn.whiteg.moeitems.Event.BreakCustArmourStand;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -19,7 +20,7 @@ import java.util.Set;
 
 public class BreakArmourStand implements Listener {
     public static Item drop(ArmorStand e,Location loc) {
-        ItemStack helmet = e.getHelmet();
+        ItemStack helmet = e.getEquipment().getHelmet();
         e.remove();
         if (helmet.getType() != Material.AIR){
             return loc.getWorld().dropItem(loc,helmet);
@@ -52,7 +53,7 @@ public class BreakArmourStand implements Listener {
                 }
             }
             BreakCustArmourStand ev = new BreakCustArmourStand(e,damager);
-            ev.callEvent();
+            Bukkit.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) return;
             drop((ArmorStand) e,loc);
         }
