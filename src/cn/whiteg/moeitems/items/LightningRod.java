@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -148,6 +149,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         ItemFrame itemFrame = loc.getWorld().spawn(loc,ItemFrame.class);
         itemFrame.setFixed(true);
         itemFrame.setVisible(false);
+        itemFrame.addScoreboardTag(BreakEntityItem.tag);
         itemFrame.setItem(item);
     }
 
