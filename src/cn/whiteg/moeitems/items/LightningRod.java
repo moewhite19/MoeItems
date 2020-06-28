@@ -1,16 +1,13 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.server.v1_16_R1.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,8 +20,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Set;
-
 public class LightningRod extends CustItem_CustModle implements Listener {
     private static final LightningRod a;
 
@@ -32,11 +27,8 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         a = new LightningRod();
     }
 
-    private LightningRodEntity lightningRodEntity;
-
     private LightningRod() {
         super(Material.BOWL,46,"§9聚雷阵");
-        lightningRodEntity = new LightningRodEntity();
 //        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"lightningrod");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
@@ -153,44 +145,10 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         event.setCancelled(true);
         ItemStack i = item.clone();
         i.setAmount(1);
-        ArmorStand armorStand = (ArmorStand) lightningRodEntity.summon(loc,i);
-        Location ploc = p.getLocation();
-        float yaw = ploc.getYaw();
-        armorStand.setDisabledSlots(EquipmentSlot.HEAD);
-        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.yaw = yaw;
-    }
-
-
-    public class LightningRodEntity extends CustEntityID {
-        LightningRodEntity() {
-            super("lightningrod",ArmorStand.class);
-//            RPGArmour.plugin.getEntityManager().regEntity(this);
-        }
-
-        @Override
-        public boolean init(Entity entity) {
-            return init(entity,createItem());
-        }
-
-        public boolean init(Entity entity,ItemStack item) {
-            if (entity instanceof ArmorStand){
-                Set<String> s = entity.getScoreboardTags();
-                s.add("dontedit");
-                s.add("candestroy");
-                ArmorStand armorStand = (ArmorStand) entity;
-                armorStand.setHelmet(item);
-                armorStand.setVisible(false);
-                return super.init(entity);
-            }
-            return false;
-        }
-
-        public Entity summon(Location location,ItemStack item) {
-            Entity entity = location.getWorld().spawn(location,ArmorStand.class);
-            this.init(entity,item);
-            return entity;
-        }
+        ItemFrame itemFrame = loc.getWorld().spawn(loc,ItemFrame.class);
+        itemFrame.setFixed(true);
+        itemFrame.setVisible(false);
+        itemFrame.setItem(item);
     }
 
 
