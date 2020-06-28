@@ -181,7 +181,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
         if (p instanceof Snowball){
             CraftSnowball snowball = (CraftSnowball) p;
             if (bullet.is(EntityUtils.getSnowballItem(snowball))){
-                loc.getWorld().createExplosion(snowball,2.6F,true,true);
+                snowball.getWorld().createExplosion(snowball,2.6F,true,true);
             }
         }
     }

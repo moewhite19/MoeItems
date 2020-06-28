@@ -301,7 +301,6 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
         }
 
         public Object getEquipmentPacket() {
-            //ItemStack hat = player.getEquipment(EnumItemSlot.HEAD);
             List<Pair<EnumItemSlot, ItemStack>> list = new ArrayList<>(8);
             for (EnumItemSlot value : EnumItemSlot.values()) {
                 ItemStack item = player.getEquipment(value);

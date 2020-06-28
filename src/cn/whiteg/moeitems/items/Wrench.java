@@ -5,18 +5,25 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.block.data.type.*;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Chest;
+import org.bukkit.block.data.type.Piston;
+import org.bukkit.block.data.type.PistonHead;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +33,7 @@ import java.util.List;
 
 public class Wrench extends CustItem_CustModle implements Listener {
     final static Wrench a;
+    final static String editTag = "dontedit";
 
     static {
         a = new Wrench();
@@ -71,6 +79,59 @@ public class Wrench extends CustItem_CustModle implements Listener {
         player.sendActionBar("已修改方块");
         event.setCancelled(true);
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onClickItemFram(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked() instanceof ItemFrame){
+            if (event.getHand() != EquipmentSlot.HAND)
+                return;
+            Player player = event.getPlayer();
+            if (player.isSneaking()) return;
+            ItemStack item = player.getInventory().getItemInMainHand();
+            if (!is(item)) return;
+            ItemFrame itemFrame = (ItemFrame) event.getRightClicked();
+            if (itemFrame.getScoreboardTags().contains(editTag)) return;
+            if (!Residence.getInstance().isResAdminOn(player)){
+                FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(itemFrame.getLocation(),player);
+                if (!perm.playerHasHints(player,Flags.build,true)) return;
+            }
+            itemFrame.setFixed(!itemFrame.isFixed());
+            player.sendActionBar("已修改展示框为: " + (itemFrame.isFixed() ? "锁定" : "解锁"));
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDamageItemFram(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof ItemFrame && event.getDamager() instanceof Player){
+            Player player = (Player) event.getDamager();
+            ItemStack item = player.getInventory().getItemInMainHand();
+            ItemFrame itemFrame = (ItemFrame) event.getEntity();
+            if (itemFrame.getScoreboardTags().contains(editTag)) return;
+            if (!is(item)){
+                if (!itemFrame.isVisible()){
+                    item = itemFrame.getItem();
+                    if (item.getType() != Material.AIR){
+                        Location loc = itemFrame.getLocation();
+                        itemFrame.remove();
+                        loc.getWorld().dropItem(loc,new ItemStack(Material.ITEM_FRAME));
+                        loc.getWorld().dropItem(loc,item);
+                    }
+                }
+                return;
+            }
+            if (player.isSneaking()) return;
+            if (itemFrame.getItem().getType() == Material.AIR) return;
+            if (!Residence.getInstance().isResAdminOn(player)){
+                FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(itemFrame.getLocation(),player);
+                if (!perm.playerHasHints(player,Flags.build,true)) return;
+            }
+            itemFrame.setVisible(!itemFrame.isVisible());
+            player.sendActionBar("已修改展示框为: " + (itemFrame.isVisible() ? "可视" : "不可视"));
+            event.setCancelled(true);
+        }
+    }
+
 
     public void chanBlock(Block block,Directional data) {
         List<BlockFace> faces = new ArrayList<>(data.getFaces());

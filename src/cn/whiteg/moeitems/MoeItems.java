@@ -1,10 +1,9 @@
 package cn.whiteg.moeitems;
 
-import cn.whiteg.moeitems.Listener.BreakArmourStand;
+import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
 import cn.whiteg.moeitems.foods.FireBerry;
-import cn.whiteg.moeitems.foods.GuisePotion;
 import cn.whiteg.moeitems.foods.SaltSodaWater;
 import cn.whiteg.moeitems.furniture.DeskClock;
 import cn.whiteg.moeitems.furniture.FlowerVase;
@@ -51,7 +50,7 @@ public class MoeItems extends PluginBase {
         logger.info("全部加载完成");
         initItems();
         regListener(new PluginListener(this));
-        regListener(new BreakArmourStand());
+        regListener(new BreakEntityItem());
         Plugin pl = Bukkit.getPluginManager().getPlugin("Residence");
         if (pl != null){
             residence = (Residence) pl;
@@ -93,7 +92,7 @@ public class MoeItems extends PluginBase {
         regItem(WaterGun.get());
         regItem(GravityStaff.get());
         regItem(Wrench.get());
-        regItem(GuisePotion.get());
+        //regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
     }

@@ -1,6 +1,6 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.utils.CommonUtils;
+import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moetp.utils.EntityTpUtils;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
@@ -328,7 +328,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             if (super.init(entity)){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
-                s.add("candestroy");
+                s.add(BreakEntityItem.tag);
                 load(entity);
                 if (entity instanceof ArmorStand){
                     ArmorStand armorStand = (ArmorStand) entity;
