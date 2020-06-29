@@ -1,6 +1,7 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.MoeItems;
+import cn.whiteg.moeitems.Setting;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -91,6 +92,7 @@ public class Wrench extends CustItem_CustModle implements Listener {
             if (!is(item)) return;
             ItemFrame itemFrame = (ItemFrame) event.getRightClicked();
             if (itemFrame.getScoreboardTags().contains(editTag)) return;
+            if(Setting.DEBUG) player.sendMessage("当前展示框标签: " + itemFrame.getScoreboardTags());
             if (!Residence.getInstance().isResAdminOn(player)){
                 FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(itemFrame.getLocation(),player);
                 if (!perm.playerHasHints(player,Flags.build,true)) return;

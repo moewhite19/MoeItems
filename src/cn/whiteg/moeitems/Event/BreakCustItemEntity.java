@@ -5,16 +5,16 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;
 
-public class BreakCustArmourStand extends EntityEvent implements Cancellable {
+public class BreakCustItemEntity extends EntityEvent implements Cancellable {
     private static HandlerList handers = new HandlerList();
     private boolean cancelled = false;
     private Entity damager;
 
-    public BreakCustArmourStand(Entity entity) {
+    public BreakCustItemEntity(Entity entity) {
         super(entity);
     }
 
-    public BreakCustArmourStand(Entity entity,Entity damager) {
+    public BreakCustItemEntity(Entity entity,Entity damager) {
         super(entity);
         this.damager = damager;
     }

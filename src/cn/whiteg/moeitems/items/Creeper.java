@@ -148,7 +148,7 @@ public class Creeper extends CustItem_CustModle implements Listener {
         @Override
         public boolean init(Entity entity) {
             if (super.init(entity)){
-                entity.getScoreboardTags().add("dontedit");
+                entity.getScoreboardTags().add("f");
                 entity.getScoreboardTags().add("dontsave");
                 entity.setCustomName(getDisplayName());
                 load(entity);

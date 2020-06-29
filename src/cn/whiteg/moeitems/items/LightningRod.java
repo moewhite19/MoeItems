@@ -30,6 +30,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
 
     private LightningRod() {
         super(Material.BOWL,46,"§9聚雷阵");
+        BreakEntityItem.addCanPlaceItemFarm(this);
 //        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"lightningrod");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
@@ -111,7 +112,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
 //        MoeItems.logger.info("点燃");
 //    }
 
-    @EventHandler(ignoreCancelled = true)
+    //@EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getBlockFace() != BlockFace.UP) return;
         Player p = event.getPlayer();
@@ -150,6 +151,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         itemFrame.setFixed(true);
         itemFrame.setVisible(false);
         itemFrame.addScoreboardTag(BreakEntityItem.tag);
+        itemFrame.addScoreboardTag("dontedit");
         itemFrame.setItem(item);
     }
 

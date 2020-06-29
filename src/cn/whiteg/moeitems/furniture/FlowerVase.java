@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.furniture;
 
+import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
@@ -11,16 +12,17 @@ public class FlowerVase extends CustItem_CustModle {
     private final static FlowerVase a = new FlowerVase();
 
     private FlowerVase() {
-        super(Material.BOWL,4,"§3花瓶");
+        super(Material.BOWL,4,"§3绒球葱花瓶");
         NamespacedKey key = new NamespacedKey(MoeItems.plugin,"flower_vase");
         ShapedRecipe r = new ShapedRecipe(key,createItem());
         r.shape(
-                "ABA",
-                "AAA"
+                "AAA",
+                " B "
         );
-        r.setIngredient('A',Material.GLASS_PANE);
-        r.setIngredient('B',Material.ALLIUM);
+        r.setIngredient('A',Material.ALLIUM);
+        r.setIngredient('B',Material.GLASS_BOTTLE);
         RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
+        BreakEntityItem.addCanPlaceItemFarm(this);
     }
 
     public static FlowerVase get() {
