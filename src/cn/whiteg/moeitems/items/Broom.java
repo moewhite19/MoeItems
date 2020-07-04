@@ -195,11 +195,11 @@ public class Broom extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerLeaveV(EntityDismountEvent event) {
-        org.bukkit.entity.Entity v = event.getDismounted();
-        if (v.isDead()) return;
-        org.bukkit.entity.Entity p = event.getEntity();
-        if (p instanceof Player && ((Player) p).isSneaking() && v instanceof ArmorStand && getEntity().is(v)){
-            CraftLivingEntity cp = (CraftLivingEntity) p;
+        org.bukkit.entity.Entity dismounted = event.getDismounted();
+        if (dismounted.isDead()) return;
+        org.bukkit.entity.Entity player = event.getEntity();
+        if (player instanceof Player && ((Player) player).isSneaking() && dismounted instanceof ArmorStand && getEntity().is(dismounted)){
+            CraftLivingEntity cp = (CraftLivingEntity) player;
             if (!cp.isDead() && cp.getHandle().pitch < 80){
                 event.setCancelled(true);
             }
