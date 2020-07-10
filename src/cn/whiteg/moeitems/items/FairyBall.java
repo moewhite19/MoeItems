@@ -99,13 +99,12 @@ public class FairyBall extends CustItem_CustModle implements Listener {
         } else {
             org.bukkit.entity.Entity hit = event.getHitEntity();
 
-
-            if (hit instanceof Player) return;
-
-            if ((hit instanceof Boss || hit instanceof Monster) && (player == null || !player.hasPermission("moeitems.fairball.monster"))){
+            if (hit == null || hit instanceof Player || hit.isDead()) return;
+            if ((hit instanceof Boss || hit instanceof Monster || hit instanceof Ghast || hit instanceof Slime || hit instanceof ArmorStand) && (player == null || !player.hasPermission("moeitems.fairball.monster"))){
                 if (player != null) player.sendActionBar(" §7无法扑捉");
                 return;
             }
+
             if (hit instanceof LivingEntity){
                 //获取并计算几率
                 float rate;

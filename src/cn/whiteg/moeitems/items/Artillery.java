@@ -128,7 +128,6 @@ public class Artillery extends CustItem_CustModle implements Listener {
                         float pitch = fixPitch(ploc.getPitch());
                         net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity) e).getHandle();
                         float mYaw = VectorUtils.getDifferenceAngle(yaw,nmsEntity.yaw);
-//                p.sendActionBar("视角差 " + mYaw);
                         float mPitch = pitch - nmsEntity.pitch;
                         float speed2 = -speed;
                         if (mYaw > speed) mYaw = speed;
@@ -152,6 +151,19 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§b开始移动火炮").create());
             } else {
                 if (p.hasCooldown(getMaterial())) return;
+                PlayerInventory inv = p.getInventory();
+                ItemStack item = inv.getItemInMainHand();
+                if (!CherryBomb.get().is(item)){
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§4没有弹药").create());
+                    return;
+                }
+                //扣除物品
+                if (item.getAmount() == 1){
+                    inv.setItemInMainHand(null);
+                } else {
+                    item.setAmount(item.getAmount() - 1);
+                }
+
                 Location loc = e.getLocation();
                 FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
                 if (!flag.playerHasHints(p,Flags.use,true)){
