@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Campfire;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -95,9 +95,9 @@ public class WaterGun extends CustItem_CustModle implements Listener {
             if (block.getType() == Material.FIRE) block.setBlockData(Bukkit.createBlockData(Material.AIR));
             else {
                 BlockData data = block.getBlockData();
-                //熄灭营火
-                if (data instanceof Campfire){
-                    ((Campfire) data).setSignalFire(false);
+                //熄灭火焰
+                if (data instanceof Lightable){
+                    ((Lightable) data).setLit(false);
                 }
             }
         }
