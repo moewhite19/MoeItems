@@ -94,6 +94,7 @@ public class MoeItems extends PluginBase {
         regItem(GravityStaff.get());
         regItem(Wrench.get());
         regItem(FairyBall.get());
+        regItem(BurstPickaxe.get());
         //regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

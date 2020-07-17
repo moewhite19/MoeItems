@@ -4,9 +4,13 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.ItemToolUtil;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Campfire;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.LlamaSpit;
@@ -17,12 +21,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class WaterGun extends CustItem_CustModle implements Listener {
     final static WaterGun a;
+    private static String tag = WaterGun.class.getSimpleName();
 
     static {
         a = new WaterGun();
@@ -31,7 +37,7 @@ public class WaterGun extends CustItem_CustModle implements Listener {
     private Entity damager = null;
 
     public WaterGun() {
-        super(Material.SHEARS,46,"§b水弹枪");
+        super(Material.SHEARS,46,"§b水元素");
     }
 
     public static WaterGun get() {
@@ -46,7 +52,7 @@ public class WaterGun extends CustItem_CustModle implements Listener {
         final ItemStack item = ((LivingEntity) damager).getEquipment().getItemInMainHand();
         if (is(item)){
             event.setCancelled(true);
-            onUse((LivingEntity) damager,item);
+            onLaunch((LivingEntity) damager,item);
         }
     }
 
@@ -56,11 +62,44 @@ public class WaterGun extends CustItem_CustModle implements Listener {
         final Player player = event.getPlayer();
         final ItemStack item = player.getEquipment().getItemInMainHand();
         if (is(item)){
-            onUse(player,item);
+            onLaunch(player,item);
         }
     }
 
-    public void onUse(LivingEntity user,ItemStack item) {
+    @EventHandler(ignoreCancelled = true)
+    public void onHit(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof LlamaSpit) || !event.getEntity().getScoreboardTags().contains(tag)) return;
+
+        Entity hitEntity = event.getHitEntity();
+        //熄灭实体火
+        if (hitEntity != null){
+            hitEntity.setFireTicks(0);
+        }
+
+        Block block = event.getHitBlock();
+        if (block != null){
+            //熄灭火焰
+            if (block.getType() == Material.FIRE) block.setBlockData(Bukkit.createBlockData(Material.AIR));
+            else {
+                BlockData data = block.getBlockData();
+                //熄灭营火
+                if (data instanceof Campfire){
+                    ((Campfire) data).setSignalFire(false);
+                }
+            }
+        }
+
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBreakBlock(BlockBreakEvent event) {
+        Player p = event.getPlayer();
+        if (is(p.getInventory().getItemInMainHand())){
+            event.setCancelled(true);
+        }
+    }
+
+    public void onLaunch(LivingEntity user,ItemStack item) {
         if (user instanceof Player){
             Player player = (Player) user;
             if (player.hasCooldown(getMaterial())){
@@ -71,22 +110,18 @@ public class WaterGun extends CustItem_CustModle implements Listener {
         damager = user;
         Location loc = user.getLocation();
         Vector v = VectorUtils.viewVector(loc);
-        v.multiply(2.4F);
+        v.multiply(3.4F);
         loc.getWorld().playSound(loc,"minecraft:entity.llama.spit",SoundCategory.AMBIENT,1F,1F);
-        user.launchProjectile(LlamaSpit.class,v);
+        LlamaSpit spit = user.launchProjectile(LlamaSpit.class,v);
+        if (spit.isDead()) return;
 
+        spit.addScoreboardTag(tag);
         damager = null;
         if (!item.getItemMeta().isUnbreakable() && RandomUtil.getRandom().nextDouble() < 0.5 && ItemToolUtil.damage(item,1)){
             user.getEquipment().setItemInMainHand(null);
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onBreakBlock(BlockBreakEvent event) {
-        Player p = event.getPlayer();
-        if (is(p.getInventory().getItemInMainHand())){
-            event.setCancelled(true);
-        }
-    }
+
 }
 

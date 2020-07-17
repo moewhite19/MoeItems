@@ -103,7 +103,8 @@ public class FireBerry extends CustItem_CustModle implements Listener {
     }
 
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    //@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    //1.16无效
     public void onLeave(EntityDismountEvent event) {
         Entity v = event.getDismounted();
         Entity p = event.getEntity();

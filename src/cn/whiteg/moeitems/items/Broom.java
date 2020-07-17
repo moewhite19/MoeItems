@@ -1,7 +1,7 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.Listener.BreakEntityItem;
-import cn.whiteg.moetp.utils.EntityTpUtils;
+import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
@@ -37,7 +37,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.*;
 
@@ -173,6 +172,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         }
     }
 
+    //进入扫帚
     @EventHandler(ignoreCancelled = true)
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
         org.bukkit.entity.Entity e = event.getRightClicked();
@@ -187,13 +187,12 @@ public class Broom extends CustItem_CustModle implements Listener {
                     return;
                 }
             }
-//            if (p.hasCooldown(getMaterial())) return;
             join((ArmorStand) e,p);
         }
     }
 
-
-    @EventHandler(ignoreCancelled = true)
+/*
+    @EventHandler(ignoreCancelled = true) //1.16后失效
     public void onPlayerLeaveV(EntityDismountEvent event) {
         org.bukkit.entity.Entity dismounted = event.getDismounted();
         if (dismounted.isDead()) return;
@@ -205,6 +204,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             }
         }
     }
+*/
 
 //    @EventHandler(priority = EventPriority.LOW)
 //    public void onLClickEntity(EntityDamageByEntityEvent event) {
@@ -249,6 +249,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         join(armorStand,p);
     }
 
+    //放置
     @EventHandler(ignoreCancelled = true)
     public void onRClickBlock(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getBlockFace() != BlockFace.UP) return;
@@ -349,7 +350,6 @@ public class Broom extends CustItem_CustModle implements Listener {
         public boolean is(org.bukkit.entity.Entity entity) {
             return entity instanceof ArmorStand && super.is(entity);
         }
-
         //        public Map<UUID, BroomStaus> getMap() {
 //            return map;
 //        }
@@ -385,106 +385,78 @@ public class Broom extends CustItem_CustModle implements Listener {
 
     }
 
-    public class BroomRun {
-        final BukkitTask task;
+    public class BroomRun extends BukkitRunnable {
         ArmorStand e;
         EntityArmorStand ne;
         LivingEntity p;
+        byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
             ne = ((CraftArmorStand) armor).getHandle();
             e = armor;
             e.addPassenger(p);
 //            e.setMarker(true);
-            task = new BukkitRunnable() {
-                byte effnum = 0;
-
-                @Override
-                public void run() {
-                    if (e.isDead() || p.isDead() || p.getVehicle() == null || !p.getVehicle().getUniqueId().equals(e.getUniqueId())){
-                        stop();
-                    }
-                    if (p instanceof Player){
-                        EntityLiving np = ((CraftLivingEntity) p).getHandle();
-                        float ad = EntityUtils.getAD(p);
-                        float ws = EntityUtils.getWS(p);
-                        boolean jump = EntityUtils.getJumping(p);
-                        boolean down = p.isSneaking();
-//                    p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
-
-                        float ycz = VectorUtils.getDifferenceAngle(np.yaw,ne.yaw);
-                        if (ycz > 0.1F || ycz < -0.1F){
-                            float ys = speedLimiter(ycz,wheelSpeed);
-                            ne.yaw += ys;
-//                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
-                        }
-                        Vector vec = e.getVelocity();
-                        Location loc = e.getLocation();
-                        Vector locv = VectorUtils.viewVector(loc);
-                        if (ws != 0F){
-                            if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
-                                vec.add(locv.multiply(0.065F * ws));
-                            }
-                        }
-                        if (ad != 0F){
-                            loc.setYaw(Location.normalizeYaw(loc.getYaw() - 90));
-                            locv = VectorUtils.viewVector(loc);
-                            if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
-                                vec.add(locv.multiply(0.065F * ad));
-                            }
-                        }
-                        if (jump){
-                            vec.setY(0.22F);
-                        } else if (!down){
-                            vec.setY(0F);
-                            effnum++;
-                            if (effnum > 4){
-                                loc.setY(loc.getY() + 1.8D);
-                                loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
-                                effnum = 0;
-/*                        int exp = p.getTotalExperience();
-                        p.sendActionBar("剩余经验值" + exp);
-                        if (exp <= 1){
-                            cancel();
-                            return;
-                        }
-                        p.setTotalExperience(exp - 1);*/
-                            }
-                        }
-                        e.setVelocity(vec);
-//                        loc = e.getLocation();
-//                        if (v2 != null){
-////                            if (!e.getPassengers().isEmpty()) e.eject();
-//                            Vector v = VectorUtils.viewVector(loc).multiply(0.42F);
-//
-//                            net.minecraft.server.v1_16_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
-//                            Location loc1 = loc.clone().add(v);
-//                            nv1.setLocation(loc1.getX(),loc1.getY(),loc1.getZ(),loc.getYaw(),loc.getPitch());
-//
-//                            nv1 = ((CraftEntity) v2).getHandle();
-//                            loc.subtract(v);
-//                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
-////                            v2.teleport(loc.add(v));
-//                        } else {
-//                            net.minecraft.server.v1_16_R1.Entity nv1 = ((CraftEntity) v1).getHandle();
-////                            org.bukkit.entity.BoomEntity er = v1.getVehicle();
-////                            if (er == null || er.getUniqueId() != e.getUniqueId()) e.addPassenger(v1);
-////                            nv1.yaw = ne.yaw;
-//                            nv1.setLocation(loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
-//                            v1.teleport(loc);
-//                        }
-
-                    }
-                }
-            }.runTaskTimer(RPGArmour.plugin,1,1);
+            runTaskTimer(MoeItems.plugin,1,1);
             map.put(e.getUniqueId(),this);
-//            seats.put(v1.getUniqueId(),this);
         }
 
         void stop() {
-            task.cancel();
-            EntityTpUtils.forgeStopRide(p);
+            cancel();
+            //EntityTpUtils.forgeStopRide(p);
 //            e.setMarker(false);
+        }
+
+        @Override
+        public void run() {
+            if (e.isDead() || p.isDead() || p.getVehicle() == null || !p.getVehicle().getUniqueId().equals(e.getUniqueId())){
+                stop();
+            }
+            if (p instanceof Player){
+                EntityLiving np = ((CraftLivingEntity) p).getHandle();
+                float ad = EntityUtils.getAD(p);
+                float ws = EntityUtils.getWS(p);
+                boolean jump = EntityUtils.getJumping(p);
+
+                boolean down = np.pitch > 80;
+//                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
+
+                float ycz = VectorUtils.getDifferenceAngle(np.yaw,ne.yaw);
+                if (ycz > 0.1F || ycz < -0.1F){
+                    float ys = speedLimiter(ycz,wheelSpeed);
+                    ne.yaw += ys;
+//                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
+                }
+                Vector vec = e.getVelocity();
+                Location loc = e.getLocation();
+                Vector locv = VectorUtils.viewVector(loc);
+                if (ws != 0F){
+                    if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
+                        vec.add(locv.multiply(0.065F * ws));
+                    }
+                }
+                if (ad != 0F){
+                    loc.setYaw(Location.normalizeYaw(loc.getYaw() - 90));
+                    locv = VectorUtils.viewVector(loc);
+                    if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
+                        vec.add(locv.multiply(0.065F * ad));
+                    }
+                }
+                if (jump){
+                    vec.setY(0.22F);
+                } else if (down){
+                    e.setVelocity(vec);
+                    return;
+                } else {
+                    vec.setY(0F);
+                }
+                effnum++;
+                if (effnum > 4){
+                    loc.setY(loc.getY() + 1.8D);
+                    loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
+                    effnum = 0;
+                }
+                e.setVelocity(vec);
+            }
         }
     }
 }
