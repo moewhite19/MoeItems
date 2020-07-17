@@ -11,6 +11,7 @@ import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_16_R1.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -91,7 +92,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
             if (p.isSneaking()){
                 BukkitTask task = movein.get(e.getUniqueId());
                 if (task != null){
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§c这个火炮已经在移动了").create());
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§c这个火炮已经在移动了"));
                     //p.sendActionBar("§c这个火炮已经在移动了");
                     return;
                 }
@@ -101,18 +102,6 @@ public class Artillery extends CustItem_CustModle implements Listener {
                     return;
                 }
                 task = new BukkitRunnable() {
-
-                    /**
-                     * When an object implementing interface <code>Runnable</code> is used
-                     * to create o thread, starting the thread causes the object's
-                     * <code>run</code> method to be called in that separately executing
-                     * thread.
-                     * <p>
-                     * The general contract of the method <code>run</code> is that it may
-                     * take any action whatsoever.
-                     *
-                     * @see Thread#run()
-                     */
                     @Override
                     public void run() {
                         if (!p.isOnline() || p.isDead() || e.isDead() || !p.isSneaking()){
@@ -141,20 +130,20 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
                     void stop() {
                         if (p.isOnline()){
-                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§b停止移动火炮").create());
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§b停止移动火炮"));
                         }
                         movein.remove(e.getUniqueId());
                         cancel();
                     }
                 }.runTaskTimer(RPGArmour.plugin,2L,2L);
                 movein.put(e.getUniqueId(),task);
-                p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§b开始移动火炮").create());
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§b开始移动火炮"));
             } else {
                 if (p.hasCooldown(getMaterial())) return;
                 PlayerInventory inv = p.getInventory();
                 ItemStack item = inv.getItemInMainHand();
                 if (!CherryBomb.get().is(item)){
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new ComponentBuilder("§4没有弹药").create());
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§4没有弹药"));
                     return;
                 }
                 //扣除物品

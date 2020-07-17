@@ -4,6 +4,9 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.ItemToolUtil;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,10 +14,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Campfire;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.LlamaSpit;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -69,6 +69,19 @@ public class WaterGun extends CustItem_CustModle implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof LlamaSpit) || !event.getEntity().getScoreboardTags().contains(tag)) return;
+        Projectile entity = event.getEntity();
+        //检查领地权限
+        FlagPermissions perms = Residence.getInstance().getPermsByLoc(entity.getLocation());
+        if (entity.getShooter() instanceof Player){
+            Player shooter = (Player) entity.getShooter();
+            if (!Residence.getInstance().isResAdminOn(shooter) && !perms.playerHasHints(shooter,Flags.build,false)){
+                return;
+            }
+        } else {
+            if (!perms.has(Flags.build,false)){
+                return;
+            }
+        }
 
         Entity hitEntity = event.getHitEntity();
         //熄灭实体火
