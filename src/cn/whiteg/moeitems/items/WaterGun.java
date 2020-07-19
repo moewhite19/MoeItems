@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.*;
@@ -29,6 +30,7 @@ import org.bukkit.util.Vector;
 public class WaterGun extends CustItem_CustModle implements Listener {
     final static WaterGun a;
     private static String tag = WaterGun.class.getSimpleName();
+    private static BlockFace[] faces = new BlockFace[]{BlockFace.DOWN,BlockFace.UP,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST,BlockFace.NORTH};
 
     static {
         a = new WaterGun();
@@ -91,17 +93,26 @@ public class WaterGun extends CustItem_CustModle implements Listener {
 
         Block block = event.getHitBlock();
         if (block != null){
+            BlockData data = block.getBlockData();
+
             //熄灭火焰
-            if (block.getType() == Material.FIRE) block.setBlockData(Bukkit.createBlockData(Material.AIR));
-            else {
-                BlockData data = block.getBlockData();
-                //熄灭火焰
-                if (data instanceof Lightable){
-                    ((Lightable) data).setLit(false);
+            if (block.getType() == Material.FIRE){
+                block.setBlockData(Bukkit.createBlockData(Material.AIR));
+            }
+            //熄灭周围火焰
+            for (BlockFace value : faces) {
+                Block b = block.getRelative(value);
+                if (b.getType() == Material.FIRE){
+                    b.setBlockData(Bukkit.createBlockData(Material.AIR));
                 }
             }
-        }
 
+            //熄灭篝火
+            if (data instanceof Lightable){
+                ((Lightable) data).setLit(false);
+            }
+
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

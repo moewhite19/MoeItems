@@ -15,7 +15,6 @@ import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
 import com.bekvon.bukkit.residence.Residence;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Snowball;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -95,6 +94,7 @@ public class MoeItems extends PluginBase {
         regItem(Wrench.get());
         regItem(FairyBall.get());
         regItem(BurstPickaxe.get());
+        regItem(Ushanka.get());
         //regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

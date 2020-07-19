@@ -3,40 +3,37 @@ package cn.whiteg.moeitems.hats;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.utils.ItemTypeUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class StrawHat extends CustItem_CustModle {
-    private static final StrawHat a = new StrawHat();
+public class Ushanka extends CustItem_CustModle {
+    private static final Ushanka a = new Ushanka();
 
-    private StrawHat() {
-        super(Material.SHEARS,11,"§6草帽");
-        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"straw_hat");
+    private Ushanka() {
+        super(Material.SHEARS,20,"§4翻毛帽");
+        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"ushanka");
         ShapedRecipe r = new ShapedRecipe(key,createItem());
         r.shape(
-                "BBB",
-                "AFA",
-                "DEC"
+                "BAB",
+                "B B"
         );
-        r.setIngredient('A',Material.LEATHER);
-        r.setIngredient('B',Material.HAY_BLOCK);
-        r.setIngredient('C',Material.DANDELION);
-        r.setIngredient('D',Material.POPPY);
-        r.setIngredient('E',Material.BLUE_ORCHID);
-        r.setIngredient('F',Material.LILY_OF_THE_VALLEY);
-
+        r.setIngredient('A',Material.WHITE_WOOL);
+        r.setIngredient('B',new RecipeChoice.MaterialChoice(new ArrayList<>(ItemTypeUtils.getWools())));
         RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
     }
 
-    public static StrawHat get() {
+    public static Ushanka get() {
         return a;
     }
 
