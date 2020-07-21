@@ -92,7 +92,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
                 net.minecraft.server.v1_16_R1.Entity entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,IChatBaseComponent.ChatSerializer.jsonToComponent(custName),humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.SPAWN_EGG,true,true,CreatureSpawnEvent.SpawnReason.EGG);
                 //导入元数据
                 if (entity != null && !entity.dead){
-                    entity.load(data);
+//                    entity.load(data);
                     if (entity instanceof EntityLiving){
                         ((EntityLiving) entity).loadData(data);
                     }
@@ -124,7 +124,8 @@ public class FairyBall extends CustItem_CustModle implements Listener {
                 EntityLiving nmsHit = ((CraftLivingEntity) hit).getHandle();
 
                 NBTTagCompound cap = new NBTTagCompound();
-                nmsHit.save(cap);
+                //
+//                nmsHit.save(cap);
                 nmsHit.saveData(cap);
 
                 NBTTagCompound compound = new NBTTagCompound();
