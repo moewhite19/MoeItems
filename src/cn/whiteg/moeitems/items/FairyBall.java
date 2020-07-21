@@ -91,8 +91,11 @@ public class FairyBall extends CustItem_CustModle implements Listener {
                 //生成实体
                 net.minecraft.server.v1_16_R1.Entity entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,IChatBaseComponent.ChatSerializer.jsonToComponent(custName),humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.SPAWN_EGG,true,true,CreatureSpawnEvent.SpawnReason.EGG);
                 //导入元数据
-                if (entity instanceof EntityLiving){
-                    ((EntityLiving) entity).loadData(data);
+                if (entity != null && !entity.dead){
+                    entity.load(data);
+                    if (entity instanceof EntityLiving){
+                        ((EntityLiving) entity).loadData(data);
+                    }
                 }
             }
 

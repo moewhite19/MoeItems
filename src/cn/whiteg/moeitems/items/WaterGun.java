@@ -110,6 +110,7 @@ public class WaterGun extends CustItem_CustModle implements Listener {
             //熄灭篝火
             if (data instanceof Lightable){
                 ((Lightable) data).setLit(false);
+                block.setBlockData(data);
             }
 
         }

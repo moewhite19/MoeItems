@@ -34,7 +34,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
@@ -42,11 +41,8 @@ import java.util.*;
 
 public class Broom extends CustItem_CustModle implements Listener {
     final static Broom o;
-//    final static DataWatcherObject<Byte> marker = EntityArmorStand.b;
-
     static {
         o = new Broom();
-
     }
 
     private final float wheelSpeed = 7.8F;
@@ -56,12 +52,6 @@ public class Broom extends CustItem_CustModle implements Listener {
 
     private Broom() {
         super(Material.SHEARS,44,"§e魔法扫帚");
-//        ConfigurationSection c = Setting.getCustItemConfig(this);
-//        if (c != null){
-//            fuze = c.getInt("fuze",fuze);
-//        } else {
-//            RPGArmour.logger.warning("找不到" + getDisplayName() + "的配置文件");
-//        }
     }
 
     public static Broom get() {
@@ -75,8 +65,6 @@ public class Broom extends CustItem_CustModle implements Listener {
     public boolean join(ArmorStand e,Player p) {
         if (getEntity().is(e) && e.getPassengers().isEmpty()){
             new BroomRun(e,p);
-//            EntityArmorStand ne = r.ne;
-//            ne.getDataWatcher().set(marker,16);
             return true;
         }
         /*e.addPassenger(p);
@@ -294,7 +282,6 @@ public class Broom extends CustItem_CustModle implements Listener {
         CraftPlayer cp = (CraftPlayer) p;
         float yaw = cp.getHandle().yaw;
         loc.setYaw(yaw);
-//        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         nmsEntity.yaw = yaw;
         event.setCancelled(true);
@@ -312,11 +299,9 @@ public class Broom extends CustItem_CustModle implements Listener {
         public void load(final org.bukkit.entity.Entity entity) {
             if (entity.isDead()) return;
             Location loc = entity.getLocation();
-//            loc.setY(loc.getY() + 180D);
             EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.4,0.55D,0.4));
 
             RPGArmour.logger.info("加载扫把");
-//            EntityUtils.setEntitySize(entity,0.1F,0.1F);
         }
 
         @Override
@@ -386,18 +371,18 @@ public class Broom extends CustItem_CustModle implements Listener {
     }
 
     public class BroomRun extends BukkitRunnable {
-        ArmorStand e;
+        ArmorStand entity;
         EntityArmorStand ne;
         LivingEntity p;
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
             ne = ((CraftArmorStand) armor).getHandle();
-            e = armor;
-            e.addPassenger(p);
+            entity = armor;
+            entity.addPassenger(p);
 //            e.setMarker(true);
             runTaskTimer(MoeItems.plugin,1,1);
-            map.put(e.getUniqueId(),this);
+            map.put(entity.getUniqueId(),this);
         }
 
         void stop() {
@@ -408,7 +393,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
         @Override
         public void run() {
-            if (e.isDead() || p.isDead() || p.getVehicle() == null || !p.getVehicle().getUniqueId().equals(e.getUniqueId())){
+            if (entity.isDead() || p.isDead() || p.getVehicle() == null || !p.getVehicle().getUniqueId().equals(entity.getUniqueId())){
                 stop();
             }
             if (p instanceof Player){
@@ -426,8 +411,8 @@ public class Broom extends CustItem_CustModle implements Listener {
                     ne.yaw += ys;
 //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
                 }
-                Vector vec = e.getVelocity();
-                Location loc = e.getLocation();
+                Vector vec = entity.getVelocity();
+                Location loc = entity.getLocation();
                 Vector locv = VectorUtils.viewVector(loc);
                 if (ws != 0F){
                     if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
@@ -444,7 +429,7 @@ public class Broom extends CustItem_CustModle implements Listener {
                 if (jump){
                     vec.setY(0.22F);
                 } else if (down){
-                    e.setVelocity(vec);
+                    entity.setVelocity(vec);
                     return;
                 } else {
                     vec.setY(0F);
@@ -455,7 +440,7 @@ public class Broom extends CustItem_CustModle implements Listener {
                     loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
                     effnum = 0;
                 }
-                e.setVelocity(vec);
+                entity.setVelocity(vec);
             }
         }
     }
