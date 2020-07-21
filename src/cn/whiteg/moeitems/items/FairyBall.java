@@ -24,10 +24,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class FairyBall extends CustItem_CustModle implements Listener {
     private final static FairyBall fairyBall = new FairyBall();
@@ -73,31 +70,39 @@ public class FairyBall extends CustItem_CustModle implements Listener {
         //获取物品NBT
         NBTTagCompound rootTag = nmsItem.getOrCreateTag();
         if (rootTag.hasKey(key)){
-            NBTTagCompound cap = rootTag.getCompound(key);
+            NBTTagCompound capDir = rootTag.getCompound(key);
 
-            for (Map.Entry<String, NBTBase> entry : cap.map.entrySet()) {
-                String[] args = entry.getKey().split(":");
-                if (args.length != 2 && !(entry.getValue() instanceof NBTTagCompound)){
-                    if (player != null){
-                        player.sendMessage("无效实体ID " + entry.getKey());
-                    }
-                    continue;
-                }
-                MinecraftKey minecraftKey = new MinecraftKey(args[0],args[1]);
-                EntityTypes<?> type = IRegistry.ENTITY_TYPE.get(minecraftKey);
-                NBTTagCompound data = (NBTTagCompound) entry.getValue();
-                String custName = data.getString("CustomName");
-                EntityHuman humanEntity = player == null ? null : ((CraftHumanEntity) player).getHandle();
-                //生成实体
-                net.minecraft.server.v1_16_R1.Entity entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,IChatBaseComponent.ChatSerializer.jsonToComponent(custName),humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.SPAWN_EGG,true,true,CreatureSpawnEvent.SpawnReason.EGG);
-                //导入元数据
-                if (entity != null && !entity.dead){
-//                    entity.load(data);
-                    if (entity instanceof EntityLiving){
-                        ((EntityLiving) entity).loadData(data);
+            String id = null;
+            NBTTagCompound data = null;
+            if (capDir.b("id")){
+                data = capDir;
+                id = data.getString("id");
+            } else {
+                Iterator<Map.Entry<String, NBTBase>> it = capDir.map.entrySet().iterator();
+                if (it.hasNext()){
+                    Map.Entry<String, NBTBase> base = it.next();
+                    if (base.getValue() instanceof NBTTagCompound){
+                        data = (NBTTagCompound) base.getValue();
+                        id = base.getKey();
                     }
                 }
             }
+
+            if (data == null || id == null){
+                if (player != null) player.sendMessage(" 无效数据");
+                return;
+            }
+            MinecraftKey minecraftKey = new MinecraftKey(id);
+            EntityTypes<?> type = IRegistry.ENTITY_TYPE.get(minecraftKey);
+            EntityHuman humanEntity = player == null ? null : ((CraftHumanEntity) player).getHandle();
+            //生成实体
+            net.minecraft.server.v1_16_R1.Entity entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,null,humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.SPAWN_EGG,true,true,CreatureSpawnEvent.SpawnReason.EGG);
+            //导入元数据
+            if (entity != null && !entity.dead){
+                removeUUID(data);
+                setLoc(data,entity.locX(),entity.locY(),entity.locZ());
+                entity.load(data);
+            } else if (player != null) player.sendMessage(" 无法生成实体");
 
         } else {
             org.bukkit.entity.Entity hit = event.getHitEntity();
@@ -123,22 +128,23 @@ public class FairyBall extends CustItem_CustModle implements Listener {
 
                 EntityLiving nmsHit = ((CraftLivingEntity) hit).getHandle();
 
+                NBTTagCompound capDir = new NBTTagCompound();
                 NBTTagCompound cap = new NBTTagCompound();
-                //
-//                nmsHit.save(cap);
-                nmsHit.saveData(cap);
+                nmsHit.ejectPassengers();   //清理乘客
+                if (nmsHit.a_(cap)){
+                    removeUUID(cap);
+                    capDir.set(nmsHit.getMinecraftKey().toString(),cap);
+                    rootTag.set(key,capDir);
+                    rootTag.remove("Rate");
 
-                NBTTagCompound compound = new NBTTagCompound();
-                compound.set(nmsHit.getMinecraftKey().toString(),cap);
-                rootTag.set(key,compound);
-                rootTag.remove("Rate");
+                    ItemStack nItem = nmsItem.getBukkitStack();
+                    ItemMeta meta = nItem.getItemMeta();
+                    meta.setLore(Arrays.asList("","§9扑捉到了: " + "§7" + (hit.getCustomName() == null || hit.getCustomName().isEmpty() ? LangUtils.getEntityTypeName(hit.getType()) : hit.getCustomName() + "§7(" + LangUtils.getEntityTypeName(hit.getType()) + ")")));
+                    nItem.setItemMeta(meta);
+                    hit.remove();
+                    loc.getWorld().dropItem(loc,nItem);
+                }
 
-                ItemStack nItem = nmsItem.getBukkitStack();
-                ItemMeta meta = nItem.getItemMeta();
-                meta.setLore(Arrays.asList("","§9扑捉到了: " + "§7" + (hit.getCustomName() == null || hit.getCustomName().isEmpty() ? LangUtils.getEntityTypeName(hit.getType()) : hit.getCustomName() + "§7(" + LangUtils.getEntityTypeName(hit.getType()) + ")")));
-                nItem.setItemMeta(meta);
-                hit.remove();
-                loc.getWorld().dropItem(loc,nItem);
             } else {
                 player.sendActionBar(" §7没有扑捉到任何东西");
             }
@@ -164,6 +170,21 @@ public class FairyBall extends CustItem_CustModle implements Listener {
             }
         }
         return item;
+    }
+
+    public void removeUUID(NBTTagCompound nbtTagCompound) {
+        nbtTagCompound.remove("UUID");
+        nbtTagCompound.remove("Rotation");
+        nbtTagCompound.remove("Motion");
+        nbtTagCompound.remove("Pos");
+    }
+
+    public void setLoc(NBTTagCompound nbt,double x,double y,double z) {
+        NBTTagList list = new NBTTagList();
+        list.add(NBTTagDouble.a(x));
+        list.add(NBTTagDouble.a(y));
+        list.add(NBTTagDouble.a(z));
+        nbt.set("Pos",list);
     }
 }
 
