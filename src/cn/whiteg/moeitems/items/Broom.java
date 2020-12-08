@@ -11,16 +11,16 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.server.v1_16_R1.EntityArmorStand;
-import net.minecraft.server.v1_16_R1.EntityLiving;
+import net.minecraft.server.v1_16_R3.EntityArmorStand;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -41,6 +41,7 @@ import java.util.*;
 
 public class Broom extends CustItem_CustModle implements Listener {
     final static Broom o;
+
     static {
         o = new Broom();
     }
@@ -70,7 +71,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         /*e.addPassenger(p);
         CraftPlayer cp = (CraftPlayer) p;
         EntityPlayer np = cp.getHandle();
-        net.minecraft.server.v1_16_R1.BoomEntity ne = ((CraftEntity) e).getHandle();
+        net.minecraft.server.v1_16_R3.BoomEntity ne = ((CraftEntity) e).getHandle();
         np.fauxSleeping = true;*/
 //        p.sendActionBar("看向地面并按下潜行键离开");
 /*        new BukkitRunnable() {
@@ -301,7 +302,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             Location loc = entity.getLocation();
             EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.4,0.55D,0.4));
 
-            RPGArmour.logger.info("加载扫把");
+            RPGArmour.logger.info("加载扫把" + loc);
         }
 
         @Override
@@ -377,6 +378,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
+            this.p = p;
             ne = ((CraftArmorStand) armor).getHandle();
             entity = armor;
             entity.addPassenger(p);
@@ -393,7 +395,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
         @Override
         public void run() {
-            if (entity.isDead() || p.isDead() || p.getVehicle() == null || !p.getVehicle().getUniqueId().equals(entity.getUniqueId())){
+            if (entity.isDead() || p.isDead() || p.getVehicle() == null){
                 stop();
             }
             if (p instanceof Player){
@@ -430,6 +432,7 @@ public class Broom extends CustItem_CustModle implements Listener {
                     vec.setY(0.22F);
                 } else if (down){
                     entity.setVelocity(vec);
+                    p.setFallDistance(0F); //防止玩家摔死
                     return;
                 } else {
                     vec.setY(0F);

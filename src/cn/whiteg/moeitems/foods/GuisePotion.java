@@ -8,11 +8,11 @@ import cn.whiteg.moepacketapi.api.event.PacketSendEvent;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.mojang.datafixers.util.Pair;
 import io.netty.channel.Channel;
-import net.minecraft.server.v1_16_R1.*;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -65,7 +65,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             entityTeleportId = PacketPlayOutEntityTeleport.class.getDeclaredField("a");
             entityTeleportId.setAccessible(true);
 
-            Field f = net.minecraft.server.v1_16_R1.Entity.class.getDeclaredField("az");
+            Field f = net.minecraft.server.v1_16_R3.Entity.class.getDeclaredField("az");
             f.setAccessible(true);
             entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) f.get(null);
 

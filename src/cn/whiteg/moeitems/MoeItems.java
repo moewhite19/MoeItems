@@ -82,7 +82,7 @@ public class MoeItems extends PluginBase {
         regItem(CatEarGolden.get());
         regItem(GardenLamp.get());
         regItem(Artillery.get());
-//        regItem(Broom.get());
+        regItem(Broom.get());
         regItem(Creeper.get());
         regItem(FireBerry.get());
         regItem(CherryBomb.get());

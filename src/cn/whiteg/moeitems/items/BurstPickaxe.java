@@ -1,17 +1,17 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
-import net.minecraft.server.v1_16_R1.IBlockData;
-import net.minecraft.server.v1_16_R1.IBlockDataHolder;
-import net.minecraft.server.v1_16_R1.PacketPlayInBlockDig;
-import net.minecraft.server.v1_16_R1.PlayerInteractManager;
+import net.minecraft.server.v1_16_R3.IBlockData;
+import net.minecraft.server.v1_16_R3.IBlockDataHolder;
+import net.minecraft.server.v1_16_R3.PacketPlayInBlockDig;
+import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -120,7 +120,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
     }
 
     public float getBreakSpeed(ItemStack item,IBlockData block) {
-        net.minecraft.server.v1_16_R1.ItemStack nmsItem = ((CraftItemStack) item).getHandle();
+        net.minecraft.server.v1_16_R3.ItemStack nmsItem = ((CraftItemStack) item).getHandle();
         if (nmsItem == null) nmsItem = CraftItemStack.asNMSCopy(item);
         return nmsItem.getItem().getDestroySpeed(nmsItem,block);
     }

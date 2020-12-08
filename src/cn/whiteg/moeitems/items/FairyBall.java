@@ -6,14 +6,14 @@ import cn.whiteg.rpgArmour.utils.EntityUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.server.v1_16_R1.*;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftSnowball;
-import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,7 +66,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
             return;
         }
         String key = "Capture";
-        net.minecraft.server.v1_16_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
         //获取物品NBT
         NBTTagCompound rootTag = nmsItem.getOrCreateTag();
         if (rootTag.hasKey(key)){
@@ -96,7 +96,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
             EntityTypes<?> type = IRegistry.ENTITY_TYPE.get(minecraftKey);
             EntityHuman humanEntity = player == null ? null : ((CraftHumanEntity) player).getHandle();
             //生成实体
-            net.minecraft.server.v1_16_R1.Entity entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,null,humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.SPAWN_EGG,true,true,CreatureSpawnEvent.SpawnReason.EGG);
+            net.minecraft.server.v1_16_R3.Entity entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,null,humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.SPAWN_EGG,true,true,CreatureSpawnEvent.SpawnReason.EGG);
             //导入元数据
             if (entity != null && !entity.dead){
                 removeUUID(data);
@@ -157,7 +157,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
         if (list.size() >= 2){
             try{
                 float f = Float.parseFloat(list.get(1));
-                net.minecraft.server.v1_16_R1.ItemStack nms = CraftItemStack.asNMSCopy(item);
+                net.minecraft.server.v1_16_R3.ItemStack nms = CraftItemStack.asNMSCopy(item);
                 NBTTagCompound tag = nms.getOrCreateTag();
                 tag.set("Rate",NBTTagFloat.a(f));
                 item = nms.asBukkitMirror();
@@ -177,6 +177,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
         nbtTagCompound.remove("Rotation");
         nbtTagCompound.remove("Motion");
         nbtTagCompound.remove("Pos");
+        nbtTagCompound.remove("Dimension");
     }
 
     public void setLoc(NBTTagCompound nbt,double x,double y,double z) {

@@ -10,19 +10,18 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_16_R1.EntityArmorStand;
+import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftSnowball;
-import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +29,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
@@ -115,7 +111,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
                         }
                         float yaw = ploc.getYaw();
                         float pitch = fixPitch(ploc.getPitch());
-                        net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity) e).getHandle();
+                        net.minecraft.server.v1_16_R3.Entity nmsEntity = ((CraftEntity) e).getHandle();
                         float mYaw = VectorUtils.getDifferenceAngle(yaw,nmsEntity.yaw);
                         float mPitch = pitch - nmsEntity.pitch;
                         float speed2 = -speed;
@@ -141,37 +137,50 @@ public class Artillery extends CustItem_CustModle implements Listener {
             } else {
                 if (p.hasCooldown(getMaterial())) return;
                 PlayerInventory inv = p.getInventory();
-                ItemStack item = inv.getItemInMainHand();
-                if (!CherryBomb.get().is(item)){
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§4没有弹药"));
+                EntityEquipment ainv = armorStand.getEquipment();
+                ItemStack aitem = ainv.getChestplate();
+                ItemStack hand = inv.getItemInMainHand();
+                if (CherryBomb.get().is(hand)){
+                    ainv.setChestplate(hand);
+                    inv.setItemInMainHand(aitem);
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§6更换弹匣"));
                     return;
-                }
-                //扣除物品
-                if (item.getAmount() == 1){
-                    inv.setItemInMainHand(null);
+                } else if (CherryBomb.get().is(aitem)){
+                    //扣除物品
+                    int ammo = aitem.getAmount() - 1;
+                    if (ammo <= 0){
+                        ainv.setChestplate(null);
+                    } else {
+                        aitem.setAmount(ammo);
+                        ainv.setChestplate(aitem);
+                    }
+
+
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§7剩余弹药: §f" + ammo));
+
+                    Location loc = e.getLocation();
+                    FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
+                    if (!flag.playerHasHints(p,Flags.use,true)){
+                        return;
+                    }
+                    Location spawnLoc = loc.clone();
+                    spawnLoc.setY(spawnLoc.getY() + 1.45D);
+                    Vector v = VectorUtils.viewVector(loc);
+                    spawnLoc.add(v.clone().multiply(2));
+                    v.multiply(3.5F);
+                    spawnLoc.getWorld().playSound(spawnLoc,"entity.firework_rocket.blast",1,0.15F);
+                    spawnLoc.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL,spawnLoc,4);
+                    ItemStack b = bullet.createItem();
+                    Snowball snowball = loc.getWorld().spawn(spawnLoc,Snowball.class);
+                    ((CraftSnowball) snowball).getHandle().setItem(CraftItemStack.asNMSCopy(b));
+                    snowball.setVelocity(v);
+                    snowball.setCustomName(getDisplayName());
+                    p.setCooldown(getMaterial(),30);
+                    snowball.setShooter(p);
                 } else {
-                    item.setAmount(item.getAmount() - 1);
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§4没有弹药"));
                 }
 
-                Location loc = e.getLocation();
-                FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
-                if (!flag.playerHasHints(p,Flags.use,true)){
-                    return;
-                }
-                Location spawnLoc = loc.clone();
-                spawnLoc.setY(spawnLoc.getY() + 1.45D);
-                Vector v = VectorUtils.viewVector(loc);
-                spawnLoc.add(v.clone().multiply(2));
-                v.multiply(3.5F);
-                spawnLoc.getWorld().playSound(spawnLoc,"entity.firework_rocket.blast",1,0.15F);
-                spawnLoc.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL,spawnLoc,4);
-                ItemStack b = bullet.createItem();
-                Snowball snowball = loc.getWorld().spawn(spawnLoc,Snowball.class);
-                ((CraftSnowball) snowball).getHandle().setItem(CraftItemStack.asNMSCopy(b));
-                snowball.setVelocity(v);
-                snowball.setCustomName(getDisplayName());
-                p.setCooldown(getMaterial(),30);
-                snowball.setShooter(p);
             }
         }
     }
