@@ -24,8 +24,9 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class GuisePotion extends CustItem_CustModle implements Listener {
-    private static final GuisePotion a;
+//旧版备份
+public class GuisePotionEX extends CustItem_CustModle implements Listener {
+    private static final GuisePotionEX a;
     private static DataWatcherObject<Optional<IChatBaseComponent>> entityCustName;
     private static Field spawnEntityLivingPacketId;
     private static Field spawnEntityLivingPacketType;
@@ -44,7 +45,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
     private static DataWatcherObject<Byte> entitySitting;
 
     static {
-        a = new GuisePotion();
+        a = new GuisePotionEX();
         try{
             spawnEntityLivingPacketId = PacketPlayOutSpawnEntityLiving.class.getDeclaredField("a");
             spawnEntityLivingPacketId.setAccessible(true);
@@ -65,8 +66,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             entityTeleportId = PacketPlayOutEntityTeleport.class.getDeclaredField("a");
             entityTeleportId.setAccessible(true);
 
-
-            Field f = net.minecraft.server.v1_16_R3.Entity.class.getDeclaredField("az");
+            Field f = Entity.class.getDeclaredField("az");
             f.setAccessible(true);
             entityCustName = (DataWatcherObject<Optional<IChatBaseComponent>>) f.get(null);
 
@@ -86,11 +86,11 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
     Map<Integer, GuisePlayer> map = Collections.synchronizedMap(new HashMap<>());
 
 
-    private GuisePotion() {
+    private GuisePotionEX() {
         super(Material.POTION,2,"§d变形剂");
     }
 
-    public static GuisePotion get() {
+    public static GuisePotionEX get() {
         return a;
     }
 
@@ -157,13 +157,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
 
     public boolean setGuise(Player player,org.bukkit.entity.Entity tager) {
         EntityPlayer np = ((CraftPlayer) player).getHandle();
-        WorldServer worldServer = np.getWorldServer();
-        PlayerChunkMap chunkMap = worldServer.getChunkProvider().playerChunkMap;
-//        等待利用
-//        EntityTrackerEntry
-//        PlayerChunkMap
-//        ChunkProviderServer
-//        来重写
+
         try{
 
             GuisePlayer staus = map.get(np.getId());
@@ -175,7 +169,6 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
             PacketPlayOutEntityDestroy destroyEntity = new PacketPlayOutEntityDestroy(np.getId());
             Object metaPacket = staus.getMetaPacket();
             Object equipmentPacket = staus.getEquipmentPacket();
-
             for (org.bukkit.entity.Entity entity : player.getWorld().getEntities()) {
                 if (entity instanceof Player){
                     Player p = (Player) entity;

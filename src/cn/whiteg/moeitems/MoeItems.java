@@ -13,6 +13,7 @@ import cn.whiteg.moeitems.hats.*;
 import cn.whiteg.moeitems.items.*;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
+import cn.whiteg.rpgArmour.manager.CommandManager;
 import com.bekvon.bukkit.residence.Residence;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -27,8 +28,8 @@ import static cn.whiteg.moeitems.Setting.reload;
 public class MoeItems extends PluginBase {
     public static Logger logger;
     public static MoeItems plugin;
-    public CommandManage mainCommand;
-    private List<CustItem> items = new ArrayList<>();
+    public CommandManager mainCommand;
+    private final List<CustItem> items = new ArrayList<>();
     private Residence residence = null;
 
 
@@ -45,9 +46,8 @@ public class MoeItems extends PluginBase {
     public void onEnable() {
         logger.info("开始加载插件");
         if (Setting.DEBUG) logger.info("§a调试模式已开启");
-        mainCommand = new CommandManage();
-        getCommand("moeitems").setExecutor(mainCommand);
-        logger.info("全部加载完成");
+        mainCommand = new CommandManager(this);
+        mainCommand.setExecutor();
         initItems();
         regListener(new PluginListener(this));
         regListener(new BreakEntityItem());
@@ -55,6 +55,7 @@ public class MoeItems extends PluginBase {
         if (pl != null){
             residence = (Residence) pl;
         }
+        logger.info("全部加载完成");
         if (Setting.DEBUG) regListener(new DebugTickListener());
     }
 

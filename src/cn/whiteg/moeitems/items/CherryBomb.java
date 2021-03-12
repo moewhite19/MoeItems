@@ -24,7 +24,7 @@ public class CherryBomb extends CustItem_CustModle implements Listener {
     private final String TAG = this.getClass().getSimpleName().toLowerCase();
 
     public CherryBomb() {
-        super(Material.SNOWBALL,8,"§6摔炮");
+        super(Material.SNOWBALL,8,"§6炮弹");
         NamespacedKey key = new NamespacedKey(MoeItems.plugin,TAG);
         ItemStack item = createItem();
         item.setAmount(8);
