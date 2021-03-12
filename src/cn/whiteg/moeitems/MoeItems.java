@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems;
 
+import cn.whiteg.mmocore.common.CommandManage;
 import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
@@ -13,7 +14,6 @@ import cn.whiteg.moeitems.hats.*;
 import cn.whiteg.moeitems.items.*;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem;
-import cn.whiteg.rpgArmour.manager.CommandManager;
 import com.bekvon.bukkit.residence.Residence;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -28,8 +28,8 @@ import static cn.whiteg.moeitems.Setting.reload;
 public class MoeItems extends PluginBase {
     public static Logger logger;
     public static MoeItems plugin;
-    public CommandManager mainCommand;
     private final List<CustItem> items = new ArrayList<>();
+    public CommandManage mainCommand;
     private Residence residence = null;
 
 
@@ -46,7 +46,7 @@ public class MoeItems extends PluginBase {
     public void onEnable() {
         logger.info("开始加载插件");
         if (Setting.DEBUG) logger.info("§a调试模式已开启");
-        mainCommand = new CommandManager(this);
+        mainCommand = new CommandManage(this);
         mainCommand.setExecutor();
         initItems();
         regListener(new PluginListener(this));
