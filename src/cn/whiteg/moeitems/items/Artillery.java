@@ -140,12 +140,12 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 EntityEquipment ainv = armorStand.getEquipment();
                 ItemStack aitem = ainv.getChestplate();
                 ItemStack hand = inv.getItemInMainHand();
-                if (CherryBomb.get().is(hand)){
+                if (CannonBall.get().is(hand)){
                     ainv.setChestplate(hand);
                     inv.setItemInMainHand(aitem);
                     p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§6更换弹匣"));
                     return;
-                } else if (CherryBomb.get().is(aitem)){
+                } else if (CannonBall.get().is(aitem)){
                     //扣除物品
                     int ammo = aitem.getAmount() - 1;
                     if (ammo <= 0){
@@ -271,7 +271,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
     public class BulletItem extends CustItem_CustModle {
         public BulletItem() {
-            super(Material.SNOWBALL,6,"炮弹");
+            super(Material.SNOWBALL,9,"炮弹");
         }
     }
 }

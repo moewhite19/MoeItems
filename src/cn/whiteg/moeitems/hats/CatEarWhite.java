@@ -2,11 +2,18 @@ package cn.whiteg.moeitems.hats;
 
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
+import cn.whiteg.rpgArmour.api.CustItem;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityAirChangeEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -14,8 +21,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.UUID;
 
-public class CatEarWhite extends CustItem_CustModle {
-    private static final CatEarWhite a = new CatEarWhite();
+public class CatEarWhite extends CustItem_CustModle implements Listener {
+    private static final CatEarWhite WHITE = new CatEarWhite();
+    private static final CustItem[] hats;
+
+    static {
+        hats = new CustItem[]{WHITE,CatEarGolden.get(),CatEarDiamond.get()};
+    }
 
     private CatEarWhite() {
         super(Material.SHEARS,36,"§f白色猫耳头饰");
@@ -31,7 +43,7 @@ public class CatEarWhite extends CustItem_CustModle {
     }
 
     public static CatEarWhite get() {
-        return a;
+        return WHITE;
     }
 
     @Override
@@ -41,6 +53,25 @@ public class CatEarWhite extends CustItem_CustModle {
         im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(UUID.randomUUID(),getDisplayName(),0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
         item.setItemMeta(im);
         return item;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onTarget(EntityTargetEvent event) {
+        if (event.getEntity() instanceof Creeper && event.getTarget() instanceof LivingEntity){
+            LivingEntity entity = (LivingEntity) event.getTarget();
+            ItemStack helmet = null;
+            var equipment = entity.getEquipment();
+            if (equipment == null) return;
+            helmet = equipment.getHelmet();
+            if (helmet == null) return;
+
+            for (CustItem hat : hats) {
+                if (hat.is(helmet)){
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
     }
 }
 

@@ -158,7 +158,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
     public boolean setGuise(Player player,org.bukkit.entity.Entity tager) {
         EntityPlayer np = ((CraftPlayer) player).getHandle();
         WorldServer worldServer = np.getWorldServer();
-        PlayerChunkMap chunkMap = worldServer.getChunkProvider().playerChunkMap;
+        var tack = worldServer.getChunkProvider().playerChunkMap.trackedEntities.get(player.getEntityId());
 //        等待利用
 //        EntityTrackerEntry
 //        PlayerChunkMap

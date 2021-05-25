@@ -5,6 +5,7 @@ import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
 import cn.whiteg.moeitems.foods.FireBerry;
+import cn.whiteg.moeitems.foods.LetheWater;
 import cn.whiteg.moeitems.foods.SaltSodaWater;
 import cn.whiteg.moeitems.furniture.DeskClock;
 import cn.whiteg.moeitems.furniture.FlowerVase;
@@ -86,7 +87,7 @@ public class MoeItems extends PluginBase {
         regItem(Broom.get());
         regItem(Creeper.get());
         regItem(FireBerry.get());
-        regItem(CherryBomb.get());
+        regItem(CannonBall.get());
         regItem(LightningRod.get());
         regItem(BigIvan.get());
         regItem(SaltSodaWater.get());
@@ -96,6 +97,11 @@ public class MoeItems extends PluginBase {
         regItem(FairyBall.get());
         regItem(BurstPickaxe.get());
         regItem(Ushanka.get());
+        regItem(QuickFiringCrossbow.get());
+        regItem(LetheWater.get());
+        regItem(ConfusedStaff.get());
+        regItem(BunnyEar.get());
+        regItem(ShulkerBull.get());
         //regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

@@ -15,15 +15,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
-public class CherryBomb extends CustItem_CustModle implements Listener {
-    private static final CherryBomb o = new CherryBomb();
+public class CannonBall extends CustItem_CustModle implements Listener {
+    private static final CannonBall o = new CannonBall();
     private final String TAG = this.getClass().getSimpleName().toLowerCase();
 
-    public CherryBomb() {
+    public CannonBall() {
         super(Material.SNOWBALL,8,"§6炮弹");
         NamespacedKey key = new NamespacedKey(MoeItems.plugin,TAG);
         ItemStack item = createItem();
@@ -40,7 +39,7 @@ public class CherryBomb extends CustItem_CustModle implements Listener {
         RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
     }
 
-    public static CherryBomb get() {
+    public static CannonBall get() {
         return o;
     }
 
