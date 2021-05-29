@@ -22,7 +22,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
@@ -96,36 +95,32 @@ public class FoxEar extends CustItem_CustModle implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDie(PlayerDeathPreprocessEvent event) {
         Player player = event.getPlayer();
-        PlayerInventory inv = player.getInventory();
-        ItemStack che = inv.getChestplate();
-        if (che != null && che.getType() == getMaterial()){
+        var hat = getEntityHat(player);
+        if (is(hat)){
             if (!CoolDownUtil.hasCd(player.getName(),skull_key)) return;
-            if (ItemToolUtil.hasLore(che,skull_key)){
-                CoolDownUtil.setCd(player.getName(),skull_key,cooldown * 1000);
-                //undyingListener.useOffHand(inv,new ItemStack(Material.TOTEM_OF_UNDYING));
-                UndyingListener.EntityResurrect(player,che);
-                event.setCancelled(true);
-                Location loc1 = player.getLocation();
+            CoolDownUtil.setCd(player.getName(),skull_key,cooldown * 1000);
+            //undyingListener.useOffHand(inv,new ItemStack(Material.TOTEM_OF_UNDYING));
+            UndyingListener.EntityResurrect(player,hat);
+            event.setCancelled(true);
+            Location loc1 = player.getLocation();
 
-                //弹开附近实体
-                for (Entity entity : player.getNearbyEntities(4D,4D,4D)) {
-                    final EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(player,entity,EntityDamageEvent.DamageCause.ENTITY_ATTACK,0);
-                    Bukkit.getPluginManager().callEvent(ev);
-                    if (ev.isCancelled()) return;
-                    Location loc2 = entity.getLocation();
-                    loc2.setY(loc2.getY() + 0.2);
-                    float yaw = VectorUtils.getLocYaw(loc1,loc2);
-                    float pitch = VectorUtils.getLocPirch(loc1,loc2);
-                    final double distance = loc1.distance(loc2); //距离
-                    final float mult = (float) (distance / 4D); //距离衰减
-                    loc2.setYaw(yaw);
-                    loc2.setPitch(pitch);
-                    Vector v = VectorUtils.viewVector(loc2);
-                    v.setY(v.getY() * 0.5);
-                    v.multiply(5 - (3 * mult));
-                    entity.setVelocity(v);
-                }
-
+            //弹开附近实体
+            for (Entity entity : player.getNearbyEntities(4D,4D,4D)) {
+                final EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(player,entity,EntityDamageEvent.DamageCause.ENTITY_ATTACK,0);
+                Bukkit.getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) return;
+                Location loc2 = entity.getLocation();
+                loc2.setY(loc2.getY() + 0.2);
+                float yaw = VectorUtils.getLocYaw(loc1,loc2);
+                float pitch = VectorUtils.getLocPirch(loc1,loc2);
+                final double distance = loc1.distance(loc2); //距离
+                final float mult = (float) (distance / 4D); //距离衰减
+                loc2.setYaw(yaw);
+                loc2.setPitch(pitch);
+                Vector v = VectorUtils.viewVector(loc2);
+                v.setY(v.getY() * 0.5);
+                v.multiply(5 - (3 * mult));
+                entity.setVelocity(v);
             }
         }
     }
