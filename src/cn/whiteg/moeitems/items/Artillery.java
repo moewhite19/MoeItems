@@ -11,17 +11,17 @@ import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSnowball;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,8 +49,8 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
     private final float speed = 1.5F;
     BulletItem bullet = new BulletItem();
-    private Map<UUID, BukkitTask> movein = new HashMap<>();
-    private ArtilleryEntity artilleryEntity;
+    private final Map<UUID, BukkitTask> movein = new HashMap<>();
+    private final ArtilleryEntity artilleryEntity;
 
     private Artillery() {
         super(Material.BOWL,32,"§e火炮");
@@ -82,8 +82,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
         Entity e = event.getRightClicked();
         Player p = event.getPlayer();
-        if (e instanceof ArmorStand && artilleryEntity.is(e)){
-            ArmorStand armorStand = (ArmorStand) e;
+        if (e instanceof ArmorStand armorStand && artilleryEntity.is(e)){
             event.setCancelled(true);
             if (p.isSneaking()){
                 BukkitTask task = movein.get(e.getUniqueId());
@@ -111,17 +110,17 @@ public class Artillery extends CustItem_CustModle implements Listener {
                         }
                         float yaw = ploc.getYaw();
                         float pitch = fixPitch(ploc.getPitch());
-                        net.minecraft.server.v1_16_R3.Entity nmsEntity = ((CraftEntity) e).getHandle();
-                        float mYaw = VectorUtils.getDifferenceAngle(yaw,nmsEntity.yaw);
-                        float mPitch = pitch - nmsEntity.pitch;
+                        var nmsEntity = ((CraftEntity) e).getHandle();
+                        float mYaw = VectorUtils.getDifferenceAngle(yaw,nmsEntity.getYRot());
+                        float mPitch = pitch - nmsEntity.getXRot();
                         float speed2 = -speed;
                         if (mYaw > speed) mYaw = speed;
                         if (mYaw < speed2) mYaw = speed2;
                         if (mPitch > speed) mPitch = speed;
                         if (mPitch < speed2) mPitch = speed2;
-                        nmsEntity.pitch += mPitch;
-                        nmsEntity.yaw += mYaw;
-                        armorStand.setHeadPose(new EulerAngle(nmsEntity.pitch / 45,0,0));//设置盔甲架仰角
+                        nmsEntity.setXRot(nmsEntity.getXRot() + mPitch);
+                        nmsEntity.setYRot(nmsEntity.getYRot() + mYaw);
+                        armorStand.setHeadPose(new EulerAngle(nmsEntity.getXRot() / 45,0,0));//设置盔甲架仰角
                     }
 
                     void stop() {
@@ -191,7 +190,10 @@ public class Artillery extends CustItem_CustModle implements Listener {
         if (p instanceof Snowball){
             CraftSnowball snowball = (CraftSnowball) p;
             if (bullet.is(EntityUtils.getSnowballItem(snowball))){
-                snowball.getWorld().createExplosion(snowball,2.6F,true,true);
+
+                snowball.getWorld().createExplosion(snowball,2.6F,true,true); //Paper方法
+//                snowball.getWorld().createExplosion(snowball.getLocation(),2.6F,true,true);
+
             }
         }
     }
@@ -211,11 +213,11 @@ public class Artillery extends CustItem_CustModle implements Listener {
         if (!is(item)) return;
         Block block = event.getClickedBlock();
         if (block == null) return;
-        // Location loc = block.getLocation().toCenterLocation(); Paper方法
-        Location loc = block.getLocation();
-        loc.setX(loc.getBlockX() + 0.5D);
-        loc.setY(loc.getBlockY() + 0.5D);
-        loc.setZ(loc.getBlockZ() + 0.5D);
+        Location loc = block.getLocation().toCenterLocation(); //Paper方法
+//        Location loc = block.getLocation();
+//        loc.setX(loc.getBlockX() + 0.5D);
+//        loc.setY(loc.getBlockY() + 0.5D);
+//        loc.setZ(loc.getBlockZ() + 0.5D);
 
         loc.setY(loc.getY() + 1);
         if (loc.getBlock().getType() != Material.AIR) return;
@@ -238,12 +240,11 @@ public class Artillery extends CustItem_CustModle implements Listener {
         Location ploc = p.getLocation();
         float pitch = -2F;
         float yaw = ploc.getYaw();
-        //armorStand.setDisabledSlots(EquipmentSlot.HEAD); //锁住盔甲架 Paper方法
-
+        armorStand.setDisabledSlots(EquipmentSlot.HEAD); //锁住盔甲架 Paper方法
         armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.pitch = pitch;
-        nmsEntity.yaw = yaw;
+        nmsEntity.setXRot(pitch);
+        nmsEntity.setYRot(yaw);
 
     }
 

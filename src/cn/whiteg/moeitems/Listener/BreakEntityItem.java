@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -168,7 +168,7 @@ public class BreakEntityItem implements Listener {
 
                 itemFrame.setFacingDirection(BlockFace.UP);
 
-                float yaw = Math.abs(((CraftPlayer) player).getHandle().yaw % 360);
+                float yaw = Math.abs(((CraftPlayer) player).getHandle().getYRot() % 360);
                 itemFrame.setRotation(getRotation(yaw));
                 //player.sendMessage("方向: " + getRotation(yaw) + " : " + yaw);
                 itemFrame.setFixed(true);

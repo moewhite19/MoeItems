@@ -1,8 +1,9 @@
 package cn.whiteg.moeitems.utils;
 
-import net.minecraft.server.v1_16_R3.Entity;
+import cn.whiteg.rpgArmour.utils.NMSUtils;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -17,7 +18,8 @@ public class CommonUtils {
 
     static {
         try{
-            Field count_f = Entity.class.getDeclaredField("entityCount");
+            Field count_f = NMSUtils.getFieldFormType(Entity.class,AtomicInteger.class);
+
             count_f.setAccessible(true);
             entityCount = (AtomicInteger) count_f.get(null);
         }catch (NoSuchFieldException | IllegalAccessException e){
@@ -80,7 +82,7 @@ public class CommonUtils {
     }
 
     public static int getItemMaxDamage(ItemStack item) {
-        var ni = ((CraftItemStack) item).getHandle();
+        var ni = CraftItemStack.asNMSCopy(item);
         if (ni == null) ni = CraftItemStack.asNMSCopy(item);
         var tm = ni.getItem();
 //        return ni.getItemUseMaxDuration();

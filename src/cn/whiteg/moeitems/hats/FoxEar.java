@@ -4,7 +4,6 @@ import cn.whiteg.mmocore.util.CoolDownUtil;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.event.PlayerDeathPreprocessEvent;
 import cn.whiteg.rpgArmour.listener.UndyingListener;
-import cn.whiteg.rpgArmour.utils.ItemToolUtil;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import org.bukkit.Bukkit;
@@ -30,7 +29,7 @@ import javax.annotation.Nullable;
 public class FoxEar extends CustItem_CustModle implements Listener {
     private static final FoxEar a = new FoxEar();
     private static final String skull_key = "§7狐仙庇护";
-    private int cooldown = 256;
+    private final int cooldown = 256;
 
 
     private FoxEar() {

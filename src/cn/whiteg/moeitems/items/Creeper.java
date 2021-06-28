@@ -156,9 +156,8 @@ public class Creeper extends CustItem_CustModle implements Listener {
                     ArmorStand armorStand = (ArmorStand) entity;
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
-                    //paper方法
-                    armorStand.setDisabledSlots(EquipmentSlot.HEAD);
-//                    Main.nms.setSlotsDisabled(armorStand,true);
+
+                    armorStand.setDisabledSlots(EquipmentSlot.HEAD);//paper方法
                     ItemMeta meta = item.getItemMeta();
                     meta.setCustomModelData(id2);
                     item.setItemMeta(meta);

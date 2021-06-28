@@ -1,17 +1,17 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
-import net.minecraft.server.v1_16_R3.IBlockData;
-import net.minecraft.server.v1_16_R3.IBlockDataHolder;
-import net.minecraft.server.v1_16_R3.PacketPlayInBlockDig;
-import net.minecraft.server.v1_16_R3.PlayerInteractManager;
+import net.minecraft.network.protocol.game.PacketPlayInBlockDig;
+import net.minecraft.server.level.PlayerInteractManager;
+import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.state.IBlockDataHolder;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -97,7 +97,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                         for (z = sz; z <= ez; z++) {
                             Block b = world.getBlockAt(x,y,z);
                             IBlockData ib = ((CraftBlock) b).getNMS();
-                            if (getBreakSpeed(item,ib) > 2F && iblockdata.getBlock().getDurability() == ib.getBlock().getDurability() && ((CraftBlock) b).getNMS().getBlock().isDestroyable()){
+                            if (getBreakSpeed(item,ib) > 2F && iblockdata.getBlock().getDurability() == ib.getBlock().getDurability() /*&& ((CraftBlock) b).getNMS().getBlock().isDestroyable()*/){
                                 if (is(item)){
                                     PlayerBreakBlock(player,b);
                                 } else {
@@ -115,13 +115,13 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
     }
 
     public void PlayerBreakBlock(Player player,Block block) {
-        PlayerInteractManager playerInv = ((CraftPlayer) player).getHandle().playerInteractManager;
-        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.STOP_DESTROY_BLOCK,"destroyed");
+        PlayerInteractManager playerInv = ((CraftPlayer) player).getHandle().d;
+        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.a,"destroyed");
+//        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.STOP_DESTROY_BLOCK,"destroyed");
     }
 
     public float getBreakSpeed(ItemStack item,IBlockData block) {
-        net.minecraft.server.v1_16_R3.ItemStack nmsItem = ((CraftItemStack) item).getHandle();
-        if (nmsItem == null) nmsItem = CraftItemStack.asNMSCopy(item);
+        var nmsItem = CraftItemStack.asNMSCopy(item);
         return nmsItem.getItem().getDestroySpeed(nmsItem,block);
     }
 }

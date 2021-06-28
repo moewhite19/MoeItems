@@ -32,9 +32,9 @@ import java.util.*;
 
 public class GravityStaff extends CustItem_CustModle implements Listener {
     final static private GravityStaff a = new GravityStaff();
-    private Map<UUID, Staus> map = new HashMap<>(16);
-    private Set<EntityType> entityList = new HashSet<>();
-    private Set<Material> blockList = new HashSet<>();
+    private final Map<UUID, Staus> map = new HashMap<>(16);
+    private final Set<EntityType> entityList = new HashSet<>();
+    private final Set<Material> blockList = new HashSet<>();
     private double damageRisk = 0.03;
 
     public GravityStaff() {
@@ -49,7 +49,7 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
                 try{
                     blockList.add(Material.valueOf(str.toUpperCase()));
                 }catch (IllegalArgumentException e){
-                    RPGArmour.logger.warning("无效的方块ID: " + str);
+                    MoeItems.logger.warning("无效的方块ID: " + str);
                 }
             }
             l = c.getStringList("EntityList");
@@ -223,8 +223,8 @@ public class GravityStaff extends CustItem_CustModle implements Listener {
         final Entity entity;
         final BukkitTask task;
         final PlayerInventory inv;
+        private final EquipmentSlot hand;
         double distance;
-        private EquipmentSlot hand;
 
         Staus(Player player,Entity entity,EquipmentSlot hand) {
             this.hand = hand;

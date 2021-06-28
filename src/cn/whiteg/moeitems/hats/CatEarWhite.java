@@ -10,9 +10,9 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Phantom;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -57,9 +57,8 @@ public class CatEarWhite extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onTarget(EntityTargetEvent event) {
-        if (event.getEntity() instanceof Creeper && event.getTarget() instanceof LivingEntity){
-            LivingEntity entity = (LivingEntity) event.getTarget();
-            ItemStack helmet = null;
+        if (event.getTarget() instanceof LivingEntity entity && (event.getEntity() instanceof Creeper || event.getEntity() instanceof Phantom)){
+            ItemStack helmet;
             var equipment = entity.getEquipment();
             if (equipment == null) return;
             helmet = equipment.getHelmet();

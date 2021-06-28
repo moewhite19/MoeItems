@@ -44,12 +44,12 @@ public class BunnyEar extends CustItem_CustModle implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true,priority = EventPriority.LOW)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player) || event.getCause() != EntityDamageEvent.DamageCause.FALL || !isHat((Player) event.getEntity()))
             return;
         double damage = event.getDamage() - 2;
-        if (damage <= 0)  event.setCancelled(true);
+        if (damage <= 0) event.setCancelled(true);
     }
 
     boolean isHat(Player player) {

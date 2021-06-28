@@ -52,7 +52,7 @@ public class FireBerry extends CustItem_CustModle implements Listener {
         v.addPassenger(p);
         new BukkitRunnable() {
             int rffFlag = 0;
-            Particle[] particles = new Particle[]{Particle.CAMPFIRE_COSY_SMOKE,Particle.CAMPFIRE_SIGNAL_SMOKE};
+            final Particle[] particles = new Particle[]{Particle.CAMPFIRE_COSY_SMOKE,Particle.CAMPFIRE_SIGNAL_SMOKE};
 
             @Override
             public void run() {

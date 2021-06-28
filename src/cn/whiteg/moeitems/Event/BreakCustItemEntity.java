@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;
 
 public class BreakCustItemEntity extends EntityEvent implements Cancellable {
-    private static HandlerList handers = new HandlerList();
+    private static final HandlerList handers = new HandlerList();
     private boolean cancelled = false;
     private Entity damager;
 

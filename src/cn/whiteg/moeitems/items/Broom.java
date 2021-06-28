@@ -11,16 +11,16 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -234,7 +234,7 @@ public class Broom extends CustItem_CustModle implements Listener {
 
 //        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.yaw = loc.getYaw();
+        nmsEntity.setYRot(loc.getYaw());
         join(armorStand,p);
     }
 
@@ -281,10 +281,10 @@ public class Broom extends CustItem_CustModle implements Listener {
         ArmorStand armorStand = (ArmorStand) entity.summon(loc);
         EntityUtils.setSlotsDisabled(armorStand,true);
         CraftPlayer cp = (CraftPlayer) p;
-        float yaw = cp.getHandle().yaw;
+        float yaw = cp.getHandle().getYRot();
         loc.setYaw(yaw);
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.yaw = yaw;
+        nmsEntity.setYRot(yaw);
         event.setCancelled(true);
 
     }
@@ -323,7 +323,6 @@ public class Broom extends CustItem_CustModle implements Listener {
                     armorStand.setVisible(false);
                     //paper方法
                     EntityUtils.setSlotsDisabled(armorStand,true);
-//                    Main.nms.setSlotsDisabled(armorStand,true);
                     armorStand.setHelmet(item);
 //                    armorStand.setMarker(true);
                 }
@@ -404,13 +403,13 @@ public class Broom extends CustItem_CustModle implements Listener {
                 float ws = EntityUtils.getWS(p);
                 boolean jump = EntityUtils.getJumping(p);
 
-                boolean down = np.pitch > 80;
+                boolean down = np.getXRot() > 80;
 //                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
 
-                float ycz = VectorUtils.getDifferenceAngle(np.yaw,ne.yaw);
+                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
                 if (ycz > 0.1F || ycz < -0.1F){
                     float ys = speedLimiter(ycz,wheelSpeed);
-                    ne.yaw += ys;
+                    ne.setYRot(ne.getYRot() + ys);
 //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
                 }
                 Vector vec = entity.getVelocity();

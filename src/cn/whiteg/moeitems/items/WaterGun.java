@@ -29,8 +29,8 @@ import org.bukkit.util.Vector;
 
 public class WaterGun extends CustItem_CustModle implements Listener {
     final static WaterGun a;
-    private static String tag = WaterGun.class.getSimpleName();
-    private static BlockFace[] faces = new BlockFace[]{BlockFace.DOWN,BlockFace.UP,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST,BlockFace.NORTH};
+    private static final String tag = WaterGun.class.getSimpleName();
+    private static final BlockFace[] faces = new BlockFace[]{BlockFace.DOWN,BlockFace.UP,BlockFace.WEST,BlockFace.SOUTH,BlockFace.EAST,BlockFace.NORTH};
 
     static {
         a = new WaterGun();

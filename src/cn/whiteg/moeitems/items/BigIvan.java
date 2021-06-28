@@ -1,6 +1,5 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
@@ -32,7 +31,7 @@ public class BigIvan extends CustItem_CustModle implements Listener {
     }
 
     private final Figurine creeperEntity = new Figurine();
-    private int fuze = 80;
+    private final int fuze = 80;
 
     private BigIvan() {
         super(Material.BOWL,48,"§b大伊万");
@@ -104,8 +103,8 @@ public class BigIvan extends CustItem_CustModle implements Listener {
                 if (!flag.has(Flags.explode,true)){
                     return;
                 }
-                //loc.getWorld().createExplosion(entity,32F,true,true);  //Paper方法
-                loc.getWorld().createExplosion(entity,32F,true,true);
+                loc.getWorld().createExplosion(entity,32F,true,true);  //Paper方法
+//                loc.getWorld().createExplosion(entity,32F,true,true);
 
 //                WorldSetting ws = MoeAntiBuild.plugin.getWorldSetting(loc.getWorld().getName());
 //                if (ws != null && ws.SafeTnT){
@@ -132,7 +131,6 @@ public class BigIvan extends CustItem_CustModle implements Listener {
                     ArmorStand armorStand = (ArmorStand) entity;
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
-                    //armorStand.setDisabledSlots(EquipmentSlot.HEAD);// Paper方法
                     EntityUtils.setSlotsDisabled(armorStand,true);
                     ItemMeta meta = item.getItemMeta();
                     meta.setCustomModelData(id2);
