@@ -103,6 +103,8 @@ public class MoeItems extends PluginBase {
         regItem(BunnyEar.get());
         regItem(ShulkerBull.get());
         regItem(FoxEar.get());
+        regItem(SuperLeash.get());
+        regItem(LeashBow.get());
         //regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

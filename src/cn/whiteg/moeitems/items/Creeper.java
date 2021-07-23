@@ -24,13 +24,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class Creeper extends CustItem_CustModle implements Listener {
     final static Creeper a;
@@ -64,7 +59,6 @@ public class Creeper extends CustItem_CustModle implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onFurnChan(FurnaceBurnEvent event) {
         if (is(event.getFuel())){
-//            MoeItems.logger.info("燃烧时间" + event.getBurnTime());
             event.setBurnTime(2400);
 //            Block block = event.getBlock();
 //            Location loc = block.getLocation();
@@ -114,7 +108,6 @@ public class Creeper extends CustItem_CustModle implements Listener {
     }
 
     public class Figurine extends CustEntityID implements CustEntityChunkEvent {
-        Map<UUID, BukkitTask> taskMap = new HashMap<>();
 
         public Figurine() {
             super("Creeper",org.bukkit.entity.ArmorStand.class);
@@ -124,7 +117,6 @@ public class Creeper extends CustItem_CustModle implements Listener {
         public void load(final Entity entity) {
             if (entity.isDead()) return;
             EntityUtils.setBoundingBox(entity,BoundingBox.of(entity.getLocation(),0.1D,0.15D,0.1D));
-//            EntityUtils.setEntitySize(entity,0.1F,0.1F);
             Bukkit.getScheduler().runTaskLater(RPGArmour.plugin,() -> {
                 if (entity.isDead()) return;
                 final Location loc = entity.getLocation();
@@ -152,8 +144,7 @@ public class Creeper extends CustItem_CustModle implements Listener {
                 entity.getScoreboardTags().add("dontsave");
                 entity.setCustomName(getDisplayName());
                 load(entity);
-                if (entity instanceof ArmorStand){
-                    ArmorStand armorStand = (ArmorStand) entity;
+                if (entity instanceof ArmorStand armorStand){
                     ItemStack item = createItem();
                     armorStand.setVisible(false);
 

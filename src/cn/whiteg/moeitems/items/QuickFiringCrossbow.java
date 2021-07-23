@@ -8,9 +8,12 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.ItemToolUtil;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
+import net.minecraft.world.item.ItemBow;
+import net.minecraft.world.item.ItemCrossbow;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArrow;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,10 +37,6 @@ import java.util.*;
 
 public class QuickFiringCrossbow extends CustItem_CustModle implements Listener {
     public static final String arrowTag = "seeker";
-    public static QuickFiringCrossbow a = new QuickFiringCrossbow();
-    public static Map<String, LivingEntity> map = new HashMap<>();
-    static DecimalFormat decimalFormat = new DecimalFormat("#.#"); //数字格式化
-    static boolean saveTarget = true;
     private static final int duration = 60;
     private static final float turningPower = 0.2F; //转向能力
     /*    @EventHandler
@@ -60,6 +59,10 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
             }
         }*/
     private static final int delay = 4;
+    public static QuickFiringCrossbow a = new QuickFiringCrossbow();
+    public static Map<String, LivingEntity> map = new HashMap<>();
+    static DecimalFormat decimalFormat = new DecimalFormat("#.#"); //数字格式化
+    static boolean saveTarget = true;
     private float itemDropChance = 0.05f;
     private float spawnChance = 0.075f;
 
@@ -81,8 +84,7 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
         if (!is(event.getBow())) return;
         final ItemStack bow = event.getBow();
         @SuppressWarnings("ConstantConditions") final ItemMeta im = bow.getItemMeta();
-        if (im instanceof CrossbowMeta){
-            CrossbowMeta cb = (CrossbowMeta) im;
+        if (im instanceof CrossbowMeta cb){
             final List<ItemStack> items = cb.getChargedProjectiles();
             Bukkit.getScheduler().runTask(RPGArmour.plugin,() -> {
                 if (!is(bow)) return;
@@ -91,12 +93,12 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
                 bow.setItemMeta(ncb);
             });
         }
-        final Projectile projectile = (Projectile) event.getProjectile();
-        if (!(projectile.getShooter() instanceof LivingEntity)) return;
-        final LivingEntity shooter = (LivingEntity) projectile.getShooter();
-        LivingEntity target = map.get(shooter.getName());
-        if (target == null || target.isDead()) return;
-        new SeekerArrow(projectile,target,1F).start();
+        if (event.getProjectile() instanceof Projectile projectile && projectile.getShooter() instanceof LivingEntity shooter){
+            if (projectile instanceof Arrow arrow) arrow.setPickupStatus(AbstractArrow.PickupStatus.CREATIVE_ONLY);
+            LivingEntity target = map.get(shooter.getName());
+            if (target == null || target.isDead()) return;
+            new SeekerArrow(projectile,target,1F).start();
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -112,8 +114,7 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
             LivingEntity le;
             if (e instanceof Mob || e instanceof Boss){
                 le = (LivingEntity) e;
-            } else if (e instanceof Player){
-                Player tPlayer = (Player) e;
+            } else if (e instanceof Player tPlayer){
                 //不追踪隐身以及生存模式以外的玩家
                 if (player.canSee(tPlayer) && (tPlayer.getGameMode() == GameMode.SURVIVAL || tPlayer.getGameMode() == GameMode.ADVENTURE)){
                     le = tPlayer;
