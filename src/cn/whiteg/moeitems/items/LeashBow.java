@@ -1,9 +1,7 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
-import cn.whiteg.rpgArmour.manager.CustEntityManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -13,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.persistence.PersistentDataType;
 
 public class LeashBow extends CustItem_CustModle implements Listener {
     public static LeashBow THIS = new LeashBow();
@@ -31,6 +28,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
     public void shoot(EntityShootBowEvent event) {
         if (is(event.getBow()) && event.getProjectile() instanceof Arrow arrow){
             leashArrow.init(arrow);
+            event.setConsumeItem(true); //无视无限附魔属性，永远都会消耗弓箭
             var shooter = event.getEntity();
             for (Entity nearbyEntity : shooter.getNearbyEntities(10,10,10)) {
                 if (nearbyEntity instanceof LivingEntity livingEntity){
@@ -48,7 +46,8 @@ public class LeashBow extends CustItem_CustModle implements Listener {
         if (event.getHitEntity() instanceof LivingEntity entity){
             if (event.getEntity() instanceof Arrow arrow && leashArrow.is(arrow)){
                 entity.setLeashHolder(arrow);
-                entity.setVelocity(arrow.getVelocity());
+                var vector = arrow.getVelocity().multiply(0.8F);
+                entity.setVelocity(entity.getVelocity().add(vector));
                 event.setCancelled(true);
             }
         }
