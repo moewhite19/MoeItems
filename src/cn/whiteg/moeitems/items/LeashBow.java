@@ -1,7 +1,9 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.manager.CustEntityManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -11,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 public class LeashBow extends CustItem_CustModle implements Listener {
     public static LeashBow THIS = new LeashBow();

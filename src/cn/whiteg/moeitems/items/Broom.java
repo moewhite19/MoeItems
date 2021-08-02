@@ -315,7 +315,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             if (super.init(entity)){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
-                s.add(BreakEntityItem.tag);
+                s.add(BreakEntityItem.TAG);
                 load(entity);
                 if (entity instanceof ArmorStand){
                     ArmorStand armorStand = (ArmorStand) entity;

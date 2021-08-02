@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;
@@ -48,9 +49,9 @@ public class Artillery extends CustItem_CustModle implements Listener {
     }
 
     private final float speed = 1.5F;
-    BulletItem bullet = new BulletItem();
     private final Map<UUID, BukkitTask> movein = new HashMap<>();
     private final ArtilleryEntity artilleryEntity;
+    BulletItem bullet = new BulletItem();
 
     private Artillery() {
         super(Material.BOWL,32,"§e火炮");
@@ -248,29 +249,33 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
     }
 
-    public class ArtilleryEntity extends CustEntityID {
+    public static class ArtilleryEntity extends CustEntityID {
         ArtilleryEntity() {
             super("artillery",ArmorStand.class);
-//            RPGArmour.plugin.getEntityManager().regEntity(this);
+            RPGArmour.plugin.getEntityManager().regEntity(this);
         }
 
         @Override
         public boolean init(Entity entity) {
-            if (entity instanceof ArmorStand){
+            if (entity instanceof ArmorStand armorStand){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
-                s.add("candestroy");
+                s.add(BreakEntityItem.TAG);
 
-                ArmorStand armorStand = (ArmorStand) entity;
                 armorStand.setHelmet(Artillery.get().createItem());
                 armorStand.setVisible(false);
             }
             return super.init(entity);
         }
+
+        @Override
+        public boolean is(Entity entity) {
+            return super.is(entity);
+        }
     }
 
 
-    public class BulletItem extends CustItem_CustModle {
+    public static class BulletItem extends CustItem_CustModle {
         public BulletItem() {
             super(Material.SNOWBALL,9,"炮弹");
         }

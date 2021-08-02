@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class BreakEntityItem implements Listener {
     public final static List<CustItem> canPlaceItemFarm = new LinkedList<>();
-    public static String tag = "candestroy";
+    public static String TAG = "candestroy";
 
     public static Item drop(ArmorStand e,Location loc) {
         ItemStack helmet = e.getEquipment().getHelmet();
@@ -73,7 +73,7 @@ public class BreakEntityItem implements Listener {
             ArmorStand as = (ArmorStand) event.getEntity();
             if (as.isVisible()) return;
             Set<String> s = as.getScoreboardTags();
-            if (!s.contains(tag)) return;
+            if (!s.contains(TAG)) return;
             Location loc = as.getLocation();
             //检查领地权限
             Residence res = Residence.getInstance();
@@ -95,7 +95,7 @@ public class BreakEntityItem implements Listener {
     public void onRClick(PlayerInteractEntityEvent event) {
         if (event.getPlayer().isSneaking() && event.getRightClicked() instanceof ItemFrame){
             ItemFrame itemFrame = (ItemFrame) event.getRightClicked();
-            if (itemFrame.isFixed() && itemFrame.getScoreboardTags().contains(tag)){
+            if (itemFrame.isFixed() && itemFrame.getScoreboardTags().contains(TAG)){
                 Location loc = itemFrame.getLocation();
                 //检查领地权限
                 Residence res = Residence.getInstance();
@@ -173,7 +173,7 @@ public class BreakEntityItem implements Listener {
                 //player.sendMessage("方向: " + getRotation(yaw) + " : " + yaw);
                 itemFrame.setFixed(true);
                 itemFrame.setVisible(false);
-                itemFrame.addScoreboardTag(tag);
+                itemFrame.addScoreboardTag(TAG);
                 itemFrame.addScoreboardTag("dontedit");
                 item = item.clone();
                 item.setAmount(1);

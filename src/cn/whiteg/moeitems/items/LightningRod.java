@@ -150,7 +150,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
         ItemFrame itemFrame = loc.getWorld().spawn(loc,ItemFrame.class);
         itemFrame.setFixed(true);
         itemFrame.setVisible(false);
-        itemFrame.addScoreboardTag(BreakEntityItem.tag);
+        itemFrame.addScoreboardTag(BreakEntityItem.TAG);
         itemFrame.addScoreboardTag("dontedit");
         itemFrame.setItem(item);
     }
