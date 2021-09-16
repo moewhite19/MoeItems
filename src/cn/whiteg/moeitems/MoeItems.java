@@ -5,6 +5,7 @@ import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
 import cn.whiteg.moeitems.foods.FireBerry;
+import cn.whiteg.moeitems.foods.GuisePotion;
 import cn.whiteg.moeitems.foods.LetheWater;
 import cn.whiteg.moeitems.foods.SaltSodaWater;
 import cn.whiteg.moeitems.furniture.DeskClock;
@@ -70,6 +71,7 @@ public class MoeItems extends PluginBase {
     public void onReload() {
         logger.info("--开始重载--");
         reload();
+        RPGArmour.plugin.getRecipeManage().onSync();
         logger.info("--重载完成--");
     }
 
@@ -105,7 +107,7 @@ public class MoeItems extends PluginBase {
         regItem(FoxEar.get());
         regItem(SuperLeash.get());
         regItem(LeashBow.get());
-        //regItem(GuisePotion.get());
+//        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
     }

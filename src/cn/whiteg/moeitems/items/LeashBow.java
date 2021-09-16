@@ -64,12 +64,16 @@ public class LeashBow extends CustItem_CustModle implements Listener {
         if (event.getHitEntity() instanceof LivingEntity entity){
             if (event.getEntity() instanceof Arrow arrow && leashArrow.is(arrow)){
                 event.setCancelled(true);
+                var vector = arrow.getVelocity().multiply(0.8F);
+                entity.setVelocity(entity.getVelocity().add(vector));
                 if (entity.setLeashHolder(arrow)){
                     leashArrow.setLife(arrow,Integer.MIN_VALUE); //让弓箭不会消失
                     leashArrow.putLeashed(arrow,entity); //记录已牵着的实体
                 }
-                var vector = arrow.getVelocity().multiply(0.8F);
-                entity.setVelocity(entity.getVelocity().add(vector));
+                //todo 加个模式切换功能，可以切换栓绳模式和骑乘模式
+//                else {
+//                    arrow.addPassenger(entity);
+//                }
             }
         }
     }
@@ -77,7 +81,6 @@ public class LeashBow extends CustItem_CustModle implements Listener {
     //不掉落栓绳
     @EventHandler
     public void onUnLeash(EntityUnleashEvent event) {
-        var le = ((LivingEntity) event.getEntity());
         if (event.getEntity() instanceof LivingEntity entity && entity.isLeashed()){
             var leashed = entity.getLeashHolder();
             if (leashed instanceof Arrow arrow && leashArrow.is(arrow)){
@@ -211,9 +214,9 @@ public class LeashBow extends CustItem_CustModle implements Listener {
         @Override
         public void load(Entity entity) {
             if (entity instanceof Arrow arrow){
-                //如果没拴着实体则清理掉弓箭
                 var entities = getLeashed(arrow);
                 if (entities == null){
+                    //如果没拴着实体则清理掉弓箭
                     arrow.remove();
                 } else {
                     setLife(arrow,Integer.MIN_VALUE);
@@ -229,7 +232,11 @@ public class LeashBow extends CustItem_CustModle implements Listener {
             if (entity instanceof Arrow arrow){
                 //如果没拴着实体则清理掉弓箭
                 var entities = getLeashed(arrow);
-                if (entities == null) return;
+                if (entities == null){
+                    //如果没拴着实体则清理掉弓箭
+                    arrow.remove();
+                    return;
+                }
                 for (LivingEntity livingEntity : entities) {
                     livingEntity.setLeashHolder(null); //解除栓绳
                 }
