@@ -17,6 +17,7 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.block.data.type.PistonHead;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -116,7 +117,7 @@ public class Wrench extends CustItem_CustModle implements Listener {
                     if (item.getType() != Material.AIR){
                         Location loc = itemFrame.getLocation();
                         itemFrame.remove();
-                        loc.getWorld().dropItem(loc,new ItemStack(Material.ITEM_FRAME));
+                        loc.getWorld().dropItem(loc,new ItemStack(itemFrame.getType() == EntityType.ITEM_FRAME ? Material.ITEM_FRAME : Material.GLOW_ITEM_FRAME));
                         loc.getWorld().dropItem(loc,item);
                     }
                 }
