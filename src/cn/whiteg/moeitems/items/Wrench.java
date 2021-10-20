@@ -6,7 +6,6 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -17,7 +16,6 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.block.data.type.PistonHead;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -104,34 +102,32 @@ public class Wrench extends CustItem_CustModle implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDamageItemFram(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof ItemFrame && event.getDamager() instanceof Player){
-            Player player = (Player) event.getDamager();
+        if (event.getEntity() instanceof ItemFrame itemFrame && event.getDamager() instanceof Player player){
             ItemStack item = player.getInventory().getItemInMainHand();
-            ItemFrame itemFrame = (ItemFrame) event.getEntity();
             if (itemFrame.getScoreboardTags().contains(editTag)) return;
-            if (!is(item)){
-                if (!itemFrame.isVisible()){
-                    item = itemFrame.getItem();
-                    if (item.getType() != Material.AIR){
-                        Location loc = itemFrame.getLocation();
-                        itemFrame.remove();
-                        loc.getWorld().dropItem(loc,new ItemStack(itemFrame.getType() == EntityType.ITEM_FRAME ? Material.ITEM_FRAME : Material.GLOW_ITEM_FRAME));
-                        loc.getWorld().dropItem(loc,item);
-                    }
+            if (is(item)){
+                if (player.isSneaking()) return;
+                if (itemFrame.getItem().getType() == Material.AIR) return;
+                if (!Residence.getInstance().isResAdminOn(player)){
+                    FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(itemFrame.getLocation(),player);
+                    if (!perm.playerHasHints(player,Flags.build,true)) return;
                 }
-                return;
+                itemFrame.setVisible(!itemFrame.isVisible());
+                player.sendActionBar("已修改展示框为: " + (itemFrame.isVisible() ? "可视" : "不可视"));
+                event.setCancelled(true);
+            } else if (!itemFrame.isVisible()){
+                event.setCancelled(true);
+//                    item = itemFrame.getItem();
+//                    if (item.getType() != Material.AIR){
+//                        Location loc = itemFrame.getLocation();
+//                        itemFrame.remove();
+//                        loc.getWorld().dropItem(loc,new ItemStack(itemFrame.getType() == EntityType.ITEM_FRAME ? Material.ITEM_FRAME : Material.GLOW_ITEM_FRAME));
+//                        loc.getWorld().dropItem(loc,item);
+//                    }
             }
-            if (player.isSneaking()) return;
-            if (itemFrame.getItem().getType() == Material.AIR) return;
-            if (!Residence.getInstance().isResAdminOn(player)){
-                FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(itemFrame.getLocation(),player);
-                if (!perm.playerHasHints(player,Flags.build,true)) return;
-            }
-            itemFrame.setVisible(!itemFrame.isVisible());
-            player.sendActionBar("已修改展示框为: " + (itemFrame.isVisible() ? "可视" : "不可视"));
-            event.setCancelled(true);
+
         }
     }
 

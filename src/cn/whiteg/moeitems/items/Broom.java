@@ -399,8 +399,8 @@ public class Broom extends CustItem_CustModle implements Listener {
             }
             if (p instanceof Player){
                 EntityLiving np = ((CraftLivingEntity) p).getHandle();
-                float ad = EntityUtils.getAD(p);
-                float ws = EntityUtils.getWS(p);
+                float ad = EntityUtils.getInputX(p);
+                float ws = EntityUtils.getInputZ(p);
                 boolean jump = EntityUtils.getJumping(p);
 
                 boolean down = np.getXRot() > 80;

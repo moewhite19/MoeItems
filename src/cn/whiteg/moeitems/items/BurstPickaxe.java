@@ -1,6 +1,7 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.utils.NMSUtils;
 import net.minecraft.network.protocol.game.PacketPlayInBlockDig;
 import net.minecraft.server.level.PlayerInteractManager;
 import net.minecraft.world.level.block.state.IBlockData;
@@ -90,6 +91,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                 int ex = x + size;
                 int ey = y + size;
                 int ez = z + size;
+                float durability = iblockdata.getBlock().getDurability();
                 looping = true;
                 loop:
                 for (x = sx; x <= ex; x++) {
@@ -97,7 +99,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                         for (z = sz; z <= ez; z++) {
                             Block b = world.getBlockAt(x,y,z);
                             IBlockData ib = ((CraftBlock) b).getNMS();
-                            if (getBreakSpeed(item,ib) > 2F && iblockdata.getBlock().getDurability() == ib.getBlock().getDurability() /*&& ((CraftBlock) b).getNMS().getBlock().isDestroyable()*/){
+                            if (getBreakSpeed(item,ib) > 2F && durability == ib.getBlock().getDurability() /*&& ((CraftBlock) b).getNMS().getBlock().isDestroyable()*/){
                                 if (is(item)){
                                     PlayerBreakBlock(player,b);
                                 } else {

@@ -51,8 +51,8 @@ public class FireBerry extends CustItem_CustModle implements Listener {
         ArmorStand v = (ArmorStand) bootFire.summon(loc);
         v.addPassenger(p);
         new BukkitRunnable() {
-            int rffFlag = 0;
             final Particle[] particles = new Particle[]{Particle.CAMPFIRE_COSY_SMOKE,Particle.CAMPFIRE_SIGNAL_SMOKE};
+            int rffFlag = 0;
 
             @Override
             public void run() {
@@ -78,8 +78,8 @@ public class FireBerry extends CustItem_CustModle implements Listener {
                 }
                 Location ploc = p.getLocation();
                 Vector vec = v.getVelocity();
-                float ws = EntityUtils.getWS(p);
-                float ad = EntityUtils.getAD(p);
+                float ws = EntityUtils.getInputZ(p);
+                float ad = EntityUtils.getInputX(p);
                 if (ws != 0F){
                     Vector locv = VectorUtils.viewVector(ploc);
                     if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < 0.5){
