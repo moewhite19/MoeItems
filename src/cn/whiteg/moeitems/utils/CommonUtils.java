@@ -3,7 +3,6 @@ package cn.whiteg.moeitems.utils;
 import cn.whiteg.rpgArmour.utils.NMSUtils;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -82,11 +81,14 @@ public class CommonUtils {
     }
 
     public static int getItemMaxDamage(ItemStack item) {
-        var ni = CraftItemStack.asNMSCopy(item);
-        if (ni == null) ni = CraftItemStack.asNMSCopy(item);
-        var tm = ni.getItem();
-//        return ni.getItemUseMaxDuration();
-        return tm.getMaxDurability();
+        if (item.hasItemMeta()){
+            var meta = item.getItemMeta();
+            meta = item.getItemMeta();
+            if (meta instanceof Damageable damageable){
+                return damageable.getDamage();
+            }
+        }
+        return 0;
     }
 
 }

@@ -2,6 +2,7 @@ package cn.whiteg.moeitems.Listener;
 
 import cn.whiteg.moeitems.Event.BreakCustItemEntity;
 import cn.whiteg.rpgArmour.api.CustItem;
+import cn.whiteg.rpgArmour.utils.EntityUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
@@ -11,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -168,7 +168,7 @@ public class BreakEntityItem implements Listener {
 
                 itemFrame.setFacingDirection(BlockFace.UP);
 
-                float yaw = Math.abs(((CraftPlayer) player).getHandle().getYRot() % 360);
+                float yaw = Math.abs(EntityUtils.getEntityRotYaw(player) % 360);
                 itemFrame.setRotation(getRotation(yaw));
                 //player.sendMessage("方向: " + getRotation(yaw) + " : " + yaw);
                 itemFrame.setFixed(true);

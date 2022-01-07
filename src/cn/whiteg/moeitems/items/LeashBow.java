@@ -12,7 +12,7 @@ import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.projectile.EntityArrow;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -67,7 +67,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
                 var vector = arrow.getVelocity().multiply(0.8F);
                 entity.setVelocity(entity.getVelocity().add(vector));
                 if (entity.setLeashHolder(arrow)){
-                    leashArrow.setLife(arrow,Integer.MIN_VALUE); //让弓箭不会消失
+//                    leashArrow.setLife(arrow,Integer.MIN_VALUE); //让弓箭不会消失
                     leashArrow.putLeashed(arrow,entity); //记录已牵着的实体
                 }
                 //todo 加个模式切换功能，可以切换栓绳模式和骑乘模式
@@ -91,7 +91,6 @@ public class LeashBow extends CustItem_CustModle implements Listener {
     }
 
     public static class LeashArrow extends CustEntityID implements CustEntityChunkEvent {
-        static Field lifeField;
         static NamespacedKey LEASH_PATH = new NamespacedKey(MoeItems.plugin,"Leashed");
         static NamespacedKey UUID_MOST_SIGNIFICANT = new NamespacedKey(MoeItems.plugin,"Most");
         static NamespacedKey UUID_LEAST_SIGNIFICANT = new NamespacedKey(MoeItems.plugin,"Least");
@@ -99,17 +98,6 @@ public class LeashBow extends CustItem_CustModle implements Listener {
 
         static {
             try{
-            /*
-    //1.17.1 反编译内容
-    public EntityArrow.PickupStatus d;
-    public int e;
-    public int au;  <--
-    private double av;
-    public int aw;
-    private SoundEffect ax;
-             */
-                lifeField = NMSUtils.getFieldFormStructure(EntityArrow.class,new Class[]{EntityArrow.PickupStatus.class,int.class,int.class},2);
-                lifeField.setAccessible(true);
                 LeashNBTTagCompound = NMSUtils.getFieldFormType(EntityInsentient.class,NBTTagCompound.class);
                 LeashNBTTagCompound.setAccessible(true);
             }catch (NoSuchFieldException e){
@@ -120,16 +108,6 @@ public class LeashBow extends CustItem_CustModle implements Listener {
         public LeashArrow() {
             super("LeashArrow",Arrow.class);
             RPGArmour.plugin.getEntityManager().regEntity(this);
-        }
-
-        public void setLife(Entity entity,int life) {
-            if (entity instanceof CraftArrow arrow){
-                try{
-                    lifeField.set(arrow.getHandle(),life);
-                }catch (IllegalAccessException e){
-                    e.printStackTrace();
-                }
-            }
         }
 
         public void putLeashed(Arrow arrow,LivingEntity entity) {
@@ -173,7 +151,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
             }
             if (list.isEmpty()){
                 root.remove(LEASH_PATH);
-                setLife(arrow,0);
+//                setLife(arrow,0);
             } else {
                 root.set(LEASH_PATH,PersistentDataType.TAG_CONTAINER_ARRAY,list.toArray(new PersistentDataContainer[0]));
                 CustEntityManager.setPersistentDataContainer(arrow,root); //保存
@@ -219,7 +197,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
                     //如果没拴着实体则清理掉弓箭
                     arrow.remove();
                 } else {
-                    setLife(arrow,Integer.MIN_VALUE);
+//                    setLife(arrow,Integer.MIN_VALUE);
                     for (LivingEntity livingEntity : entities) {
                         livingEntity.setLeashHolder(arrow);
                     }

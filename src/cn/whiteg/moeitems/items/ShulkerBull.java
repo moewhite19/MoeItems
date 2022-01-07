@@ -6,7 +6,7 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftSnowball;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ShulkerBullet;
@@ -38,9 +38,8 @@ public class ShulkerBull extends CustItem_CustModle implements Listener {
         if (!is(item)) return;
         var loc = snowball.getLocation();
         var source = snowball.getShooter();
-        if (source instanceof Entity){
+        if (source instanceof Entity shooter){
             var shulkerBullet = loc.getWorld().spawn(loc,ShulkerBullet.class);
-            Entity shooter = (Entity) source;
             shooter.addPassenger(shulkerBullet);
             Bukkit.getScheduler().runTask(MoeItems.plugin,snowball::remove);
         }
