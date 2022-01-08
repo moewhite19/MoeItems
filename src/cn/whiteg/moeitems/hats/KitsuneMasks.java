@@ -9,7 +9,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 public class KitsuneMasks extends CustItem_CustModle implements Listener {
     final static KitsuneMasks obj = new KitsuneMasks();
     int idMin = 84;

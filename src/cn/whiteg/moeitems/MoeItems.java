@@ -107,6 +107,7 @@ public class MoeItems extends PluginBase {
         regItem(SuperLeash.get());
         regItem(LeashBow.get());
         regItem(KitsuneMasks.get());
+        regItem(BlindBox.get());
         regListener(new GSoup()); //寄汤
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());

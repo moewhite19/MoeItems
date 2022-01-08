@@ -24,7 +24,7 @@ import org.bukkit.util.Vector;
 
 public class BigIvan extends CustItem_CustModle implements Listener {
     final static BigIvan a;
-    private final static int id2 = 18; //放出来后的动态模型
+    private final static int id2 = 19; //放出来后的动态模型
 
     static {
         a = new BigIvan();
@@ -34,7 +34,7 @@ public class BigIvan extends CustItem_CustModle implements Listener {
     private final int fuze = 80;
 
     private BigIvan() {
-        super(Material.BOWL,18,"§b大伊万");
+        super(Material.BOWL,19,"§b大伊万");
 //        ConfigurationSection c = Setting.getCustItemConfig(this);
 //        if (c != null){
 //            fuze = c.getInt("fuze",fuze);

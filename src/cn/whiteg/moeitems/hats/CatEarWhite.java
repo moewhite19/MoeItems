@@ -26,7 +26,7 @@ public class CatEarWhite extends CustItem_CustModle implements Listener {
     private static final CustItem[] hats;
 
     static {
-        hats = new CustItem[]{WHITE,CatEarGolden.get(),CatEarDiamond.get()};
+        hats = new CustItem[]{WHITE,CatEarGolden.get(),CatEarDiamond.get(), KitsuneMasks.get()};
     }
 
     private CatEarWhite() {
