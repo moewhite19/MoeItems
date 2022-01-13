@@ -14,8 +14,9 @@ public class GSoup implements Listener {
         ItemStack item = event.getItem();
         if (item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("§6寄汤")){
             Player player = event.getPlayer();
-            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION,600,2),false);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER,80,2),false);
+//            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION,600,2),false);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.POISON,600,6),false);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER,600,6),false);
         }
     }
 }

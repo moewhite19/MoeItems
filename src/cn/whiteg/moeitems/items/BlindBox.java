@@ -3,6 +3,8 @@ package cn.whiteg.moeitems.items;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -59,6 +61,7 @@ public class BlindBox extends CustItem_CustModle implements Listener {
                 var player = event.getWhoClicked();
                 var inv = player.getInventory();
                 player.sendMessage(Component.text(" §b抽到了§r").append(randomItem.displayName().hoverEvent(randomItem.asHoverEvent())));
+                player.playSound(Sound.sound(Key.key("entity.puffer_fish.blow_up"),Sound.Source.PLAYER,1f,1f));
                 HashMap<Integer, ItemStack> callBack = inv.addItem(randomItem);
                 if (!callBack.isEmpty()){
                     player.getWorld().dropItem(player.getLocation(),randomItem);
