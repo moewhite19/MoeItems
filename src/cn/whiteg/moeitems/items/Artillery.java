@@ -19,10 +19,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftSnowball;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -81,12 +80,12 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
-        Entity e = event.getRightClicked();
+        Entity entity = event.getRightClicked();
         Player p = event.getPlayer();
-        if (e instanceof ArmorStand armorStand && artilleryEntity.is(e)){
+        if (entity instanceof ArmorStand armorStand && artilleryEntity.is(entity)){
             event.setCancelled(true);
             if (p.isSneaking()){
-                BukkitTask task = movein.get(e.getUniqueId());
+                BukkitTask task = movein.get(entity.getUniqueId());
                 if (task != null){
                     p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§c这个火炮已经在移动了"));
                     //p.sendActionBar("§c这个火炮已经在移动了");
@@ -100,7 +99,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 task = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!p.isOnline() || p.isDead() || e.isDead() || !p.isSneaking()){
+                        if (!p.isOnline() || p.isDead() || entity.isDead() || !p.isSneaking()){
                             stop();
                             return;
                         }
@@ -111,28 +110,30 @@ public class Artillery extends CustItem_CustModle implements Listener {
                         }
                         float yaw = ploc.getYaw();
                         float pitch = fixPitch(ploc.getPitch());
-                        var nmsEntity = ((CraftEntity) e).getHandle();
-                        float mYaw = VectorUtils.getDifferenceAngle(yaw,nmsEntity.getYRot());
-                        float mPitch = pitch - nmsEntity.getXRot();
+                        float rawYaw = EntityUtils.getEntityRotYaw(entity);
+                        float rawPitch = EntityUtils.getEntityRotPitch(entity);
+                        float mYaw = VectorUtils.getDifferenceAngle(yaw,rawYaw);
+                        float mPitch = pitch - rawPitch;
                         float speed2 = -speed;
                         if (mYaw > speed) mYaw = speed;
                         if (mYaw < speed2) mYaw = speed2;
                         if (mPitch > speed) mPitch = speed;
                         if (mPitch < speed2) mPitch = speed2;
-                        nmsEntity.setXRot(nmsEntity.getXRot() + mPitch);
-                        nmsEntity.setYRot(nmsEntity.getYRot() + mYaw);
-                        armorStand.setHeadPose(new EulerAngle(nmsEntity.getXRot() / 45,0,0));//设置盔甲架仰角
+                        EntityUtils.setEntityRotYaw(entity,rawYaw + mYaw);
+                        float finalP = rawPitch + mPitch;
+                        EntityUtils.setEntityRotPitch(entity,finalP);
+                        armorStand.setHeadPose(new EulerAngle(finalP / 45,0,0));//设置盔甲架仰角
                     }
 
                     void stop() {
                         if (p.isOnline()){
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§b停止移动火炮"));
                         }
-                        movein.remove(e.getUniqueId());
+                        movein.remove(entity.getUniqueId());
                         cancel();
                     }
                 }.runTaskTimer(RPGArmour.plugin,2L,2L);
-                movein.put(e.getUniqueId(),task);
+                movein.put(entity.getUniqueId(),task);
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§b开始移动火炮"));
             } else {
                 if (p.hasCooldown(getMaterial())) return;
@@ -158,7 +159,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
 
                     p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§7剩余弹药: §f" + ammo));
 
-                    Location loc = e.getLocation();
+                    Location loc = entity.getLocation();
                     FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
                     if (!flag.playerHasHints(p,Flags.use,true)){
                         return;
@@ -172,7 +173,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
                     spawnLoc.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL,spawnLoc,4);
                     ItemStack b = bullet.createItem();
                     Snowball snowball = loc.getWorld().spawn(spawnLoc,Snowball.class);
-                    ((CraftSnowball) snowball).getHandle().setItem(CraftItemStack.asNMSCopy(b));
+                    ((CraftSnowball) snowball).getHandle().a(CraftItemStack.asNMSCopy(b));
                     snowball.setVelocity(v);
                     snowball.setCustomName(getDisplayName());
                     p.setCooldown(getMaterial(),30);
@@ -243,10 +244,8 @@ public class Artillery extends CustItem_CustModle implements Listener {
         float yaw = ploc.getYaw();
         armorStand.setDisabledSlots(EquipmentSlot.HEAD); //锁住盔甲架 Paper方法
         armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
-        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.setXRot(pitch);
-        nmsEntity.setYRot(yaw);
-
+        EntityUtils.setEntityRotPitch(armorStand,pitch);
+        EntityUtils.setEntityRotYaw(armorStand,yaw);
     }
 
     public static class ArtilleryEntity extends CustEntityID {

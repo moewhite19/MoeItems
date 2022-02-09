@@ -18,9 +18,9 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -233,8 +233,9 @@ public class Broom extends CustItem_CustModle implements Listener {
         EntityUtils.setSlotsDisabled(armorStand,true);
 
 //        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
-        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.setYRot(loc.getYaw());
+//        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+//        nmsEntity.setYRot(loc.getYaw());
+        EntityUtils.setEntityRotYaw(armorStand,loc.getYaw());
         join(armorStand,p);
     }
 

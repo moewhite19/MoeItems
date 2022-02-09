@@ -78,7 +78,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
 
     final int size = 1;
     boolean looping = false;
-    private int maxDamage;
+    private final int maxDamage;
 
     public BurstPickaxe() {
         super(Material.STONE_PICKAXE,2,"§4爆裂镐");

@@ -78,14 +78,14 @@ public class MoeItems extends PluginBase {
     public void initItems() {
         regItem(DeskClock.get());
         regItem(FlowerVase.get());
-        regItem(Scarecrow.get());
+        regItem(Scarecrow.get()); //稻草人
         regItem(ChristmasHat.get());
         regItem(StrawHat.get());
         regItem(CatEarWhite.get());
         regItem(CatEarDiamond.get());
         regItem(CatEarGolden.get());
         regItem(GardenLamp.get());
-//        regItem(Artillery.get());
+        regItem(Artillery.get());
 //        regItem(Broom.get());
         regItem(Creeper.get());
         regItem(FireBerry.get());
@@ -108,6 +108,7 @@ public class MoeItems extends PluginBase {
         regItem(LeashBow.get());
         regItem(KitsuneMasks.get());
         regItem(BlindBox.get());
+        regItem(new Duck()); //小黄鸭
         regListener(new GSoup()); //寄汤
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());

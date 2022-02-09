@@ -51,6 +51,7 @@ public class Scarecrow extends CustItem_CustModle implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onEntitySpawn(EntitySpawnEvent event) {
         Entity e = event.getEntity();
+        if (e.getType() != EntityType.PHANTOM) return;
         Location cl = cacheLoc.get();
         if (cl != null){
             Location el = e.getLocation();
@@ -59,10 +60,8 @@ public class Scarecrow extends CustItem_CustModle implements Listener {
                 return;
             }
         }
-        if (e.getType() != EntityType.PHANTOM) return;
-        for (Entity entity : e.getNearbyEntities(64,512D,64)) {
-            if (entity instanceof LivingEntity){
-                LivingEntity le = (LivingEntity) entity;
+        for (Entity entity : e.getNearbyEntities(64,256,64)) {
+            if (entity instanceof LivingEntity le){
                 EntityEquipment ee = le.getEquipment();
                 if (ee != null){
                     ItemStack h = ee.getHelmet();
@@ -73,8 +72,7 @@ public class Scarecrow extends CustItem_CustModle implements Listener {
                     }
                 }
 
-            } else if (entity instanceof ItemFrame){
-                ItemFrame frame = (ItemFrame) entity;
+            } else if (entity instanceof ItemFrame frame){
                 ItemStack item = frame.getItem();
                 if (is(item)){
                     event.setCancelled(true);
