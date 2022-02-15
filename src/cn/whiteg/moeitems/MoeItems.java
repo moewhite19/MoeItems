@@ -1,7 +1,6 @@
 package cn.whiteg.moeitems;
 
 import cn.whiteg.mmocore.common.CommandManage;
-import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
 import cn.whiteg.moeitems.foods.FireBerry;
@@ -52,7 +51,6 @@ public class MoeItems extends PluginBase {
         mainCommand.setExecutor();
         initItems();
         regListener(new PluginListener(this));
-        regListener(new BreakEntityItem());
         Plugin pl = Bukkit.getPluginManager().getPlugin("Residence");
         if (pl != null){
             residence = (Residence) pl;

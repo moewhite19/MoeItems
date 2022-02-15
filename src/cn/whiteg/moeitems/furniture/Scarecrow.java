@@ -1,6 +1,5 @@
 package cn.whiteg.moeitems.furniture;
 
-import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
@@ -41,7 +40,7 @@ public class Scarecrow extends CustItem_CustModle implements Listener {
         r.setIngredient('B',Material.HAY_BLOCK);
         r.setIngredient('C',new RecipeChoice.MaterialChoice(new ArrayList<>(ItemTypeUtils.getWools())));
         RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
-        BreakEntityItem.addCanPlaceItemFarm(this);
+        RPGArmour.plugin.getCanBreakEntityItem().addCanPlaceItemFarm(this);
     }
 
     public static Scarecrow get() {

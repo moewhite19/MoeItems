@@ -1,7 +1,6 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.MoeItems;
-import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -29,7 +28,8 @@ public class Duck extends CustItem_CustModle implements Listener {
 
     @EventHandler
     public void onani(PlayerInteractEvent event) {
-        if (event.getAction() != Action.LEFT_CLICK_AIR) return;
+        Action action = event.getAction();
+        if (action != Action.LEFT_CLICK_AIR && action != Action.LEFT_CLICK_BLOCK) return;
         final Player player = event.getPlayer();
         if (player.hasCooldown(getMaterial())) return;
         final PlayerInventory pi = player.getInventory();
@@ -50,7 +50,7 @@ public class Duck extends CustItem_CustModle implements Listener {
             ItemMeta itemMeta = item.getItemMeta();
             PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
             float pitch = dataContainer.getOrDefault(pitchKey,PersistentDataType.FLOAT,1f);
-            pitch = new BigDecimal(pitch).add(new BigDecimal("0.1")).setScale(1, RoundingMode.HALF_UP).floatValue();
+            pitch = new BigDecimal(pitch).add(new BigDecimal("0.1")).setScale(1,RoundingMode.HALF_UP).floatValue();
             if (pitch > 2) pitch = 0f;
             dataContainer.set(pitchKey,PersistentDataType.FLOAT,pitch);
             item.setItemMeta(itemMeta);

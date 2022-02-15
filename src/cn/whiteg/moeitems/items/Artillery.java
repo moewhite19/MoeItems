@@ -1,10 +1,10 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
@@ -12,14 +12,12 @@ import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftSnowball;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
@@ -259,7 +257,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
             if (entity instanceof ArmorStand armorStand){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
-                s.add(BreakEntityItem.TAG);
+                s.add(CanBreakEntityItem.TAG);
 
                 armorStand.setHelmet(Artillery.get().createItem());
                 armorStand.setVisible(false);

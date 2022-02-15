@@ -1,6 +1,5 @@
 package cn.whiteg.moeitems.furniture;
 
-import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
@@ -28,7 +27,7 @@ public class GardenLamp extends CustItem_CustModle {
         r.setIngredient('B',Material.STICK);
         r.setIngredient('C',new RecipeChoice.MaterialChoice(new ArrayList<>(ItemTypeUtils.getLogs())));
         RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
-        BreakEntityItem.addCanPlaceItemFarm(this);
+        RPGArmour.plugin.getCanBreakEntityItem().addCanPlaceItemFarm(this);
     }
 
     public static GardenLamp get() {

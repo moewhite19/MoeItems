@@ -1,6 +1,6 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.Listener.BreakEntityItem;
+import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -30,7 +30,7 @@ public class LightningRod extends CustItem_CustModle implements Listener {
 
     private LightningRod() {
         super(Material.BOWL,46,"§9聚雷阵");
-        BreakEntityItem.addCanPlaceItemFarm(this);
+        RPGArmour.plugin.getCanBreakEntityItem().addCanPlaceItemFarm(this);
 //        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"lightningrod");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
@@ -113,48 +113,6 @@ public class LightningRod extends CustItem_CustModle implements Listener {
 //    }
 
     //@EventHandler(ignoreCancelled = true)
-    public void onRClickBlock(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getBlockFace() != BlockFace.UP) return;
-        Player p = event.getPlayer();
-        EquipmentSlot hand = event.getHand();
-        ItemStack item;
-        PlayerInventory pi = p.getInventory();
-        if (hand == EquipmentSlot.HAND){
-            item = pi.getItemInMainHand();
-        } else if (hand == EquipmentSlot.OFF_HAND){
-            item = pi.getItemInOffHand();
-        } else return;
-        if (!is(item)) return;
-        Block block = event.getClickedBlock();
-        if (block == null) return;
-        Location loc = block.getLocation().toCenterLocation();
-        loc.setY(loc.getY() + 1);
-        if (loc.getBlock().getType() != Material.AIR) return;
-        Residence res = Residence.getInstance();
-        if (!res.isResAdminOn(p)){
-            FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
-            if (!flag.playerHasHints(p,Flags.place,true)){
-                return;
-            }
-        }
-        if (item.getAmount() > 1){
-            item.setAmount(item.getAmount() - 1);
-        } else if (hand == EquipmentSlot.HAND){
-            pi.setItemInMainHand(null);
-        } else {
-            pi.setItemInOffHand(null);
-        }
-        event.setCancelled(true);
-        ItemStack i = item.clone();
-        i.setAmount(1);
-        ItemFrame itemFrame = loc.getWorld().spawn(loc,ItemFrame.class);
-        itemFrame.setFixed(true);
-        itemFrame.setVisible(false);
-        itemFrame.addScoreboardTag(BreakEntityItem.TAG);
-        itemFrame.addScoreboardTag("dontedit");
-        itemFrame.setItem(item);
-    }
-
 
 }
 

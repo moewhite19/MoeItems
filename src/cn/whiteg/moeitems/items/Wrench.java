@@ -3,6 +3,7 @@ package cn.whiteg.moeitems.items;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.moeitems.Setting;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
@@ -33,7 +34,6 @@ import java.util.List;
 
 public class Wrench extends CustItem_CustModle implements Listener {
     final static Wrench a;
-    final static String editTag = "dontedit";
 
     static {
         a = new Wrench();
@@ -82,15 +82,14 @@ public class Wrench extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onClickItemFram(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked() instanceof ItemFrame){
+        if (event.getRightClicked() instanceof ItemFrame itemFrame){
             if (event.getHand() != EquipmentSlot.HAND)
                 return;
             Player player = event.getPlayer();
             if (player.isSneaking()) return;
             ItemStack item = player.getInventory().getItemInMainHand();
             if (!is(item)) return;
-            ItemFrame itemFrame = (ItemFrame) event.getRightClicked();
-            if (itemFrame.getScoreboardTags().contains(editTag)) return;
+            if (itemFrame.getScoreboardTags().contains(CanBreakEntityItem.TAG)) return;
             if (Setting.DEBUG) player.sendMessage("当前展示框标签: " + itemFrame.getScoreboardTags());
             if (!Residence.getInstance().isResAdminOn(player)){
                 FlagPermissions perm = Residence.getInstance().getPermsByLocForPlayer(itemFrame.getLocation(),player);
@@ -106,7 +105,7 @@ public class Wrench extends CustItem_CustModle implements Listener {
     public void onDamageItemFram(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof ItemFrame itemFrame && event.getDamager() instanceof Player player){
             ItemStack item = player.getInventory().getItemInMainHand();
-            if (itemFrame.getScoreboardTags().contains(editTag)) return;
+            if (itemFrame.getScoreboardTags().contains(CanBreakEntityItem.TAG)) return;
             if (is(item)){
                 if (player.isSneaking()) return;
                 if (itemFrame.getItem().getType() == Material.AIR) return;
