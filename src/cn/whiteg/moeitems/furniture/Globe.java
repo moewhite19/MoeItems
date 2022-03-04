@@ -3,13 +3,9 @@ package cn.whiteg.moeitems.furniture;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
-import cn.whiteg.rpgArmour.utils.ItemTypeUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
-
-import java.util.ArrayList;
 
 public class Globe extends CustItem_CustModle {
     private final static Globe a = new Globe();
@@ -23,9 +19,9 @@ public class Globe extends CustItem_CustModle {
                 "B",
                 "C"
         );
-        r.setIngredient('A',new RecipeChoice.MaterialChoice(new ArrayList<>(ItemTypeUtils.getPlanks())));
-        r.setIngredient('B',Material.STICK);
-        r.setIngredient('C',new RecipeChoice.MaterialChoice(new ArrayList<>(ItemTypeUtils.getSlabs())));
+        r.setIngredient('A',Material.COPPER_BLOCK);
+        r.setIngredient('B',Material.LIGHTNING_ROD);
+        r.setIngredient('C',Material.CUT_COPPER_SLAB);
         RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
         RPGArmour.plugin.getCanBreakEntityItem().addCanPlaceItemFarm(this);
     }
