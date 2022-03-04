@@ -1,4 +1,4 @@
-package cn.whiteg.moeitems.foods;
+package cn.whiteg.moeitems.food;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,4 +1,4 @@
-package cn.whiteg.moeitems.foods;
+package cn.whiteg.moeitems.food;
 
 import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;

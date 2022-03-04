@@ -1,4 +1,4 @@
-package cn.whiteg.moeitems.foods;
+package cn.whiteg.moeitems.food;
 
 import cn.whiteg.chanlang.LangUtils;
 import cn.whiteg.moeitems.MoeItems;

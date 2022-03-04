@@ -3,14 +3,11 @@ package cn.whiteg.moeitems;
 import cn.whiteg.mmocore.common.CommandManage;
 import cn.whiteg.moeitems.Listener.DebugTickListener;
 import cn.whiteg.moeitems.Listener.PluginListener;
-import cn.whiteg.moeitems.foods.FireBerry;
-import cn.whiteg.moeitems.foods.GSoup;
-import cn.whiteg.moeitems.foods.LetheWater;
-import cn.whiteg.moeitems.foods.SaltSodaWater;
-import cn.whiteg.moeitems.furniture.DeskClock;
-import cn.whiteg.moeitems.furniture.FlowerVase;
-import cn.whiteg.moeitems.furniture.GardenLamp;
-import cn.whiteg.moeitems.furniture.Scarecrow;
+import cn.whiteg.moeitems.food.FireBerry;
+import cn.whiteg.moeitems.food.GSoup;
+import cn.whiteg.moeitems.food.LetheWater;
+import cn.whiteg.moeitems.food.SaltSodaWater;
+import cn.whiteg.moeitems.furniture.*;
 import cn.whiteg.moeitems.hats.*;
 import cn.whiteg.moeitems.items.*;
 import cn.whiteg.rpgArmour.RPGArmour;
@@ -106,6 +103,12 @@ public class MoeItems extends PluginBase {
         regItem(LeashBow.get());
         regItem(KitsuneMasks.get());
         regItem(BlindBox.get());
+        regItem(BoltHat.get());
+        regItem(DemonHorn.get());
+//        regItem(WitchHat.get()); //暂时不知道写什么x
+        regItem(Crucible.get());
+        regItem(Globe.get());
+        regItem(TrashCan.get());
         regItem(new Duck()); //小黄鸭
         regListener(new GSoup()); //寄汤
 //        regItem(GuisePotion.get());
