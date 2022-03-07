@@ -5,9 +5,14 @@ import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 
-public class Crucible extends CustItem_CustModle {
+public class Crucible extends CustItem_CustModle implements Listener {
     private final static Crucible a = new Crucible();
 
     private Crucible() {
@@ -26,6 +31,17 @@ public class Crucible extends CustItem_CustModle {
 
     public static Crucible get() {
         return a;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onClick(PlayerInteractEntityEvent event) {
+        if (!event.getPlayer().isSneaking() && event.getRightClicked() instanceof ItemFrame frame){
+            final ItemStack item = frame.getItem();
+            if (is(item)){
+                frame.addPassenger(event.getPlayer());
+                event.setCancelled(true);
+            }
+        }
     }
 }
 

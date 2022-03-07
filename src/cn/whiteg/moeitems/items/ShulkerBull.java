@@ -6,7 +6,7 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftSnowball;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftSnowball;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ShulkerBullet;
@@ -32,8 +32,7 @@ public class ShulkerBull extends CustItem_CustModle implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onShor(ProjectileLaunchEvent event) {
-        if (!(event.getEntity() instanceof Snowball)) return;
-        CraftSnowball snowball = (CraftSnowball) event.getEntity();
+        if (!(event.getEntity() instanceof Snowball snowball)) return;
         ItemStack item = EntityUtils.getSnowballItem(snowball);
         if (!is(item)) return;
         var loc = snowball.getLocation();
