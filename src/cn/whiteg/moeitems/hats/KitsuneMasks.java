@@ -1,6 +1,6 @@
 package cn.whiteg.moeitems.hats;
 
-import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.api.CustItem_RangeOfModel;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,37 +9,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-public class KitsuneMasks extends CustItem_CustModle implements Listener {
+
+public class KitsuneMasks extends CustItem_RangeOfModel implements Listener {
     final static KitsuneMasks obj = new KitsuneMasks();
-    int idMin = 84;
-    int idMax = 89;
 
     public KitsuneMasks() {
-        super(Material.SHEARS,85,"§6稻荷神面具");
+        super(Material.SHEARS,85,"§6稻荷神面具",84,89);
     }
 
     public static KitsuneMasks get() {
         return obj;
     }
 
-    @Override
-    public boolean is(ItemStack itemStack) {
-        if (itemStack != null && itemStack.getType() == this.getMaterial() && itemStack.hasItemMeta()){
-            ItemMeta var2 = itemStack.getItemMeta();
-            if (!var2.hasCustomModelData()){
-                return false;
-            } else {
-                int data = var2.getCustomModelData();
-                return data >= idMin && data <= idMax;
-            }
-        } else {
-            return false;
-        }
-    }
-
     //获取下一个ID
     public int nextId(int id) {
-        return (id >= idMax) ? idMin : id + 1;
+        return (id >= getIdMax()) ? getIdMin() : id + 1;
     }
 
     //切换面具下一个Id

@@ -68,10 +68,6 @@ public class LeashBow extends CustItem_CustModle implements Listener {
 //                    leashArrow.setLife(arrow,Integer.MIN_VALUE); //让弓箭不会消失
                     leashArrow.putLeashed(arrow,entity); //记录已牵着的实体
                 }
-                //todo 加个模式切换功能，可以切换栓绳模式和骑乘模式
-//                else {
-//                    arrow.addPassenger(entity);
-//                }
             }
         }
     }

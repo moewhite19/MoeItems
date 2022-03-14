@@ -29,7 +29,6 @@ import java.util.Random;
 
 public class BurstPickaxe extends CustItem_CustModle implements Listener {
     private static final BurstPickaxe pickaxe = new BurstPickaxe();
-    private static final Random random = new Random();
     static Field blockDurabilityField;
     static Method IBlockGetBlock;
     static Method getItem;
