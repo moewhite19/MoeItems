@@ -4,9 +4,11 @@ import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
-import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.api.CustItem_MultiModel;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
+import cn.whiteg.rpgArmour.utils.ItemToolUtil;
+import cn.whiteg.rpgArmour.utils.ItemTypeUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -19,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +41,7 @@ import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.*;
 
-public class Broom extends CustItem_CustModle implements Listener {
+public class Broom extends CustItem_MultiModel implements Listener {
     final static Broom o;
 
     static {
@@ -47,23 +50,23 @@ public class Broom extends CustItem_CustModle implements Listener {
 
     private final float wheelSpeed = 7.8F;
     private final float moveSpeed = 1.9F;
-    private final BoomEntity entity = new BoomEntity();
+    private final BoomEntity boomEntity = new BoomEntity();
     Map<UUID, BroomRun> map = new HashMap<>();
 
     private Broom() {
-        super(Material.SHEARS,45,"§e魔法扫帚");
+        super(Material.SHEARS,45,"§e魔法扫帚",45,4,5,6);
     }
 
     public static Broom get() {
         return o;
     }
 
-    public BoomEntity getEntity() {
-        return entity;
+    public BoomEntity getBoomEntity() {
+        return boomEntity;
     }
 
     public boolean join(ArmorStand e,Player p) {
-        if (getEntity().is(e) && e.getPassengers().isEmpty()){
+        if (getBoomEntity().is(e) && e.getPassengers().isEmpty()){
             new BroomRun(e,p);
             return true;
         }
@@ -163,7 +166,7 @@ public class Broom extends CustItem_CustModle implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof LivingEntity entity && event.getCause() == EntityDamageEvent.DamageCause.FALL){
-            if (this.entity.is(entity.getVehicle())){
+            if (this.boomEntity.is(entity.getVehicle())){
                 event.setCancelled(true);
             }
         }
@@ -174,7 +177,7 @@ public class Broom extends CustItem_CustModle implements Listener {
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
         org.bukkit.entity.Entity e = event.getRightClicked();
         Player p = event.getPlayer();
-        if (e instanceof ArmorStand && entity.is(e) && e.getPassengers().isEmpty()){
+        if (e instanceof ArmorStand && boomEntity.is(e) && e.getPassengers().isEmpty()){
             event.setCancelled(true);
             Location loc = e.getLocation();
             Residence res = Residence.getInstance();
@@ -193,7 +196,7 @@ public class Broom extends CustItem_CustModle implements Listener {
         org.bukkit.entity.Entity dismounted = event.getDismounted();
         if (dismounted.isDead()) return;
         org.bukkit.entity.Entity player = event.getEntity();
-        if (player instanceof Player && ((Player) player).isSneaking() && dismounted instanceof ArmorStand && getEntity().is(dismounted)){
+        if (player instanceof Player && ((Player) player).isSneaking() && dismounted instanceof ArmorStand && getBoomEntity().is(dismounted)){
             if (!player.isDead() && EntityUtils.getEntityRotPitch(player) < 80){
                 event.setCancelled(true);
             }
@@ -231,10 +234,10 @@ public class Broom extends CustItem_CustModle implements Listener {
         if (p.getVehicle() != null) return;
         ItemStack item = event.getItemDrop().getItemStack();
         if (!is(item)) return;
-        if (item.getAmount() > 1) return;
+        if (item.getAmount() != 1) return;
         event.getItemDrop().remove();
         Location loc = p.getLocation();
-        ArmorStand armorStand = (ArmorStand) entity.summon(loc);
+        ArmorStand armorStand = (ArmorStand) boomEntity.summon(loc,item);
         EntityUtils.setSlotsDisabled(armorStand,true);
 
 //        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
@@ -283,8 +286,10 @@ public class Broom extends CustItem_CustModle implements Listener {
         } else {
             pi.setItemInOffHand(null);
         }
+        item = item.clone();
+        item.setAmount(1);
         loc.setY(loc.getY() + 1);
-        ArmorStand armorStand = (ArmorStand) entity.summon(loc);
+        ArmorStand armorStand = (ArmorStand) boomEntity.summon(loc,item);
         EntityUtils.setSlotsDisabled(armorStand,true);
 
         float yaw = EntityUtils.getEntityRotYaw(p);
@@ -308,7 +313,6 @@ public class Broom extends CustItem_CustModle implements Listener {
             if (entity.isDead()) return;
             Location loc = entity.getLocation();
             EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.4,0.55D,0.4));
-
             RPGArmour.logger.info("加载扫把" + loc);
         }
 
@@ -319,6 +323,10 @@ public class Broom extends CustItem_CustModle implements Listener {
 
         @Override
         public boolean init(org.bukkit.entity.Entity entity) {
+            return init(entity,createItem());
+        }
+
+        public boolean init(org.bukkit.entity.Entity entity,ItemStack item) {
             if (super.init(entity)){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
@@ -326,7 +334,6 @@ public class Broom extends CustItem_CustModle implements Listener {
                 load(entity);
                 if (entity instanceof ArmorStand){
                     ArmorStand armorStand = (ArmorStand) entity;
-                    ItemStack item = createItem();
                     armorStand.setVisible(false);
                     //paper方法
                     EntityUtils.setSlotsDisabled(armorStand,true);
@@ -336,6 +343,12 @@ public class Broom extends CustItem_CustModle implements Listener {
                 return true;
             }
             return false;
+        }
+
+        public Entity summon(Location location,ItemStack item) {
+            final ArmorStand armorStand = location.getWorld().spawn(location,ArmorStand.class);
+            init(armorStand,item);
+            return armorStand;
         }
 
         @Override
