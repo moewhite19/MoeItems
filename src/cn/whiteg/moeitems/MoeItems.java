@@ -81,11 +81,11 @@ public class MoeItems extends PluginBase {
         regItem(CatEarGolden.get());
         regItem(GardenLamp.get());
         regItem(Artillery.get());
-//        regItem(Broom.get());
+        regItem(Broom.get());
         regItem(Creeper.get());
         regItem(FireBerry.get());
         regItem(CannonBall.get());
-//        regItem(LightningRod.get());
+//        regItem(LightningRod.get()); //暂时不开放,1.17已有避雷针
         regItem(BigIvan.get());
         regItem(SaltSodaWater.get());
         regItem(WaterGun.get());

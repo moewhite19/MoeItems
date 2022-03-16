@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class TrashCan extends CustItem_CustModle implements Listener {
     private final static TrashCan a = new TrashCan();
-    Map<UUID, Inventory> inventoryMap = new MapMaker().weakValues().makeMap();
+    Map<UUID, Inventory> inventoryMap = new MapMaker().weakValues().makeMap(); //弱值Map
 
     private TrashCan() {
         super(Material.BOWL,67,"§7垃圾桶");

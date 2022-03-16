@@ -4,8 +4,10 @@ import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.event.BreakCustItemEntityEvent;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
+import cn.whiteg.rpgArmour.utils.ItemToolUtil;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -194,6 +196,19 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 snowball.getWorld().createExplosion(snowball,2.6F,true,true); //Paper方法
 //                snowball.getWorld().createExplosion(snowball.getLocation(),2.6F,true,true);
 
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBreak(BreakCustItemEntityEvent event) {
+        if (is(event.getDropStack())){
+            final Entity entity = event.getEntity();
+            if (entity instanceof ArmorStand as){
+                final ItemStack ammo = as.getEquipment().getChestplate();
+                if (!ItemToolUtil.itemIsAir(ammo)){
+                    as.getWorld().dropItem(as.getLocation(),ammo);
+                }
             }
         }
     }

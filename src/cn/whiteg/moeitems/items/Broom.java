@@ -1,32 +1,30 @@
 package cn.whiteg.moeitems.items;
 
-import cn.whiteg.moeitems.Listener.BreakEntityItem;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -36,6 +34,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.*;
 
@@ -52,7 +51,7 @@ public class Broom extends CustItem_CustModle implements Listener {
     Map<UUID, BroomRun> map = new HashMap<>();
 
     private Broom() {
-        super(Material.SHEARS,44,"§e魔法扫帚");
+        super(Material.SHEARS,45,"§e魔法扫帚");
     }
 
     public static Broom get() {
@@ -161,6 +160,15 @@ public class Broom extends CustItem_CustModle implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onFallDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof LivingEntity entity && event.getCause() == EntityDamageEvent.DamageCause.FALL){
+            if (this.entity.is(entity.getVehicle())){
+                event.setCancelled(true);
+            }
+        }
+    }
+
     //进入扫帚
     @EventHandler(ignoreCancelled = true)
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
@@ -180,20 +188,17 @@ public class Broom extends CustItem_CustModle implements Listener {
         }
     }
 
-/*
-    @EventHandler(ignoreCancelled = true) //1.16后失效
+    @EventHandler(ignoreCancelled = true) //1.16后失效, 1.18后又恢复
     public void onPlayerLeaveV(EntityDismountEvent event) {
         org.bukkit.entity.Entity dismounted = event.getDismounted();
         if (dismounted.isDead()) return;
         org.bukkit.entity.Entity player = event.getEntity();
         if (player instanceof Player && ((Player) player).isSneaking() && dismounted instanceof ArmorStand && getEntity().is(dismounted)){
-            CraftLivingEntity cp = (CraftLivingEntity) player;
-            if (!cp.isDead() && cp.getHandle().pitch < 80){
+            if (!player.isDead() && EntityUtils.getEntityRotPitch(player) < 80){
                 event.setCancelled(true);
             }
         }
     }
-*/
 
 //    @EventHandler(priority = EventPriority.LOW)
 //    public void onLClickEntity(EntityDamageByEntityEvent event) {
@@ -281,11 +286,12 @@ public class Broom extends CustItem_CustModle implements Listener {
         loc.setY(loc.getY() + 1);
         ArmorStand armorStand = (ArmorStand) entity.summon(loc);
         EntityUtils.setSlotsDisabled(armorStand,true);
-        CraftPlayer cp = (CraftPlayer) p;
-        float yaw = cp.getHandle().getYRot();
-        loc.setYaw(yaw);
-        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        nmsEntity.setYRot(yaw);
+
+        float yaw = EntityUtils.getEntityRotYaw(p);
+//        loc.setYaw(yaw);
+//        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+//        nmsEntity.setYRot(yaw);
+        EntityUtils.setEntityRotYaw(armorStand,yaw);
         event.setCancelled(true);
 
     }
@@ -316,7 +322,7 @@ public class Broom extends CustItem_CustModle implements Listener {
             if (super.init(entity)){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
-                s.add(BreakEntityItem.TAG);
+                s.add(CanBreakEntityItem.TAG);
                 load(entity);
                 if (entity instanceof ArmorStand){
                     ArmorStand armorStand = (ArmorStand) entity;
@@ -398,19 +404,22 @@ public class Broom extends CustItem_CustModle implements Listener {
             if (entity.isDead() || p.isDead() || p.getVehicle() == null){
                 stop();
             }
-            if (p instanceof Player){
-                EntityLiving np = ((CraftLivingEntity) p).getHandle();
+            if (p instanceof Player player){
                 float ad = EntityUtils.getInputX(p);
                 float ws = EntityUtils.getInputZ(p);
                 boolean jump = EntityUtils.getJumping(p);
 
-                boolean down = np.getXRot() > 80;
+                boolean down = player.isSneaking();
 //                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
 
-                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
+//                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
+                final float entityRotYaw = EntityUtils.getEntityRotYaw(entity);
+                float ycz = VectorUtils.getDifferenceAngle(EntityUtils.getEntityRotYaw(p),entityRotYaw);
                 if (ycz > 0.1F || ycz < -0.1F){
                     float ys = speedLimiter(ycz,wheelSpeed);
-                    ne.setYRot(ne.getYRot() + ys);
+//                    ne.setYRot(ne.getYRot() + ys);
+                    EntityUtils.setEntityRotYaw(entity,entityRotYaw + ys);
+                    ne.p(ys);
 //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
                 }
                 Vector vec = entity.getVelocity();

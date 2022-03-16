@@ -13,6 +13,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -101,9 +102,7 @@ public class FireBerry extends CustItem_CustModle implements Listener {
         }.runTaskTimer(RPGArmour.plugin,1,1);
     }
 
-
-    //@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    //1.16无效
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)    //1.16无效,但是1.18又可以用了
     public void onLeave(EntityDismountEvent event) {
         Entity v = event.getDismounted();
         Entity p = event.getEntity();
