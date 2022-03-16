@@ -1,14 +1,12 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.MoeItems;
-import cn.whiteg.rpgArmour.RPGArmour;
+import cn.whiteg.moeitems.Setting;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_MultiModel;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
-import cn.whiteg.rpgArmour.utils.ItemToolUtil;
-import cn.whiteg.rpgArmour.utils.ItemTypeUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -313,7 +311,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
             if (entity.isDead()) return;
             Location loc = entity.getLocation();
             EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.4,0.55D,0.4));
-            RPGArmour.logger.info("加载扫把" + loc);
+            if (Setting.DEBUG) MoeItems.logger.info("加载扫把" + loc);
         }
 
         @Override
@@ -393,11 +391,9 @@ public class Broom extends CustItem_MultiModel implements Listener {
     public class BroomRun extends BukkitRunnable {
         ArmorStand entity;
         EntityArmorStand ne;
-        LivingEntity p;
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
-            this.p = p;
             ne = ((CraftArmorStand) armor).getHandle();
             entity = armor;
             entity.addPassenger(p);
@@ -412,28 +408,26 @@ public class Broom extends CustItem_MultiModel implements Listener {
 //            e.setMarker(false);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void run() {
-            if (entity.isDead() || p.isDead() || p.getVehicle() == null){
-                stop();
-            }
-            if (p instanceof Player player){
-                float ad = EntityUtils.getInputX(p);
-                float ws = EntityUtils.getInputZ(p);
-                boolean jump = EntityUtils.getJumping(p);
+            if (entity.getPassenger() instanceof Player player && !entity.isDead() && !player.isDead() && player.getVehicle() != null){
+                float ad = EntityUtils.getInputX(player);
+                float ws = EntityUtils.getInputZ(player);
+                boolean jump = EntityUtils.getJumping(player);
 
                 boolean down = player.isSneaking();
 //                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
 
 //                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
                 final float entityRotYaw = EntityUtils.getEntityRotYaw(entity);
-                float ycz = VectorUtils.getDifferenceAngle(EntityUtils.getEntityRotYaw(p),entityRotYaw);
+                float ycz = VectorUtils.getDifferenceAngle(EntityUtils.getEntityRotYaw(player),entityRotYaw);
                 if (ycz > 0.1F || ycz < -0.1F){
                     float ys = speedLimiter(ycz,wheelSpeed);
-//                    ne.setYRot(ne.getYRot() + ys);
+                    //                    ne.setYRot(ne.getYRot() + ys);
                     EntityUtils.setEntityRotYaw(entity,entityRotYaw + ys);
                     ne.p(ys);
-//                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
+                    //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
                 }
                 Vector vec = entity.getVelocity();
                 Location loc = entity.getLocation();
@@ -454,7 +448,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
                     vec.setY(0.22F);
                 } else if (down){
                     entity.setVelocity(vec);
-                    p.setFallDistance(0F); //防止玩家摔死
+                    player.setFallDistance(0F); //防止玩家摔死
                     return;
                 } else {
                     vec.setY(0F);
@@ -466,6 +460,8 @@ public class Broom extends CustItem_MultiModel implements Listener {
                     effnum = 0;
                 }
                 entity.setVelocity(vec);
+            } else {
+                stop();
             }
         }
     }
