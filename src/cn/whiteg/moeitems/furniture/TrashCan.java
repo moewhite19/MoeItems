@@ -3,6 +3,7 @@ package cn.whiteg.moeitems.furniture;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import com.google.common.collect.MapMaker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,11 +22,10 @@ import org.bukkit.inventory.ShapedRecipe;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
 public class TrashCan extends CustItem_CustModle implements Listener {
     private final static TrashCan a = new TrashCan();
-    Map<UUID, Inventory> inventoryMap = new WeakHashMap<>();
+    Map<UUID, Inventory> inventoryMap = new MapMaker().weakValues().makeMap();
 
     private TrashCan() {
         super(Material.BOWL,67,"§7垃圾桶");
@@ -86,10 +86,11 @@ public class TrashCan extends CustItem_CustModle implements Listener {
 
     public Inventory getOrCreateInv(Entity entity) {
         final UUID uniqueId = entity.getUniqueId();
-        var inv = inventoryMap.remove(uniqueId);
+        var inv = inventoryMap.get(uniqueId);
         if (inv == null){
-            inv = Bukkit.createInventory(null,InventoryType.CHEST, getDisplayName());
-            inventoryMap.put(new UUID(uniqueId.getMostSignificantBits(),uniqueId.getLeastSignificantBits()),inv);
+            inv = Bukkit.createInventory(null,InventoryType.CHEST,getDisplayName());
+//            inventoryMap.put(new UUID(uniqueId.getMostSignificantBits(),uniqueId.getLeastSignificantBits()),inv);
+            inventoryMap.put(uniqueId,inv);
         }
         return inv;
     }
