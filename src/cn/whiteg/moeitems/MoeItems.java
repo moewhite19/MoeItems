@@ -109,6 +109,7 @@ public class MoeItems extends PluginBase {
         regItem(Crucible.get());
         regItem(Globe.get());
         regItem(TrashCan.get());
+        regItem(Chair.get());
         regItem(new Duck()); //小黄鸭
         regListener(new GSoup()); //寄汤
 //        regItem(GuisePotion.get());
