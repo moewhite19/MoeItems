@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockBase;
 import net.minecraft.world.level.block.state.IBlockData;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.meta.Damageable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Random;
 
 public class BurstPickaxe extends CustItem_CustModle implements Listener {
     private static final BurstPickaxe pickaxe = new BurstPickaxe();
@@ -33,6 +33,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
     static Method IBlockGetBlock;
     static Method getItem;
     static Method getDestroySpeed;//  public float getDestroySpeed(IBlockData state)
+    static Sound sound = Sound.BLOCK_STONE_BREAK;
 
     static {
         for (Method method : BlockBase.BlockData.class.getMethods()) {
@@ -76,8 +77,8 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
     }
 
     final int size = 1;
-    boolean looping = false;
     private final int maxDamage;
+    boolean looping = false;
 
     public BurstPickaxe() {
         super(Material.STONE_PICKAXE,2,"§4爆裂镐");
@@ -102,6 +103,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                 IBlockData iblockdata = ((CraftBlock) block).getNMS();
                 World world = block.getWorld();
                 if (getBreakSpeed(item,iblockdata) < 2F) return;
+                world.playSound(block.getLocation(),sound,1f,0.5f); //播放音效
                 event.setCancelled(true);
                 int x = block.getX();
                 int y = block.getY();
