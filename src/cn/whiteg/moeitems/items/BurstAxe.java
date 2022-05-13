@@ -61,7 +61,7 @@ public class BurstAxe extends CustItem_CustModle implements Listener {
         if (is(item)){
             final HashSet<Block> logs = new HashSet<>();
             final AtomicInteger leaves = new AtomicInteger();
-            deepScan(logs,leaves,block,48);
+            deepScan(logs,leaves,block,64); //遍历树干方块
 //            player.sendMessage(leaves.get() + " , " + logs.size());
             if (logs.isEmpty() || leaves.get() < logs.size()) return; //没有原木，或者树叶较少时跳出
             logs.remove(block); //剔除当前采集的方块

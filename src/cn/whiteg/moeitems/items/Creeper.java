@@ -56,10 +56,12 @@ public class Creeper extends CustItem_CustModle implements Listener {
         return creeperEntity;
     }
 
+    //当使用苦力怕当燃料燃烧时
     @EventHandler(ignoreCancelled = true)
     public void onFurnChan(FurnaceBurnEvent event) {
         if (is(event.getFuel())){
             event.setBurnTime(2400);
+            //爆炸
 //            Block block = event.getBlock();
 //            Location loc = block.getLocation();
 //            Residence res = MoeItems.plugin.getResidence();

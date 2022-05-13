@@ -30,22 +30,6 @@ public class CommonUtils {
         return entityCount.incrementAndGet();
     }
 
-    //获取位位置中心点
-    public static Location locationToCenter(Location loc) {
-        loc.setX(loc.getBlockX() + 0.5D);
-        loc.setY(loc.getBlockY() + 0.5D);
-        loc.setZ(loc.getBlockZ() + 0.5D);
-        return loc;
-    }
-
-    public static Object getNmsEntity(org.bukkit.entity.Entity entity) {
-        try{
-            return entity.getClass().getMethod("getHandle").invoke(entity);
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     /**
      * 消耗物品耐久度

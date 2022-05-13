@@ -45,8 +45,7 @@ public class CannonBall extends CustItem_CustModle implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHit(ProjectileHitEvent event) {
-        if (!(event.getEntity() instanceof Snowball)) return;
-        Snowball snowball = (Snowball) event.getEntity();
+        if (!(event.getEntity() instanceof Snowball snowball)) return;
         if (is(EntityUtils.getSnowballItem(snowball))){
             Location loc = snowball.getLocation();
             FlagPermissions flag = Residence.getInstance().getPermsByLoc(loc);

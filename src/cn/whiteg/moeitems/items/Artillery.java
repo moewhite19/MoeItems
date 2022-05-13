@@ -144,10 +144,10 @@ public class Artillery extends CustItem_CustModle implements Listener {
                 if (CannonBall.get().is(hand)){
                     ainv.setChestplate(hand);
                     inv.setItemInMainHand(aitem);
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§6更换弹匣"));
-                    return;
+                    p.sendActionBar(new TextComponent("§6Reloading..."));
                 } else if (CannonBall.get().is(aitem)){
                     //扣除物品
+                    //noinspection ConstantConditions
                     int ammo = aitem.getAmount() - 1;
                     if (ammo <= 0){
                         ainv.setChestplate(null);
@@ -156,8 +156,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
                         ainv.setChestplate(aitem);
                     }
 
-
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR,new TextComponent("§7剩余弹药: §f" + ammo));
+                    p.sendActionBar(new TextComponent("§7剩余弹药: §f" + ammo));
 
                     Location loc = entity.getLocation();
                     FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
