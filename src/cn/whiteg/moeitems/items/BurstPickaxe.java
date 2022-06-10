@@ -4,6 +4,7 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.NMSUtils;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
 import net.minecraft.network.protocol.game.PacketPlayInBlockDig;
+import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.PlayerInteractManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockBase;
@@ -12,9 +13,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -163,8 +164,9 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
     }
 
     public void PlayerBreakBlock(Player player,Block block) {
-        PlayerInteractManager playerInv = ((CraftPlayer) player).getHandle().d;
-        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.a,"destroyed");
+        player.breakBlock(block);
+//        PlayerInteractManager playerInv = ((EntityPlayer) NMSUtils.getNmsEntity(player)).d;
+//        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.a,"destroyed");
 //        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.STOP_DESTROY_BLOCK,"destroyed");
     }
 

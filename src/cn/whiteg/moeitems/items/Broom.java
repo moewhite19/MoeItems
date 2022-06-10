@@ -7,6 +7,7 @@ import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_MultiModel;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
+import cn.whiteg.rpgArmour.utils.NMSUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
@@ -17,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -394,7 +394,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
-            ne = ((CraftArmorStand) armor).getHandle();
+            ne = (EntityArmorStand) NMSUtils.getNmsEntity(armor);
             entity = armor;
             entity.addPassenger(p);
 //            e.setMarker(true);
