@@ -2,15 +2,11 @@ package cn.whiteg.moeitems.hats;
 
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
-import org.bukkit.entity.Creeper;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Phantom;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 public class WitchHat extends CustItem_CustModle {
     private static final WitchHat a = new WitchHat();
