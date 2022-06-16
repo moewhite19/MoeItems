@@ -5,10 +5,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 
-public class WitchHat extends CustItem_CustModle {
+public class WitchHat extends CustItem_CustModle implements Listener {
     private static final WitchHat a = new WitchHat();
 
     private WitchHat() {
