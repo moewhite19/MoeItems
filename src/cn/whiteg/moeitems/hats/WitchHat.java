@@ -5,6 +5,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,6 +27,14 @@ public class WitchHat extends CustItem_CustModle {
 
     public static WitchHat get() {
         return a;
+    }
+
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.LOW)
+    public void onDamage(EntityDamageEvent event){
+        if (event.getCause() == EntityDamageEvent.DamageCause.MAGIC){
+//            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR,-(event.getDamage() * 0.85));//修改盔甲值
+            event.setDamage(event.getDamage() * 0.25); //直接设置总值
+        }
     }
 
 }

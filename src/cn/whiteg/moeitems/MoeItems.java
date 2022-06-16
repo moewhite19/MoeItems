@@ -105,7 +105,7 @@ public class MoeItems extends PluginBase {
         regItem(BlindBox.get());
         regItem(BoltHat.get());
         regItem(DemonHorn.get());
-//        regItem(WitchHat.get()); //暂时不知道写什么x
+        regItem(WitchHat.get()); //暂时不知道写什么x
         regItem(Crucible.get());
         regItem(Globe.get());
         regItem(TrashCan.get());
