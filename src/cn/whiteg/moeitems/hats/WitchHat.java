@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 public class WitchHat extends CustItem_CustModle {
@@ -32,8 +33,13 @@ public class WitchHat extends CustItem_CustModle {
     @EventHandler(ignoreCancelled = true,priority = EventPriority.LOW)
     public void onDamage(EntityDamageEvent event){
         if (event.getCause() == EntityDamageEvent.DamageCause.MAGIC){
+            if(event.getEntity() instanceof LivingEntity livingEntity){
+                final EntityEquipment equipment = livingEntity.getEquipment();
+                if(equipment != null && is(equipment.getHelmet())){
 //            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR,-(event.getDamage() * 0.85));//修改盔甲值
-            event.setDamage(event.getDamage() * 0.25); //直接设置总值
+                    event.setDamage(event.getDamage() * 0.25); //直接设置总值
+                }
+            }
         }
     }
 
