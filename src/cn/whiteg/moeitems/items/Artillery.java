@@ -49,7 +49,7 @@ public class Artillery extends CustItem_CustModle implements Listener {
         a = new Artillery();
     }
 
-    private final float speed = 1.5F;
+    private final float speed = 3.2F;
     private final Map<UUID, BukkitTask> movein = new HashMap<>();
     private final ArtilleryEntity artilleryEntity;
     BulletItem bullet = new BulletItem();

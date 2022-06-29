@@ -16,7 +16,7 @@ public class Chair extends CustItem_RangeOfModel implements Listener {
     private final static Chair a = new Chair();
 
     private Chair() {
-        super(Material.BOWL,90,"§f椅子",90,95);
+        super(Material.BOWL,90,"§f椅子",90,105);
         NamespacedKey key = new NamespacedKey(MoeItems.plugin,"chair");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(

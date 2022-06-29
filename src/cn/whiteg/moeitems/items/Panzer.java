@@ -4,7 +4,7 @@ import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.moeitems.Setting;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
-import cn.whiteg.rpgArmour.api.CustItem_MultiModel;
+import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.NMSUtils;
@@ -18,54 +18,54 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.*;
 
-public class Broom extends CustItem_MultiModel implements Listener {
-    final static Broom o;
+public class Panzer extends CustItem_CustModle implements Listener {
+    final static Panzer o;
 
     static {
-        o = new Broom();
+        o = new Panzer();
     }
 
     private final float wheelSpeed = 7.8F;
     private final float moveSpeed = 1.9F;
-    private final BoomEntity boomEntity = new BoomEntity();
-    Map<UUID, BroomRun> map = new HashMap<>();
+    private final BoomEntity bodyEntity = new BoomEntity();
+    Map<UUID, BodyRun> map = new HashMap<>();
+    static int itemId = 69;
+    static int bodyId = 67;
+    static int turretId = 65;
 
-    private Broom() {
-        super(Material.SHEARS,45,"§e魔法扫帚",45,4,5,6);
+    private Panzer() {
+        super(Material.SHEARS,itemId,"§9kanonenjadgpanzer");
     }
 
-    public static Broom get() {
+    public static Panzer get() {
         return o;
     }
 
-    public BoomEntity getBoomEntity() {
-        return boomEntity;
+    public BoomEntity getBodyEntity() {
+        return bodyEntity;
     }
 
     public boolean join(ArmorStand e,Player p) {
-        if (getBoomEntity().is(e) && e.getPassengers().isEmpty()){
-            new BroomRun(e,p);
+        if (getBodyEntity().is(e) && e.getPassengers().isEmpty()){
+            new BodyRun(e,p);
             return true;
         }
         /*e.addPassenger(p);
@@ -153,9 +153,9 @@ public class Broom extends CustItem_MultiModel implements Listener {
 
     public void unreg() {
         if (!map.isEmpty()){
-            Iterator<Map.Entry<UUID, BroomRun>> it = map.entrySet().iterator();
+            Iterator<Map.Entry<UUID, BodyRun>> it = map.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<UUID, BroomRun> s = it.next();
+                Map.Entry<UUID, BodyRun> s = it.next();
                 s.getValue().stop();
             }
         }
@@ -164,7 +164,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onFallDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof LivingEntity entity && event.getCause() == EntityDamageEvent.DamageCause.FALL){
-            if (this.boomEntity.is(entity.getVehicle())){
+            if (this.bodyEntity.is(entity.getVehicle())){
                 event.setCancelled(true);
             }
         }
@@ -173,9 +173,9 @@ public class Broom extends CustItem_MultiModel implements Listener {
     //进入扫帚
     @EventHandler(ignoreCancelled = true)
     public void onRClickEntity(PlayerInteractAtEntityEvent event) {
-        org.bukkit.entity.Entity e = event.getRightClicked();
+        Entity e = event.getRightClicked();
         Player p = event.getPlayer();
-        if (e instanceof ArmorStand && boomEntity.is(e) && e.getPassengers().isEmpty()){
+        if (e instanceof ArmorStand && bodyEntity.is(e) && e.getPassengers().isEmpty()){
             event.setCancelled(true);
             Location loc = e.getLocation();
             Residence res = Residence.getInstance();
@@ -186,18 +186,6 @@ public class Broom extends CustItem_MultiModel implements Listener {
                 }
             }
             join((ArmorStand) e,p);
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true) //1.16后失效, 1.18后又恢复
-    public void onPlayerLeaveV(EntityDismountEvent event) {
-        org.bukkit.entity.Entity dismounted = event.getDismounted();
-        if (dismounted.isDead()) return;
-        org.bukkit.entity.Entity player = event.getEntity();
-        if (player instanceof Player && ((Player) player).isSneaking() && dismounted instanceof ArmorStand armorStand && getBoomEntity().is(dismounted)){
-            if (!player.isDead() && !armorStand.isOnGround()){
-                event.setCancelled(true);
-            }
         }
     }
 
@@ -225,24 +213,18 @@ public class Broom extends CustItem_MultiModel implements Listener {
 //        }
 //}
 
-    @EventHandler(ignoreCancelled = true)
-    public void onDroupItem(PlayerDropItemEvent event) {
-        Player p = event.getPlayer();
-        if (!p.isSneaking()) return;
-        if (p.getVehicle() != null) return;
-        ItemStack item = event.getItemDrop().getItemStack();
-        if (!is(item)) return;
-        if (item.getAmount() != 1) return;
-        event.getItemDrop().remove();
-        Location loc = p.getLocation();
-        ArmorStand armorStand = (ArmorStand) boomEntity.summon(loc,item);
-        EntityUtils.setSlotsDisabled(armorStand,true);
-
-//        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
-//        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-//        nmsEntity.setYRot(loc.getYaw());
-        EntityUtils.setEntityRotYaw(armorStand,loc.getYaw());
-        join(armorStand,p);
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event){
+        final Item item = event.getEntity();
+        final ItemStack itemStack = item.getItemStack();
+        if(itemStack.hasItemMeta() && itemStack.getType() == getMaterial()){
+            final ItemMeta itemMeta = itemStack.getItemMeta();
+            if(itemMeta.hasCustomModelData() && itemMeta.getCustomModelData() == bodyId){
+                itemMeta.setCustomModelData(itemId);
+                itemStack.setItemMeta(itemMeta);
+                item.setItemStack(itemStack);
+            }
+        }
     }
 
     //放置
@@ -277,6 +259,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
             }
         }
         event.setCancelled(true);
+
         if (item.getAmount() > 1){
             item.setAmount(item.getAmount() - 1);
         } else if (hand == EquipmentSlot.HAND){
@@ -287,7 +270,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         item = item.clone();
         item.setAmount(1);
         loc.setY(loc.getY() + 1);
-        ArmorStand armorStand = (ArmorStand) boomEntity.summon(loc,item);
+        ArmorStand armorStand = (ArmorStand) bodyEntity.summon(loc,item);
         EntityUtils.setSlotsDisabled(armorStand,true);
 
         float yaw = EntityUtils.getEntityRotYaw(p);
@@ -303,28 +286,43 @@ public class Broom extends CustItem_MultiModel implements Listener {
 //        Map<UUID, BroomStaus> map = new HashMap<>();
 
         public BoomEntity() {
-            super("broom",ArmorStand.class);
+            super("panzer",ArmorStand.class);
         }
 
         @Override
-        public void load(final org.bukkit.entity.Entity entity) {
+        public void load(final Entity entity) {
             if (entity.isDead()) return;
             Location loc = entity.getLocation();
             EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.4,0.55D,0.4));
-            if (Setting.DEBUG) MoeItems.logger.info("加载扫把" + loc);
+            if (Setting.DEBUG) MoeItems.logger.info("加载" + getId() + loc);
         }
 
         @Override
-        public void unload(org.bukkit.entity.Entity entity) {
-//            entity.remove();
+        public void unload(Entity entity) {
+            entity.remove();
         }
 
         @Override
-        public boolean init(org.bukkit.entity.Entity entity) {
+        public boolean init(Entity entity) {
             return init(entity,createItem());
         }
 
-        public boolean init(org.bukkit.entity.Entity entity,ItemStack item) {
+        public ItemStack createItem() {
+            ItemStack var1 = new ItemStack(getMaterial());
+            ItemMeta var2 = var1.getItemMeta();
+            if (var2 != null) {
+                var2.setDisplayName(getDisplayName());
+                if (getLore() != null) {
+                    var2.setLore(getLore());
+                }
+
+                var2.setCustomModelData(bodyId);
+                var1.setItemMeta(var2);
+            }
+            return var1;
+        }
+
+        public boolean init(Entity entity,ItemStack item) {
             if (super.init(entity)){
                 Set<String> s = entity.getScoreboardTags();
                 s.add("dontedit");
@@ -349,7 +347,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         }
 
         @Override
-        public boolean is(org.bukkit.entity.Entity entity) {
+        public boolean is(Entity entity) {
             return entity instanceof ArmorStand && super.is(entity);
         }
         //        public Map<UUID, BroomStaus> getMap() {
@@ -399,12 +397,11 @@ public class Broom extends CustItem_MultiModel implements Listener {
         return r;
     }
 
-    public class BroomRun extends BukkitRunnable {
+    public class BodyRun extends BukkitRunnable {
         ArmorStand entity;
         EntityArmorStand ne;
-        byte effnum = 0;
 
-        public BroomRun(ArmorStand armor,Player p) {
+        public BodyRun(ArmorStand armor,Player p) {
             ne = (EntityArmorStand) NMSUtils.getNmsEntity(armor);
             entity = armor;
             entity.addPassenger(p);
@@ -427,14 +424,6 @@ public class Broom extends CustItem_MultiModel implements Listener {
                 float ws = EntityUtils.getInputZ(livingEntity);
                 boolean jump;
                 jump = EntityUtils.getJumping(livingEntity);
-                boolean down;
-                if(livingEntity instanceof Player player){
-                    down = player.isSneaking();
-                }else {
-                    final float inputY = EntityUtils.getInputY(livingEntity);
-                    down = inputY < -0.1f;
-                }
-
 //                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
 
 //                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
@@ -462,21 +451,11 @@ public class Broom extends CustItem_MultiModel implements Listener {
                         vec.add(locv.multiply(0.065F * ad));
                     }
                 }
-                if (jump){
-                    vec.setY(0.22F);
-                } else if (down){
-                    entity.setVelocity(vec);
-                    livingEntity.setFallDistance(0F); //防止玩家摔死
-                    return;
-                } else {
-                    vec.setY(0F);
-                }
-                effnum++;
-                if (effnum > 4){
-                    loc.setY(loc.getY() + 1.8D);
-                    loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
-                    effnum = 0;
-                }
+//                if (jump){
+//                    vec.setY(0.22F);
+//                } else {
+//                    vec.setY(0F);
+//                }
                 entity.setVelocity(vec);
             } else {
                 stop();

@@ -16,7 +16,7 @@ public class WitchHat extends CustItem_CustModle implements Listener {
     private static final WitchHat a = new WitchHat();
 
     private WitchHat() {
-        super(Material.SHEARS,96,"§c女巫帽");
+        super(Material.SHEARS,96,"§5女巫帽");
 //        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"witch_hat");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
@@ -38,7 +38,7 @@ public class WitchHat extends CustItem_CustModle implements Listener {
                 if (equipment != null){
                     final ItemStack helmet = equipment.getHelmet();
                     if (is(helmet)){
-                        final double immune = event.getDamage() * 0.75;
+                        final double immune = event.getFinalDamage() * 0.75;
                         event.setDamage(EntityDamageEvent.DamageModifier.ARMOR,-immune);//修改盔甲值
                         //扣耐久值
                         if (ItemToolUtil.damage(helmet,RandomUtil.getRandom().nextInt(2)/*(int) Math.ceil(immune)*/)){

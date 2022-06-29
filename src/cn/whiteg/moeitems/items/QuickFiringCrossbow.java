@@ -34,8 +34,8 @@ import java.util.*;
 
 public class QuickFiringCrossbow extends CustItem_CustModle implements Listener {
     public static final String arrowTag = "seeker";
-    private static final int duration = 60;
-    private static final float turningPower = 0.2F; //转向能力
+    private static final int duration = 600;
+    private static final float turningPower = 0.6F; //转向能力
     /*    @EventHandler
         public void onUse(PlayerInteractEvent event) {
             if (event.getAction() == Action.LEFT_CLICK_AIR){
@@ -59,7 +59,6 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
     public static QuickFiringCrossbow a = new QuickFiringCrossbow();
     public static Map<String, LivingEntity> map = new HashMap<>();
     static DecimalFormat decimalFormat = new DecimalFormat("#.#"); //数字格式化
-    static boolean saveTarget = true;
     private float itemDropChance = 0.05f;
     private float spawnChance = 0.075f;
 
