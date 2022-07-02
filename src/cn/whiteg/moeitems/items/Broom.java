@@ -46,8 +46,8 @@ public class Broom extends CustItem_MultiModel implements Listener {
         o = new Broom();
     }
 
-    private final float wheelSpeed = 8F; //转向速度
-    private final float moveSpeed =0.7F; //飞行速度
+//    private final float wheelSpeed = 8F; //转向速度
+    private final float moveSpeed =0.85F; //飞行速度
     private final BoomEntity boomEntity = new BoomEntity();
     Map<UUID, BroomRun> map = new HashMap<>();
 
