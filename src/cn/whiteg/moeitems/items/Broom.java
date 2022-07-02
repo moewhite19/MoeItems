@@ -46,8 +46,8 @@ public class Broom extends CustItem_MultiModel implements Listener {
         o = new Broom();
     }
 
-    private final float wheelSpeed = 7.8F;
-    private final float moveSpeed = 1.9F;
+    private final float wheelSpeed = 8F; //转向速度
+    private final float moveSpeed =0.7F; //飞行速度
     private final BoomEntity boomEntity = new BoomEntity();
     Map<UUID, BroomRun> map = new HashMap<>();
 
@@ -400,17 +400,17 @@ public class Broom extends CustItem_MultiModel implements Listener {
     }
 
     public class BroomRun extends BukkitRunnable {
-        ArmorStand entity;
+        ArmorStand broom;
         EntityArmorStand ne;
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
             ne = (EntityArmorStand) NMSUtils.getNmsEntity(armor);
-            entity = armor;
-            entity.addPassenger(p);
+            broom = armor;
+            broom.addPassenger(p);
 //            e.setMarker(true);
             runTaskTimer(MoeItems.plugin,1,1);
-            map.put(entity.getUniqueId(),this);
+            map.put(broom.getUniqueId(),this);
         }
 
         void stop() {
@@ -422,7 +422,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         @SuppressWarnings("deprecation")
         @Override
         public void run() {
-            if (entity.getPassenger() instanceof LivingEntity livingEntity && !entity.isDead() && !livingEntity.isDead() && livingEntity.getVehicle() != null){
+            if (broom.getPassenger() instanceof LivingEntity livingEntity && !broom.isDead() && !livingEntity.isDead() && livingEntity.getVehicle() != null){
                 float ad = EntityUtils.getInputX(livingEntity);
                 float ws = EntityUtils.getInputZ(livingEntity);
                 boolean jump;
@@ -436,36 +436,35 @@ public class Broom extends CustItem_MultiModel implements Listener {
                 }
 
 //                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
-
-//                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
-                final float entityRotYaw = EntityUtils.getEntityRotYaw(entity);
-                float ycz = getDifferenceAngle(EntityUtils.getEntityRotYaw(livingEntity),entityRotYaw);
-                if (ycz > 0.1F || ycz < -0.1F){
-                    float ys = speedLimiter(ycz,wheelSpeed);
-                    //                    ne.setYRot(ne.getYRot() + ys);
-                    EntityUtils.setEntityRotYaw(entity,entityRotYaw + ys);
-//                    ne.p(ys);
-                    //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
-                }
-                Vector vec = entity.getVelocity();
-                Location loc = entity.getLocation();
+                /*//同步扫帚和玩家的方向
+//                final float entityRotYaw = EntityUtils.getEntityRotYaw(entity);
+//                float ycz = getDifferenceAngle(EntityUtils.getEntityRotYaw(livingEntity),entityRotYaw);
+//                if (ycz > 0.1F || ycz < -0.1F){
+//                    float ys = speedLimiter(ycz,wheelSpeed);
+//                    EntityUtils.setEntityRotYaw(entity,entityRotYaw + ys);
+//                    //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
+//                }*/
+                //直接同步玩家方向
+                EntityUtils.setEntityRotYaw(broom,EntityUtils.getEntityRotYaw(livingEntity));
+                Vector vec = broom.getVelocity();
+                Location loc = broom.getLocation();
                 Vector locv = VectorUtils.viewVector(loc);
                 if (ws != 0F){
                     if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
-                        vec.add(locv.multiply(0.065F * ws));
+                        vec.add(locv.multiply(0.035F * ws));
                     }
                 }
                 if (ad != 0F){
                     loc.setYaw(Location.normalizeYaw(loc.getYaw() - 90));
                     locv = VectorUtils.viewVector(loc);
                     if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
-                        vec.add(locv.multiply(0.065F * ad));
+                        vec.add(locv.multiply(0.025F * ad));
                     }
                 }
                 if (jump){
                     vec.setY(0.22F);
                 } else if (down){
-                    entity.setVelocity(vec);
+                    broom.setVelocity(vec);
                     livingEntity.setFallDistance(0F); //防止玩家摔死
                     return;
                 } else {
@@ -477,7 +476,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
                     loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
                     effnum = 0;
                 }
-                entity.setVelocity(vec);
+                broom.setVelocity(vec);
             } else {
                 stop();
             }

@@ -43,13 +43,13 @@ public class Panzer extends CustItem_CustModle implements Listener {
         o = new Panzer();
     }
 
+    final static int itemId = 69;
+    final static int bodyId = 67;
+    final static int turretId = 65;
     private final float wheelSpeed = 7.8F;
-    private final float moveSpeed = 1.9F;
+    private final float moveSpeed = 2.4F;
     private final BoomEntity bodyEntity = new BoomEntity();
     Map<UUID, BodyRun> map = new HashMap<>();
-    static int itemId = 69;
-    static int bodyId = 67;
-    static int turretId = 65;
 
     private Panzer() {
         super(Material.SHEARS,itemId,"§9kanonenjadgpanzer");
@@ -141,14 +141,6 @@ public class Panzer extends CustItem_CustModle implements Listener {
         if (v > max) return max;
         if (v < max2) return max2;
         return v;
-    }
-
-    public void drop(ArmorStand e,Location loc) {
-        ItemStack helmet = e.getHelmet();
-        e.remove();
-        if (is(helmet)){
-            loc.getWorld().dropItem(loc,helmet);
-        }
     }
 
     public void unreg() {
@@ -267,10 +259,8 @@ public class Panzer extends CustItem_CustModle implements Listener {
         } else {
             pi.setItemInOffHand(null);
         }
-        item = item.clone();
-        item.setAmount(1);
         loc.setY(loc.getY() + 1);
-        ArmorStand armorStand = (ArmorStand) bodyEntity.summon(loc,item);
+        ArmorStand armorStand = (ArmorStand) bodyEntity.summon(loc);
         EntityUtils.setSlotsDisabled(armorStand,true);
 
         float yaw = EntityUtils.getEntityRotYaw(p);
@@ -293,7 +283,7 @@ public class Panzer extends CustItem_CustModle implements Listener {
         public void load(final Entity entity) {
             if (entity.isDead()) return;
             Location loc = entity.getLocation();
-            EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.4,0.55D,0.4));
+            EntityUtils.setBoundingBox(entity,BoundingBox.of(loc,0.98,0.78D,0.98));
             if (Setting.DEBUG) MoeItems.logger.info("加载" + getId() + loc);
         }
 
@@ -420,43 +410,34 @@ public class Panzer extends CustItem_CustModle implements Listener {
         @Override
         public void run() {
             if (entity.getPassenger() instanceof LivingEntity livingEntity && !entity.isDead() && !livingEntity.isDead() && livingEntity.getVehicle() != null){
+//                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
+
+//                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
+                final boolean onGround = entity.isOnGround();
                 float ad = EntityUtils.getInputX(livingEntity);
                 float ws = EntityUtils.getInputZ(livingEntity);
                 boolean jump;
                 jump = EntityUtils.getJumping(livingEntity);
-//                        p.sendActionBar("左右 " + ad + "  前后 " + ws + "  " + (jump ? "正在上升" : (down ? "正在下降" : "")));
-
-//                float ycz = VectorUtils.getDifferenceAngle(np.getYRot(),ne.getYRot());
-                final float entityRotYaw = EntityUtils.getEntityRotYaw(entity);
-                float ycz = getDifferenceAngle(EntityUtils.getEntityRotYaw(livingEntity),entityRotYaw);
-                if (ycz > 0.1F || ycz < -0.1F){
-                    float ys = speedLimiter(ycz,wheelSpeed);
-                    //                    ne.setYRot(ne.getYRot() + ys);
-                    EntityUtils.setEntityRotYaw(entity,entityRotYaw + ys);
-//                    ne.p(ys);
-                    //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
-                }
                 Vector vec = entity.getVelocity();
                 Location loc = entity.getLocation();
                 Vector locv = VectorUtils.viewVector(loc);
                 if (ws != 0F){
-                    if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
-                        vec.add(locv.multiply(0.065F * ws));
+                    if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < (onGround ? moveSpeed : 0.5f)){
+                        vec.add(locv.multiply((onGround ? 0.065F : 0.02f) * ws));
                     }
                 }
                 if (ad != 0F){
-                    loc.setYaw(Location.normalizeYaw(loc.getYaw() - 90));
-                    locv = VectorUtils.viewVector(loc);
-                    if (Math.abs(vec.getX()) + Math.abs(vec.getZ()) < moveSpeed){
-                        vec.add(locv.multiply(0.065F * ad));
-                    }
+                    float ys = -speedLimiter(ad * (onGround ? 2.2f : 1f),(onGround ? wheelSpeed: 1f));
+                    //                    ne.setYRot(ne.getYRot() + ys);
+                    EntityUtils.setEntityRotYaw(entity,EntityUtils.getEntityRotYaw(entity) + ys);
+//                    ne.p(ys);
+                    //                    p.sendActionBar("视角差: " + ys + "玩家视角" + np.yaw + " 实体视角" + ne.yaw);
                 }
-//                if (jump){
-//                    vec.setY(0.22F);
-//                } else {
-//                    vec.setY(0F);
-//                }
+                if (jump && onGround){
+                    vec.setY(0.6f);
+                }
                 entity.setVelocity(vec);
+
             } else {
                 stop();
             }
