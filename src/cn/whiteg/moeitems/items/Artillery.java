@@ -229,14 +229,12 @@ public class Artillery extends CustItem_CustModle implements Listener {
         if (!is(item)) return;
         Block block = event.getClickedBlock();
         if (block == null) return;
-        Location loc = block.getLocation().toCenterLocation(); //Paper方法
-//        Location loc = block.getLocation();
-//        loc.setX(loc.getBlockX() + 0.5D);
-//        loc.setY(loc.getBlockY() + 0.5D);
-//        loc.setZ(loc.getBlockZ() + 0.5D);
-
-        loc.setY(loc.getY() + 1);
-        if (loc.getBlock().getType() != Material.AIR) return;
+//        Location loc = block.getLocation().toCenterLocation(); //Paper方法
+        Location loc = block.getLocation();
+        loc.setX(loc.getX() + 0.5D);
+        loc.setY(loc.getY() + 1.2D);
+        loc.setZ(loc.getZ() + 0.5D);
+        if (loc.getBlock().isSolid()) return;
         Residence res = Residence.getInstance();
         if (!res.isResAdminOn(p)){
             FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);

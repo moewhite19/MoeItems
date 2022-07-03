@@ -263,12 +263,11 @@ public class Broom extends CustItem_MultiModel implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
         Location loc = block.getLocation();
-        loc.setX(loc.getBlockX() + 0.5D);
-        loc.setY(loc.getBlockY() + 0.5D);
-        loc.setZ(loc.getBlockZ() + 0.5D);
-
-        loc.setY(loc.getY() + 1);
-        if (loc.getBlock().getType() != Material.AIR) return;
+        loc.setX(loc.getX() + 0.5D);
+        loc.setY(loc.getY() + 1.2D);
+        loc.setZ(loc.getZ() + 0.5D);
+//        loc.setY(loc.getY() + 1);
+        if (loc.getBlock().isSolid()) return;
         Residence res = Residence.getInstance();
         if (!res.isResAdminOn(p)){
             FlagPermissions flag = Residence.getInstance().getPermsByLocForPlayer(loc,p);
@@ -286,7 +285,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         }
         item = item.clone();
         item.setAmount(1);
-        loc.setY(loc.getY() + 1);
+//        loc.setY(loc.getY() + 1);
         ArmorStand armorStand = (ArmorStand) boomEntity.summon(loc,item);
         EntityUtils.setSlotsDisabled(armorStand,true);
 
