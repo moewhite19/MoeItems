@@ -2,9 +2,11 @@ package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.moeitems.Setting;
+import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_MultiModel;
+import cn.whiteg.rpgArmour.custItems.BambooDragonfly;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.NMSUtils;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -32,6 +35,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -422,6 +426,13 @@ public class Broom extends CustItem_MultiModel implements Listener {
         @Override
         public void run() {
             if (broom.getPassenger() instanceof LivingEntity livingEntity && !broom.isDead() && !livingEntity.isDead() && livingEntity.getVehicle() != null){
+                if(livingEntity instanceof Player player){
+                    //调用竹蜻蜓的方法，检查这里让不让飞
+                    if (!BambooDragonfly.canFlyin(player)){
+                        stop();
+                        return;
+                    }
+                }
                 float ad = EntityUtils.getInputX(livingEntity);
                 float ws = EntityUtils.getInputZ(livingEntity);
                 boolean jump;
