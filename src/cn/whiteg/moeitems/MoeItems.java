@@ -115,6 +115,7 @@ public class MoeItems extends PluginBase {
         regListener(new GSoup()); //寄汤
         regItem(VirtueAxe.get());
         regItem(Panzer.get()); //坦克
+        regItem(new Barber());
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

@@ -50,13 +50,14 @@ public class Broom extends CustItem_MultiModel implements Listener {
         o = new Broom();
     }
 
-//    private final float wheelSpeed = 8F; //转向速度
-    private final float moveSpeed =0.85F; //飞行速度
+    //    private final float wheelSpeed = 8F; //转向速度
+    private final float moveSpeed = 0.85F; //飞行速度
     private final BoomEntity boomEntity = new BoomEntity();
     Map<UUID, BroomRun> map = new HashMap<>();
 
     private Broom() {
         super(Material.SHEARS,45,"§e魔法扫帚",45,4,5,6);
+        RPGArmour.plugin.getEntityManager().regEntity(boomEntity);
     }
 
     public static Broom get() {
@@ -387,16 +388,15 @@ public class Broom extends CustItem_MultiModel implements Listener {
 //                }
 //            }
 //        }
-
     }
 
-    public static float getDifferenceAngle(float v1, float v2) {
+    public static float getDifferenceAngle(float v1,float v2) {
         v1 += 180.0F;
         v2 += 180.0F;
         float r = v1 - v2;
-        if (r > 180.0F) {
+        if (r > 180.0F){
             r -= 360.0F;
-        } else if (r < -180.0F) {
+        } else if (r < -180.0F){
             r += 360.0F;
         }
         return r;
@@ -426,7 +426,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         @Override
         public void run() {
             if (broom.getPassenger() instanceof LivingEntity livingEntity && !broom.isDead() && !livingEntity.isDead() && livingEntity.getVehicle() != null){
-                if(livingEntity instanceof Player player){
+                if (livingEntity instanceof Player player){
                     //调用竹蜻蜓的方法，检查这里让不让飞
                     if (!BambooDragonfly.canFlyin(player)){
                         stop();
@@ -438,9 +438,9 @@ public class Broom extends CustItem_MultiModel implements Listener {
                 boolean jump;
                 jump = EntityUtils.getJumping(livingEntity);
                 boolean down;
-                if(livingEntity instanceof Player player){
+                if (livingEntity instanceof Player player){
                     down = player.isSneaking();
-                }else {
+                } else {
                     final float inputY = EntityUtils.getInputY(livingEntity);
                     down = inputY < -0.1f;
                 }
