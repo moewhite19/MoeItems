@@ -3,9 +3,7 @@ package cn.whiteg.moeitems.items;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -22,12 +20,11 @@ public class Barber extends CustItem_CustModle implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInteraction(PlayerInteractAtEntityEvent event) {
-        if(event.getHand() != EquipmentSlot.HAND) return;
         final Player player = event.getPlayer();
+        if (event.getHand() != EquipmentSlot.HAND || player.isSneaking()) return;
         final ItemStack hand = player.getItemInHand();
-        if (is(hand )){
-            Entity clicked = event.getRightClicked();
-            if(!clicked.getPassengers().isEmpty())return; //头上有实体时无视
+        if (is(hand) && event.getRightClicked() instanceof LivingEntity clicked){
+            if (!clicked.getPassengers().isEmpty()) return; //头上有实体时无视
             final ItemStack one = hand.asOne();
             hand.subtract(); //物品减少一个
             final Item item = clicked.getWorld().dropItem(clicked.getLocation(),one);
@@ -43,8 +40,8 @@ public class Barber extends CustItem_CustModle implements Listener {
     }
 
     @EventHandler
-    public void onEntityLeave(EntityDismountEvent event){
-        if(event.getEntity() instanceof Item item && is(item.getItemStack())){
+    public void onEntityLeave(EntityDismountEvent event) {
+        if (event.getEntity() instanceof Item item && is(item.getItemStack())){
             item.setCanPlayerPickup(true);
             item.setCanMobPickup(true);
         }
