@@ -67,7 +67,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
     }
 
     public boolean join(ArmorStand e,Player p) {
-        if (getBoomEntity().is(e) && e.getPassengers().isEmpty()){
+        if (getBoomEntity().is(e) && e.getPassengers().isEmpty() &&  BambooDragonfly.canFlyin(p)){
             new BroomRun(e,p);
             return true;
         }
