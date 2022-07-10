@@ -68,7 +68,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
 
     public boolean join(ArmorStand e,Player p) {
         if (getBoomEntity().is(e) && e.getPassengers().isEmpty() &&  BambooDragonfly.canFlyin(p)){
-            new BroomRun(e,p);
+            new BroomRun(e,p).start();
             return true;
         }
         /*e.addPassenger(p);
@@ -402,22 +402,26 @@ public class Broom extends CustItem_MultiModel implements Listener {
 
     public class BroomRun extends BukkitRunnable {
         ArmorStand broom;
+        private final Player passenger;
         EntityArmorStand ne;
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
             ne = (EntityArmorStand) NMSUtils.getNmsEntity(armor);
             broom = armor;
-            broom.addPassenger(p);
+            this.passenger = p;
 //            e.setMarker(true);
-            runTaskTimer(MoeItems.plugin,1,1);
-            map.put(broom.getUniqueId(),this);
         }
 
         void stop() {
             cancel();
             //EntityTpUtils.forgeStopRide(p);
 //            e.setMarker(false);
+        }
+        void start(){
+            broom.addPassenger(passenger);
+            runTaskTimer(MoeItems.plugin,1,1);
+            map.put(broom.getUniqueId(),this);
         }
 
         @SuppressWarnings("deprecation")
