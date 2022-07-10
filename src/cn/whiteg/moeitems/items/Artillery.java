@@ -67,7 +67,9 @@ public class Artillery extends CustItem_CustModle implements Listener {
         r.setIngredient('A',Material.SHIELD);
         r.setIngredient('B',Material.CAULDRON);
         r.setIngredient('C',Material.ARMOR_STAND);
-        RPGArmour.plugin.getRecipeManage().addRecipe(key,r);
+        final RPGArmour rpgArmour = RPGArmour.plugin;
+        rpgArmour.getRecipeManage().addRecipe(key,r);
+        rpgArmour.getEntityManager().regEntity(artilleryEntity);
     }
 
     public static Artillery get() {
