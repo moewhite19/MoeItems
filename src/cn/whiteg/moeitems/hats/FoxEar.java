@@ -111,7 +111,7 @@ public class FoxEar extends CustItem_CustModle implements Listener {
                 Location loc2 = entity.getLocation();
                 loc2.setY(loc2.getY() + 0.2);
                 float yaw = VectorUtils.getLocYaw(loc1,loc2);
-                float pitch = VectorUtils.getLocPirch(loc1,loc2);
+                float pitch = VectorUtils.getLocPitch(loc1,loc2);
                 final double distance = loc1.distance(loc2); //距离
                 final float mult = (float) (distance / 4D); //距离衰减
                 loc2.setYaw(yaw);

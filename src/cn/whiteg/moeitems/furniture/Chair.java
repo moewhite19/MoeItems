@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +17,7 @@ public class Chair extends CustItem_RangeOfModel implements Listener {
     private final static Chair a = new Chair();
 
     private Chair() {
-        super(Material.BOWL,90,"§f椅子",90,105);
+        super(Material.BOWL,90,"§f椅子",90,106);
         NamespacedKey key = new NamespacedKey(MoeItems.plugin,"chair");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
@@ -33,7 +34,8 @@ public class Chair extends CustItem_RangeOfModel implements Listener {
         return a;
     }
 
-    @EventHandler(ignoreCancelled = true)
+//    @EventHandler(ignoreCancelled = true ,priority = EventPriority.LOW)
+    @EventHandler
     public void onClick(PlayerInteractEntityEvent event) {
         if (!event.getPlayer().isSneaking() && event.getRightClicked() instanceof ItemFrame frame){
             final ItemStack item = frame.getItem();

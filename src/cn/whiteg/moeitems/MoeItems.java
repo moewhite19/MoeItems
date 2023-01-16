@@ -116,6 +116,7 @@ public class MoeItems extends PluginBase {
         regItem(VirtueAxe.get());
         regItem(Panzer.get()); //坦克
         regItem(new Barber());
+        regItem(MapRender.get());
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
@@ -133,6 +134,7 @@ public class MoeItems extends PluginBase {
     }
 
     public void regItem(CustItem item) {
+        if(item == null) return;
         items.add(item);
         RPGArmour.plugin.getItemManager().regItem(item);
     }

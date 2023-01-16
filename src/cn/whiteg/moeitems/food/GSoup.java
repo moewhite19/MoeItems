@@ -12,7 +12,8 @@ public class GSoup implements Listener {
     @EventHandler
     public void onEat(PlayerItemConsumeEvent event) {
         ItemStack item = event.getItem();
-        if (item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("§6寄汤")){
+        final String displayName = item.getItemMeta().getDisplayName();
+        if (item.hasItemMeta() && (displayName.contains("寄汤") || displayName.contains("鸡汤"))){
             Player player = event.getPlayer();
 //            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION,600,2),false);
             player.addPotionEffect(new PotionEffect(PotionEffectType.POISON,600,6),false);
