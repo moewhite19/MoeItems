@@ -21,7 +21,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -155,18 +154,8 @@ public class FoxEar extends CustItem_CustModle implements Listener {
     }
 
     @Override
-    public boolean is(ItemStack item) {
-        if (item != null && item.getType() == this.getMaterial() && item.hasItemMeta()){
-            ItemMeta itemMeta = item.getItemMeta();
-            if (!itemMeta.hasCustomModelData()){
-                return false;
-            } else {
-                var id = itemMeta.getCustomModelData();
-                return id >= 60 && id <= 62;
-            }
-        } else {
-            return false;
-        }
+    public boolean hasId(int id) {
+        return id >= 60 && id <= 62;
     }
 
     //    @Override

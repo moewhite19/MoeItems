@@ -2,22 +2,20 @@ package cn.whiteg.moeitems.furniture;
 
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
-import cn.whiteg.rpgArmour.api.CustItem_RangeOfModel;
+import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 
-public class Chair extends CustItem_RangeOfModel implements Listener {
+public class Chair extends CustItem_CustModle implements Listener {
     private final static Chair a = new Chair();
 
     private Chair() {
-        super(Material.BOWL,90,"§f椅子",90,106);
+        super(Material.BOWL,90,"§f椅子");
         NamespacedKey key = new NamespacedKey(MoeItems.plugin,"chair");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
@@ -44,6 +42,11 @@ public class Chair extends CustItem_RangeOfModel implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    @Override
+    public boolean hasId(int id) {
+        return (id > 90 && id <106) || (id >167 && id < 176);
     }
 }
 

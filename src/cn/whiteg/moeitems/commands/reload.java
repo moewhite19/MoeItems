@@ -2,7 +2,6 @@ package cn.whiteg.moeitems.commands;
 
 import cn.whiteg.mmocore.common.HasCommandInterface;
 import cn.whiteg.moeitems.MoeItems;
-import cn.whiteg.rpgArmour.RPGArmour;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

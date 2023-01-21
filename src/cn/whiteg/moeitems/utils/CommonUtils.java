@@ -2,7 +2,6 @@ package cn.whiteg.moeitems.utils;
 
 import cn.whiteg.rpgArmour.utils.NMSUtils;
 import net.minecraft.world.entity.Entity;
-import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
