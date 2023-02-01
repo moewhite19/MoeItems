@@ -6,12 +6,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class LingDagger extends DaggerAbs{
-    private final static PotionEffect EFFECT= new PotionEffect(PotionEffectType.GLOWING,100,1,false,false,false);
+public class CorrodeEpee extends EpeeAbs {
 
-    public LingDagger() {
-        super(1,"§b§l光棱匕首",6);
+    private final PotionEffect EFFECT = new PotionEffect(PotionEffectType.POISON,100,2,false,false,false);
+
+    public CorrodeEpee() {
+        super(3,"§2§l腐蚀巨刃",3);
     }
+
     @Override
     public void onDamage(Entity entity,Entity damager,ItemStack item) {
         if (entity instanceof LivingEntity living){

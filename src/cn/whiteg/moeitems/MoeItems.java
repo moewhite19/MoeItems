@@ -117,8 +117,12 @@ public class MoeItems extends PluginBase {
         regItem(Panzer.get()); //坦克
         regItem(new Barber());
         regItem(MapRender.get());
+        //光凌武器
         regItem(new LingEpee());
         regItem(new LingDagger());
+        //腐蚀武器
+        regItem(new CorrodeEpee());
+        regItem(new CorrodeDagger());
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

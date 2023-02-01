@@ -1,6 +1,7 @@
 package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.MoeItems;
+import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import org.bukkit.*;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
     private final float DAMAGE;
     UUID DelayDamage;
+
 
     public EpeeAbs(int id,String displayName,float damage) {
         super(Material.NETHERITE_SWORD,id,displayName);
@@ -44,7 +46,7 @@ public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
             //如果手持不是巨剑跳出
             if (!is(hand)) return;
             //cd内无法攻击
-            if(damager instanceof Player player && player.hasCooldown(getMaterial())){
+            if ((damager instanceof Player player && player.hasCooldown(getMaterial())) || CommonUtils.getPlayerAttackCooldown(damager) < 15){
                 event.setCancelled(true);
                 return;
             }
@@ -59,14 +61,23 @@ public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
                 loc.getWorld().spawnParticle(Particle.SWEEP_ATTACK,loc.clone().add(VectorUtils.viewVector(loc).multiply(1.1F)),3); //在前方播放粒子
                 damager.getWorld().playSound(loc,Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,SoundCategory.PLAYERS,1f,0.4f); //播放挥砍音效
                 DelayDamage = entity.getUniqueId();
+                CommonUtils.setPlayerAttackCooldown(damager,20);
                 damager.attack(entity);
+                onDamage(entity,damager,hand);
                 //挥砍
                 for (Entity nearbyEntity : entity.getNearbyEntities(1D,1D,1D)) {
                     DelayDamage = nearbyEntity.getUniqueId();
+                    CommonUtils.setPlayerAttackCooldown(damager,20);
                     damager.attack(nearbyEntity);
+                    onDamage(nearbyEntity,damager,hand);
                 }
             },12L);
             event.setCancelled(true);
         }
     }
+
+    public void onDamage(Entity entity,Entity damager,ItemStack item) {
+
+    }
+
 }

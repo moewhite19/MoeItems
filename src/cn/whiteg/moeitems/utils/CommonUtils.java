@@ -1,7 +1,12 @@
 package cn.whiteg.moeitems.utils;
 
+import cn.whiteg.rpgArmour.reflection.FieldAccessor;
 import cn.whiteg.rpgArmour.utils.NMSUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityLiving;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -12,23 +17,24 @@ import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommonUtils {
-    static AtomicInteger entityCount;
-
+    //todo 计划移动到RPGArmour
+    private static final FieldAccessor<Integer> playerAttackCooldownnField;
     static {
         try{
-            Field count_f = NMSUtils.getFieldFormType(Entity.class,AtomicInteger.class);
-
-            count_f.setAccessible(true);
-            entityCount = (AtomicInteger) count_f.get(null);
-        }catch (NoSuchFieldException | IllegalAccessException e){
-            e.printStackTrace();
+            playerAttackCooldownnField = new FieldAccessor<>(NMSUtils.getFieldFormStructure(EntityLiving.class,
+                    float.class,
+                    int.class,
+                    float.class,
+                    float.class,
+                    int.class,
+                    float.class,
+                    float.class,
+                    float.class,
+                    int.class)[4]);
+        }catch (NoSuchFieldException e){
+            throw new RuntimeException(e);
         }
     }
-
-    public static int getNextEntityId() {
-        return entityCount.incrementAndGet();
-    }
-
 
     /**
      * 消耗物品耐久度
@@ -74,4 +80,16 @@ public class CommonUtils {
         return 0;
     }
 
+    @Deprecated
+    //获取攻击cd
+    public static float getPlayerAttackCooldown(org.bukkit.entity.Entity player) {
+        if (player instanceof LivingEntity) return playerAttackCooldownnField.get(NMSUtils.getNmsEntity(player));
+        return 0f;
+    }
+
+    @Deprecated
+    //设置攻击cd
+    public static void setPlayerAttackCooldown(org.bukkit.entity.Entity player,int cooldown) {
+        if (player instanceof LivingEntity) playerAttackCooldownnField.set(NMSUtils.getNmsEntity(player),cooldown);
+    }
 }

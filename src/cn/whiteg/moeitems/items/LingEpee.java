@@ -1,7 +1,22 @@
 package cn.whiteg.moeitems.items;
 
-public class LingEpee extends EpeeAbs{
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+public class LingEpee extends EpeeAbs {
+
+    private final PotionEffect EFFECT = new PotionEffect(PotionEffectType.GLOWING,150,1,false,false,false);
+
     public LingEpee() {
         super(3,"§b§l光棱巨刃",6);
+    }
+    @Override
+    public void onDamage(Entity entity,Entity damager,ItemStack item) {
+        if (entity instanceof LivingEntity living){
+            living.addPotionEffect(EFFECT);
+        }
     }
 }
