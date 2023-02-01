@@ -120,9 +120,11 @@ public class MoeItems extends PluginBase {
         //光凌武器
         regItem(new LingEpee());
         regItem(new LingDagger());
+        regItem(new LingSword());
         //腐蚀武器
         regItem(new CorrodeEpee());
         regItem(new CorrodeDagger());
+        regItem(new CorrodeSword());
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());

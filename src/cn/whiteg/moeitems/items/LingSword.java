@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class Ling extends NormalSwordAbs {
+public class LingSword extends NormalSwordAbs {
 
     private final PotionEffect EFFECT = new PotionEffect(PotionEffectType.GLOWING,120,1,false,false,false);
 
-    public Ling() {
+    public LingSword() {
         super(3,"§b§l光棱",1);
     }
     @Override
