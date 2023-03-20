@@ -125,6 +125,7 @@ public class MoeItems extends PluginBase {
         regItem(new CorrodeEpee());
         regItem(new CorrodeDagger());
         regItem(new CorrodeSword());
+        regItem(new Reclamation()); //手持海绵x
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
