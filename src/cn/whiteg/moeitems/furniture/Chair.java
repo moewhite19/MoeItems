@@ -1,10 +1,8 @@
 package cn.whiteg.moeitems.furniture;
 
-import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +14,7 @@ public class Chair extends CustItem_CustModle implements Listener {
 
     private Chair() {
         super(Material.BOWL,90,"§f椅子");
-        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"chair");
+//        NamespacedKey key = new NamespacedKey(MoeItems.plugin,"chair");
 //        ShapedRecipe r = new ShapedRecipe(key,createItem());
 //        r.shape(
 //                "B",

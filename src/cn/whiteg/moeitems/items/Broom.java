@@ -1,5 +1,6 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.mmocore.util.NMSUtils;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.moeitems.Setting;
 import cn.whiteg.rpgArmour.RPGArmour;
@@ -9,7 +10,6 @@ import cn.whiteg.rpgArmour.api.CustItem_MultiModel;
 import cn.whiteg.rpgArmour.custItems.BambooDragonfly;
 import cn.whiteg.rpgArmour.listener.CanBreakEntityItem;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
-import cn.whiteg.rpgArmour.utils.NMSUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;

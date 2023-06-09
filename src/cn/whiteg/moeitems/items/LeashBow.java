@@ -1,12 +1,12 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.mmocore.reflection.ReflectUtil;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.rpgArmour.RPGArmour;
 import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.manager.CustEntityManager;
-import cn.whiteg.rpgArmour.utils.NMSUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Material;
@@ -92,7 +92,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
 
         static {
             try{
-                LeashNBTTagCompound = NMSUtils.getFieldFormType(EntityInsentient.class,NBTTagCompound.class);
+                LeashNBTTagCompound = ReflectUtil.getFieldFormType(EntityInsentient.class,NBTTagCompound.class);
                 LeashNBTTagCompound.setAccessible(true);
             }catch (NoSuchFieldException e){
                 e.printStackTrace();

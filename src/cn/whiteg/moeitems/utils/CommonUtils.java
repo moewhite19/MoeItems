@@ -1,27 +1,22 @@
 package cn.whiteg.moeitems.utils;
 
-import cn.whiteg.rpgArmour.reflection.FieldAccessor;
-import cn.whiteg.rpgArmour.utils.NMSUtils;
-import net.minecraft.world.entity.Entity;
+import cn.whiteg.mmocore.reflection.FieldAccessor;
+import cn.whiteg.mmocore.reflection.ReflectUtil;
+import cn.whiteg.mmocore.util.NMSUtils;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class CommonUtils {
     //todo 计划移动到RPGArmour
     private static final FieldAccessor<Integer> playerAttackCooldownnField;
     static {
         try{
-            playerAttackCooldownnField = new FieldAccessor<>(NMSUtils.getFieldFormStructure(EntityLiving.class,
+            playerAttackCooldownnField = new FieldAccessor<>(ReflectUtil.getFieldFormStructure(EntityLiving.class,
                     float.class,
                     int.class,
                     float.class,
