@@ -30,7 +30,7 @@ public class Chair extends CustItem_CustModle implements Listener {
         return a;
     }
 
-//    @EventHandler(ignoreCancelled = true ,priority = EventPriority.LOW)
+    //    @EventHandler(ignoreCancelled = true ,priority = EventPriority.LOW)
     @EventHandler
     public void onClick(PlayerInteractEntityEvent event) {
         if (!event.getPlayer().isSneaking() && event.getRightClicked() instanceof ItemFrame frame){
@@ -44,7 +44,7 @@ public class Chair extends CustItem_CustModle implements Listener {
 
     @Override
     public boolean hasId(int id) {
-        return (id > 90 && id <106) || (id >167 && id < 176);
+        return (id >= 90 && id <= 106) || (id >= 164 && id <= 176);
     }
 }
 
