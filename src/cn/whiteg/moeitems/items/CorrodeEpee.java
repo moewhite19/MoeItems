@@ -11,7 +11,7 @@ public class CorrodeEpee extends EpeeAbs {
     private final PotionEffect EFFECT = new PotionEffect(PotionEffectType.POISON,100,2,false,false,false);
 
     public CorrodeEpee() {
-        super(3,"§2§l腐蚀巨刃",3);
+        super(4,"§2§l腐蚀巨刃",3);
     }
 
     @Override

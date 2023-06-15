@@ -11,7 +11,7 @@ public class CorrodeDagger extends DaggerAbs {
     private final PotionEffect EFFECT = new PotionEffect(PotionEffectType.POISON,50,4,false,false,false);
 
     public CorrodeDagger() {
-        super(1,"§2§l腐蚀匕首",3);
+        super(2,"§2§l腐蚀匕首",3);
     }
 
     @Override

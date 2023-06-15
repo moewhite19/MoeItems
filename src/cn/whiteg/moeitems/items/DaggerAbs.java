@@ -35,10 +35,14 @@ public abstract class DaggerAbs extends CustItem_CustModle implements Listener {
             final ItemStack hand = equipment.getItemInMainHand();
             if (!is(hand)) return;
             //匕首不支持挥砍
-            if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK || (damager instanceof Player player && player.hasCooldown(getMaterial()))){
+            if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK){
                 event.setCancelled(true);
                 return;
             }
+            if (damager instanceof Player player && player.hasCooldown(getMaterial())){
+                return;
+            }
+
 
             var loc = damager.getEyeLocation();
             damager.getWorld().playSound(loc,Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,SoundCategory.PLAYERS,1f,0.4f); //播放挥砍音效

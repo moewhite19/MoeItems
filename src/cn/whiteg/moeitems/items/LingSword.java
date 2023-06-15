@@ -11,7 +11,7 @@ public class LingSword extends NormalSwordAbs {
     private final PotionEffect EFFECT = new PotionEffect(PotionEffectType.GLOWING,120,1,false,false,false);
 
     public LingSword() {
-        super(3,"§b§l光棱",1);
+        super(1,"§b§l光棱",1);
     }
     @Override
     public void onDamage(Entity entity,Entity damager,ItemStack item) {

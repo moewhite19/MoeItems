@@ -46,8 +46,10 @@ public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
             //如果手持不是巨剑跳出
             if (!is(hand)) return;
             //cd内无法攻击
-            if ((damager instanceof Player player && player.hasCooldown(getMaterial())) || CommonUtils.getPlayerAttackCooldown(damager) < 15){
-                event.setCancelled(true);
+            if (damager instanceof Player player && player.hasCooldown(getMaterial())){
+                if (CommonUtils.getPlayerAttackCooldown(damager) < 15){
+                    event.setCancelled(true);
+                }
                 return;
             }
             damager.getWorld().playSound(damager.getLocation(),Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK,SoundCategory.PLAYERS,1f,0.2f); //播放挥砍音效
@@ -66,6 +68,7 @@ public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
                 onDamage(entity,damager,hand);
                 //挥砍
                 for (Entity nearbyEntity : entity.getNearbyEntities(1D,1D,1D)) {
+                    if(nearbyEntity.equals(damager)) continue; //这是要砍到自己啊哈哈哈哈
                     DelayDamage = nearbyEntity.getUniqueId();
                     CommonUtils.setPlayerAttackCooldown(damager,20);
                     damager.attack(nearbyEntity);

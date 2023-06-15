@@ -4,6 +4,7 @@ import cn.whiteg.mmocore.reflection.FieldAccessor;
 import cn.whiteg.mmocore.reflection.ReflectUtil;
 import cn.whiteg.mmocore.util.NMSUtils;
 import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.WalkAnimationState;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -18,14 +19,9 @@ public class CommonUtils {
         try{
             playerAttackCooldownnField = new FieldAccessor<>(ReflectUtil.getFieldFormStructure(EntityLiving.class,
                     float.class,
-                    int.class,
-                    float.class,
                     float.class,
                     int.class,
-                    float.class,
-                    float.class,
-                    float.class,
-                    int.class)[4]);
+                    WalkAnimationState.class)[2]);
         }catch (NoSuchFieldException e){
             throw new RuntimeException(e);
         }

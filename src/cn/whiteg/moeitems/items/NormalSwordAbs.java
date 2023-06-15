@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-public class NormalSwordAbs extends CustItem_CustModle implements Listener {
+public abstract class NormalSwordAbs extends CustItem_CustModle implements Listener {
 
     private final float DAMAGE;
 
@@ -33,11 +33,10 @@ public class NormalSwordAbs extends CustItem_CustModle implements Listener {
             if (!is(hand)) return;
             if (damager instanceof Player && CommonUtils.getPlayerAttackCooldown(damager) < 15) return;//如果攻击cd没满
             event.setDamage(EntityDamageEvent.DamageModifier.BASE,DAMAGE + event.getDamage(EntityDamageEvent.DamageModifier.BASE));
+            onDamage(event.getEntity(),damager,hand);
         }
     }
 
 
-    public void onDamage(Entity entity,Entity damager,ItemStack item) {
-
-    }
+    public abstract void onDamage(Entity entity,Entity damager,ItemStack item);
 }
