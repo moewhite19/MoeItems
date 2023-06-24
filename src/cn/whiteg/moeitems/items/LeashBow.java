@@ -33,7 +33,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
     public static LeashArrow leashArrow = new LeashArrow();
 
     public LeashBow() {
-        super(Material.BOW,10,"栓绳弓");
+        super(Material.BOW,7,"栓绳弓");
     }
 
     public static LeashBow get() {
