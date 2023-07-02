@@ -94,5 +94,10 @@ public class TrashCan extends CustItem_CustModle implements Listener {
         }
         return inv;
     }
+
+    @Override
+    public boolean hasId(int i) {
+        return i == getId() || i == 331;
+    }
 }
 

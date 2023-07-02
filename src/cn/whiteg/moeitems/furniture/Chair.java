@@ -44,7 +44,7 @@ public class Chair extends CustItem_CustModle implements Listener {
 
     @Override
     public boolean hasId(int id) {
-        return (id >= 90 && id <= 106) || (id >= 164 && id <= 176);
+        return (id >= 90 && id <= 106) || (id >= 164 && id <= 176) || (id >= 500 && id <= 517) || (id >= 1080 && id <= 1200);
     }
 }
 

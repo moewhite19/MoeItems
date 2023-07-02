@@ -63,7 +63,7 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
     private float spawnChance = 0.075f;
 
     public QuickFiringCrossbow() {
-        super(Material.CROSSBOW,3,"§9连弩");
+        super(Material.CROSSBOW,1,"§9连弩");
         ConfigurationSection c = Setting.getCustItemConfit(getClass().getSimpleName());
         if (c != null){
             spawnChance = (float) c.getDouble("spawnChance",spawnChance);
