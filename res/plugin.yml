@@ -1,6 +1,6 @@
 name: MoeItems
 main: cn.whiteg.moeitems.MoeItems
-version: 1.1
+version: 1.1.1
 api-version: 1.13
 author: MoeWhite
 depend: [MMOCore, RPGArmour]
