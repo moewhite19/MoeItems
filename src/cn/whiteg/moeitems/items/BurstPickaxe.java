@@ -1,17 +1,18 @@
 package cn.whiteg.moeitems.items;
 
+import cn.whiteg.mmocore.reflection.FieldAccessor;
 import cn.whiteg.mmocore.reflection.ReflectUtil;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.RandomUtil;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.state.BlockBase;
-import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,25 +21,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class BurstPickaxe extends CustItem_CustModle implements Listener {
     private static final BurstPickaxe pickaxe = new BurstPickaxe();
-    static Field blockDurabilityField;
-    static Method IBlockGetBlock;
+    static FieldAccessor<Float> blockDurabilityField;
     static Method getItem;
-    static Method getDestroySpeed;//  public float getDestroySpeed(IBlockData state)
+    static Method getDestroySpeed;//  public float getDestroySpeed(BlockState state)
     static Sound sound = Sound.BLOCK_STONE_BREAK;
 
     static {
-        for (Method method : BlockBase.BlockData.class.getMethods()) {
-            if (method.getReturnType().equals(net.minecraft.world.level.block.Block.class)){
-                IBlockGetBlock = method;
-                break;
-            }
-        }
 
         for (Method method : net.minecraft.world.item.ItemStack.class.getMethods()) {
             if (method.getReturnType().equals(Item.class)){
@@ -50,7 +43,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
         for (Method method : net.minecraft.world.item.ItemStack.class.getMethods()) {
             if (method.getReturnType().equals(float.class)){
                 Class<?>[] parameterTypes = method.getParameterTypes();
-                if (parameterTypes.length == 1 && parameterTypes[0].equals(IBlockData.class)){
+                if (parameterTypes.length == 1 && parameterTypes[0].equals(BlockState.class)){
                     getDestroySpeed = method;
                     break;
                 }
@@ -58,15 +51,14 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
         }
 
         try{
-            blockDurabilityField = ReflectUtil.getFieldFormStructure(BlockBase.class,boolean.class,float.class,boolean.class)[1];
-            blockDurabilityField.setAccessible(true);
+            blockDurabilityField = new FieldAccessor<>(ReflectUtil.getFieldFormStructure(BlockBehaviour.class,boolean.class,float.class,boolean.class)[1]);
         }catch (NoSuchFieldException e){
             e.printStackTrace();
         }
 
 
 //        try{
-//            getBlock = IBlockDataHolder.class.getDeclaredField("c");
+//            getBlock = BlockStateHolder.class.getDeclaredField("c");
 //            getBlock.setAccessible(true);
 //        }catch (NoSuchFieldException e){
 //            e.printStackTrace();
@@ -97,7 +89,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
         } else if (is(item)){
             try{
                 Block block = event.getBlock();
-                IBlockData iblockdata = ((CraftBlock) block).getNMS();
+                BlockState iblockdata = ((CraftBlock) block).getNMS();
                 World world = block.getWorld();
                 if (getBreakSpeed(item,iblockdata) < 2F) return;
                 world.playSound(block.getLocation(),sound,1f,0.5f); //播放音效
@@ -112,7 +104,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                 int ex = x + size;
                 int ey = y + size;
                 int ez = z + size;
-                net.minecraft.world.level.block.Block nBlock = (net.minecraft.world.level.block.Block) IBlockGetBlock.invoke(iblockdata);
+                net.minecraft.world.level.block.Block nBlock = iblockdata.getBlock();
                 float durability = getBlockDurability(nBlock);
                 looping = true;
                 int startDamage = ((Damageable) item.getItemMeta()).getDamage();
@@ -122,8 +114,8 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                     for (y = sy; y <= ey; y++) {
                         for (z = sz; z <= ez; z++) {
                             Block b = world.getBlockAt(x,y,z);
-                            IBlockData ibd = ((CraftBlock) b).getNMS();
-                            net.minecraft.world.level.block.Block nb = (net.minecraft.world.level.block.Block) IBlockGetBlock.invoke(ibd);
+                            BlockState ibd = ((CraftBlock) b).getNMS();
+                            net.minecraft.world.level.block.Block nb = ibd.getBlock();
                             if (getBreakSpeed(item,ibd) > 2F && durability == getBlockDurability(nb) /*&& ((CraftBlock) b).getNMS().getBlock().isDestroyable()*/){
                                 if (is(item)){
                                     PlayerBreakBlock(player,b);
@@ -166,7 +158,7 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
 //        playerInv.a(((CraftBlock) block).getPosition(),PacketPlayInBlockDig.EnumPlayerDigType.STOP_DESTROY_BLOCK,"destroyed");
     }
 
-    public float getBreakSpeed(ItemStack itemStack,IBlockData block) {
+    public float getBreakSpeed(ItemStack itemStack,BlockState block) {
         try{
             var nmsItem = CraftItemStack.asNMSCopy(itemStack);
             return (float) getDestroySpeed.invoke(nmsItem,block);

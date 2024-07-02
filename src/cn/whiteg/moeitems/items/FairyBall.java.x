@@ -6,21 +6,25 @@ import cn.whiteg.rpgArmour.utils.EntityUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.core.IRegistry;
+import io.papermc.paper.math.BlockPosition;
+import io.papermc.paper.persistence.PersistentDataContainerView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
-import net.minecraft.resources.MinecraftKey;
-import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.EnumMobSpawn;
-import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.MobSpawnType;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftSnowball;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
+import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftSnowball;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -73,23 +77,22 @@ public class FairyBall extends CustItem_CustModle implements Listener {
             return;
         }
         String key = "Capture";
-        var nmsItem = CraftItemStack.asNMSCopy(item);
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
         //获取物品NBT
-        NBTTagCompound rootTag = nmsItem.getOrCreateTag();
-        if (rootTag.hasKey(key)){
-            NBTTagCompound capDir = rootTag.getCompound(key);
-
+        CompoundTag rootTag = nmsItem.getComponents();
+        if (rootTag.contains(key)){
+            CompoundTag capDir = rootTag.getCompound(key);
             String id = null;
-            NBTTagCompound data = null;
-            if (capDir.b("id")){
+            CompoundTag data = null;
+            if (capDir.contains("id")){
                 data = capDir;
                 id = data.getString("id");
             } else {
-                Iterator<Map.Entry<String, NBTBase>> it = capDir.x.entrySet().iterator();
+                Iterator<Map.Entry<String, Tag>> it = capDir.tags.entrySet().iterator();
                 if (it.hasNext()){
-                    Map.Entry<String, NBTBase> base = it.next();
-                    if (base.getValue() instanceof NBTTagCompound){
-                        data = (NBTTagCompound) base.getValue();
+                    Map.Entry<String, Tag> base = it.next();
+                    if (base.getValue() instanceof CompoundTag){
+                        data = (CompoundTag) base.getValue();
                         id = base.getKey();
                     }
                 }
@@ -99,15 +102,17 @@ public class FairyBall extends CustItem_CustModle implements Listener {
                 if (player != null) player.sendMessage(" 无效数据");
                 return;
             }
-            MinecraftKey minecraftKey = new MinecraftKey(id);
-            EntityTypes<?> type = IRegistry.Y.get(minecraftKey);
-            EntityHuman humanEntity = player == null ? null : ((CraftHumanEntity) player).getHandle();
+            ResourceLocation minecraftKey = ResourceLocation.parse(id);
+            net.minecraft.world.entity.EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(minecraftKey);
+            ServerPlayer humanEntity = player == null ? null : ((CraftPlayer) player).getHandle();
             //生成实体
-            var entity = type.spawnCreature(((CraftWorld) loc.getWorld()).getHandle(),data,null,humanEntity,new BlockPosition(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),EnumMobSpawn.m,true,true,CreatureSpawnEvent.SpawnReason.EGG);
+
+            final ServerLevel level = ((CraftWorld) loc.getWorld()).getHandle();
+            var entity = type.spawn(level,null,humanEntity,new BlockPos(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ()),MobSpawnType.SPAWN_EGG,true,true);
             //导入元数据
             if (entity != null && entity.isAlive()){
                 removeUUID(data);
-                setLoc(data,entity.locX(),entity.locY(),entity.locZ());
+                setLoc(data,entity.getBlockX(),entity.getBlockY(),entity.getBlockZ());
                 entity.load(data);
             } else if (player != null) player.sendMessage(" 无法生成实体");
 
@@ -133,12 +138,12 @@ public class FairyBall extends CustItem_CustModle implements Listener {
                 }
 
 
-                EntityLiving nmsHit = ((CraftLivingEntity) hit).getHandle();
+                net.minecraft.world.entity.LivingEntity nmsHit = ((CraftLivingEntity) hit).getHandle();
 
-                NBTTagCompound capDir = new NBTTagCompound();
-                NBTTagCompound cap = new NBTTagCompound();
+                CompoundTag capDir = new CompoundTag();
+                CompoundTag cap = new CompoundTag();
                 nmsHit.ejectPassengers();   //清理乘客
-                if (nmsHit.d(cap)){
+                if (nmsHit.saveAsPassenger(cap)){
                     removeUUID(cap);
                     capDir.set(nmsHit.getMinecraftKey().toString(),cap);
                     rootTag.set(key,capDir);
@@ -163,7 +168,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
             try{
                 float f = Float.parseFloat(list.get(1));
                 var nms = CraftItemStack.asNMSCopy(item);
-                NBTTagCompound tag = nms.getOrCreateTag();
+                CompoundTag tag = nms.getOrCreateTag();
                 tag.set("Rate",NBTTagFloat.a(f));
                 item = nms.asBukkitMirror();
                 ItemMeta met = item.getItemMeta();
@@ -177,7 +182,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
         return item;
     }
 
-    public void removeUUID(NBTTagCompound nbtTagCompound) {
+    public void removeUUID(CompoundTag nbtTagCompound) {
         nbtTagCompound.remove("UUID");
         nbtTagCompound.remove("Rotation");
         nbtTagCompound.remove("Motion");
@@ -185,7 +190,7 @@ public class FairyBall extends CustItem_CustModle implements Listener {
         nbtTagCompound.remove("Dimension");
     }
 
-    public void setLoc(NBTTagCompound nbt,double x,double y,double z) {
+    public void setLoc(CompoundTag nbt,double x,double y,double z) {
         NBTTagList list = new NBTTagList();
         list.add(NBTTagDouble.a(x));
         list.add(NBTTagDouble.a(y));

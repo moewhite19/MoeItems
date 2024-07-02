@@ -12,7 +12,6 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -264,7 +263,7 @@ public class Panzer extends CustItem_CustModle implements Listener {
 
         float yaw = EntityUtils.getEntityRotYaw(p);
 //        loc.setYaw(yaw);
-//        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+//        net.minecraft.world.entity.decoration.ArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
 //        nmsEntity.setYRot(yaw);
         EntityUtils.setEntityRotYaw(armorStand,yaw);
         event.setCancelled(true);
@@ -388,10 +387,10 @@ public class Panzer extends CustItem_CustModle implements Listener {
 
     public class BodyRun extends BukkitRunnable {
         ArmorStand entity;
-        EntityArmorStand ne;
+        net.minecraft.world.entity.decoration.ArmorStand ne;
 
         public BodyRun(ArmorStand armor,Player p) {
-            ne = (EntityArmorStand) NMSUtils.getNmsEntity(armor);
+            ne = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.getNmsEntity(armor);
             entity = armor;
             entity.addPassenger(p);
 //            e.setMarker(true);

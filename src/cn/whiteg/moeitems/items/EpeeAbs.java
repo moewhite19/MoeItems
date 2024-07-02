@@ -3,6 +3,7 @@ package cn.whiteg.moeitems.items;
 import cn.whiteg.moeitems.MoeItems;
 import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.utils.EntityUtils;
 import cn.whiteg.rpgArmour.utils.VectorUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -47,7 +48,7 @@ public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
             if (!is(hand)) return;
             //cd内无法攻击
             if (damager instanceof Player player && player.hasCooldown(getMaterial())){
-                if (CommonUtils.getPlayerAttackCooldown(damager) < 15){
+                if (EntityUtils.getPlayerPrepTime(damager) < 15){
                     event.setCancelled(true);
                 }
                 return;
@@ -63,14 +64,14 @@ public abstract class EpeeAbs extends CustItem_CustModle implements Listener {
                 loc.getWorld().spawnParticle(Particle.SWEEP_ATTACK,loc.clone().add(VectorUtils.viewVector(loc).multiply(1.1F)),3); //在前方播放粒子
                 damager.getWorld().playSound(loc,Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,SoundCategory.PLAYERS,1f,0.4f); //播放挥砍音效
                 DelayDamage = entity.getUniqueId();
-                CommonUtils.setPlayerAttackCooldown(damager,20);
+                EntityUtils.setPlayerPrepTime(damager,20);
                 damager.attack(entity);
                 onDamage(entity,damager,hand);
                 //挥砍
                 for (Entity nearbyEntity : entity.getNearbyEntities(1D,1D,1D)) {
-                    if(nearbyEntity.equals(damager)) continue; //这是要砍到自己啊哈哈哈哈
+                    if (nearbyEntity.equals(damager)) continue; //这是要砍到自己啊哈哈哈哈
                     DelayDamage = nearbyEntity.getUniqueId();
-                    CommonUtils.setPlayerAttackCooldown(damager,20);
+                    EntityUtils.setPlayerPrepTime(damager,20);
                     damager.attack(nearbyEntity);
                     onDamage(nearbyEntity,damager,hand);
                 }

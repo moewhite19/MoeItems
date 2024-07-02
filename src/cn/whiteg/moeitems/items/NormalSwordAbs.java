@@ -2,6 +2,7 @@ package cn.whiteg.moeitems.items;
 
 import cn.whiteg.moeitems.utils.CommonUtils;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
+import cn.whiteg.rpgArmour.utils.EntityUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +32,7 @@ public abstract class NormalSwordAbs extends CustItem_CustModle implements Liste
             if (equipment == null) return;
             final ItemStack hand = equipment.getItemInMainHand();
             if (!is(hand)) return;
-            if (damager instanceof Player && CommonUtils.getPlayerAttackCooldown(damager) < 15) return;//如果攻击cd没满
+            if (damager instanceof Player && EntityUtils.getPlayerPrepTime(damager) < 15) return;//如果攻击cd没满
             event.setDamage(EntityDamageEvent.DamageModifier.BASE,DAMAGE + event.getDamage(EntityDamageEvent.DamageModifier.BASE));
             onDamage(event.getEntity(),damager,hand);
         }

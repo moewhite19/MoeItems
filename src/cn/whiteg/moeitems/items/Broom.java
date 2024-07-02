@@ -14,7 +14,6 @@ import cn.whiteg.rpgArmour.utils.VectorUtils;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -28,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,7 +37,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.*;
 
@@ -242,7 +241,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
         EntityUtils.setSlotsDisabled(armorStand,true);
 
 //        armorStand.setHeadPose(new EulerAngle(pitch / 45,0,0));//设置盔甲架仰角
-//        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+//        net.minecraft.world.entity.decoration.ArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
 //        nmsEntity.setYRot(loc.getYaw());
         EntityUtils.setEntityRotYaw(armorStand,loc.getYaw());
         join(armorStand,p);
@@ -294,7 +293,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
 
         float yaw = EntityUtils.getEntityRotYaw(p);
 //        loc.setYaw(yaw);
-//        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+//        net.minecraft.world.entity.decoration.ArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
 //        nmsEntity.setYRot(yaw);
         EntityUtils.setEntityRotYaw(armorStand,yaw);
         event.setCancelled(true);
@@ -403,11 +402,11 @@ public class Broom extends CustItem_MultiModel implements Listener {
     public class BroomRun extends BukkitRunnable {
         ArmorStand broom;
         private final Player passenger;
-        EntityArmorStand ne;
+        net.minecraft.world.entity.decoration.ArmorStand ne;
         byte effnum = 0;
 
         public BroomRun(ArmorStand armor,Player p) {
-            ne = (EntityArmorStand) NMSUtils.getNmsEntity(armor);
+            ne = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.getNmsEntity(armor);
             broom = armor;
             this.passenger = p;
 //            e.setMarker(true);
@@ -485,7 +484,7 @@ public class Broom extends CustItem_MultiModel implements Listener {
                 effnum++;
                 if (effnum > 4){
                     loc.setY(loc.getY() + 1.8D);
-                    loc.getWorld().spawnParticle(Particle.TOTEM,loc,3,0.2,0.1,0.2,0.25);
+                    loc.getWorld().spawnParticle(Particle.TOTEM_OF_UNDYING,loc,3,0.2,0.1,0.2,0.25);
                     effnum = 0;
                 }
                 broom.setVelocity(vec);

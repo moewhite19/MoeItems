@@ -2,8 +2,6 @@ package cn.whiteg.moeitems.items;
 
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.EntityUtils;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,9 +31,6 @@ public class Testball extends CustItem_CustModle implements Listener {
 
     //开始伪装
     public static void start(Player player,Entity target) {
-        final EntityPlayer nmsPlayer = EntityUtils.getNmsPlayer(player);
-        final int entityId = player.getEntityId();
-        WorldServer worldServer;
 
 
     }

@@ -38,7 +38,7 @@ public class BunnyEar extends CustItem_CustModle implements Listener {
     public void onSneak(PlayerToggleSneakEvent event) {
         if (!isHat(event.getPlayer())) return;
         if (event.isSneaking()){
-            var effType = PotionEffectType.JUMP;
+            var effType = PotionEffectType.JUMP_BOOST;
             if (event.getPlayer().hasPotionEffect(effType)) return;
             event.getPlayer().addPotionEffect(new PotionEffect(effType,10,2,false,false));
         }

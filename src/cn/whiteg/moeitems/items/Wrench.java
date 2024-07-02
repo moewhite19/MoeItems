@@ -13,10 +13,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.block.data.type.Bed;
-import org.bukkit.block.data.type.Chest;
-import org.bukkit.block.data.type.Piston;
-import org.bukkit.block.data.type.PistonHead;
+import org.bukkit.block.data.type.*;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -75,7 +72,11 @@ public class Wrench extends CustItem_CustModle implements Listener {
             chanBlock(block,(Directional) data);
         } else if (data instanceof Rotatable){
             rotableBlock(block,(Rotatable) data);
-        } else return;
+        } else if (data instanceof Crafter crafter){
+            chanBlock(block,crafter);
+        } else {
+            return;
+        }
         player.sendActionBar("已修改方块");
         event.setCancelled(true);
     }
@@ -139,6 +140,21 @@ public class Wrench extends CustItem_CustModle implements Listener {
             if (data.getFacing() == (faces.get(i++))){
                 if (i < size) data.setFacing(faces.get(i));
                 else data.setFacing(faces.get(0));
+                block.setBlockData(data);
+                return;
+            }
+        }
+        MoeItems.logger.warning("没有找到方块方向");
+    }
+
+    public void chanBlock(Block block,Crafter data) {
+        Crafter.Orientation[] faces = Crafter.Orientation.values();
+        int size = faces.length;
+        int i = 0;
+        while (i < size) {
+            if (data.getOrientation() == (faces[i++])){
+                if (i < size) data.setOrientation(faces[i]);
+                else data.setOrientation(faces[0]);
                 block.setBlockData(data);
                 return;
             }

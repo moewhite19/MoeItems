@@ -10,7 +10,7 @@ import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.utils.NMSUtils;
 import com.mojang.datafixers.util.Pair;
 import io.netty.channel.Channel;
-import net.minecraft.core.IRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -264,7 +264,7 @@ public class GuisePotion extends CustItem_CustModle implements Listener {
                 PacketPlayOutSpawnEntityLiving spawnLivinEntity = new PacketPlayOutSpawnEntityLiving(player);
                 try{
                     var type = NMSUtils.getEntityType((Class<? extends Entity>) tagerClass);
-                    spawnEntityLivingPacketType.set(spawnLivinEntity,IRegistry.Y.getId(type));
+                    spawnEntityLivingPacketType.set(spawnLivinEntity,Registry.Y.getId(type));
                 }catch (IllegalArgumentException e){
                     e.printStackTrace();
                 }

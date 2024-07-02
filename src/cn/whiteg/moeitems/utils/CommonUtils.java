@@ -3,7 +3,6 @@ package cn.whiteg.moeitems.utils;
 import cn.whiteg.mmocore.reflection.FieldAccessor;
 import cn.whiteg.mmocore.reflection.ReflectUtil;
 import cn.whiteg.mmocore.util.NMSUtils;
-import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.WalkAnimationState;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EquipmentSlot;
@@ -15,9 +14,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class CommonUtils {
     //todo 计划移动到RPGArmour
     private static final FieldAccessor<Integer> playerAttackCooldownnField;
+
     static {
         try{
-            playerAttackCooldownnField = new FieldAccessor<>(ReflectUtil.getFieldFormStructure(EntityLiving.class,
+            playerAttackCooldownnField = new FieldAccessor<>(ReflectUtil.getFieldFormStructure(LivingEntity.class,
                     float.class,
                     float.class,
                     int.class,
@@ -69,18 +69,5 @@ public class CommonUtils {
             }
         }
         return 0;
-    }
-
-    @Deprecated
-    //获取攻击cd
-    public static float getPlayerAttackCooldown(org.bukkit.entity.Entity player) {
-        if (player instanceof LivingEntity) return playerAttackCooldownnField.get(NMSUtils.getNmsEntity(player));
-        return 0f;
-    }
-
-    @Deprecated
-    //设置攻击cd
-    public static void setPlayerAttackCooldown(org.bukkit.entity.Entity player,int cooldown) {
-        if (player instanceof LivingEntity) playerAttackCooldownnField.set(NMSUtils.getNmsEntity(player),cooldown);
     }
 }

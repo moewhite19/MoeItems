@@ -7,8 +7,8 @@ import cn.whiteg.rpgArmour.api.CustEntityChunkEvent;
 import cn.whiteg.rpgArmour.api.CustEntityID;
 import cn.whiteg.rpgArmour.api.CustItem_CustModle;
 import cn.whiteg.rpgArmour.manager.CustEntityManager;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Mob;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Arrow;
@@ -65,7 +65,7 @@ public class LeashBow extends CustItem_CustModle implements Listener {
                 var vector = arrow.getVelocity().multiply(0.8F);
                 entity.setVelocity(entity.getVelocity().add(vector));
                 if (entity.setLeashHolder(arrow)){
-//                    leashArrow.setLife(arrow,Integer.MIN_VALUE); //让弓箭不会消失
+                    arrow.setLifetimeTicks(Integer.MIN_VALUE);
                     leashArrow.putLeashed(arrow,entity); //记录已牵着的实体
                 }
             }
@@ -88,15 +88,15 @@ public class LeashBow extends CustItem_CustModle implements Listener {
         static NamespacedKey LEASH_PATH = new NamespacedKey(MoeItems.plugin,"Leashed");
         static NamespacedKey UUID_MOST_SIGNIFICANT = new NamespacedKey(MoeItems.plugin,"Most");
         static NamespacedKey UUID_LEAST_SIGNIFICANT = new NamespacedKey(MoeItems.plugin,"Least");
-        static Field LeashNBTTagCompound; //实体储存的栓绳对象
+//        static Field LeashCompoundTag; //实体储存的栓绳对象
 
         static {
-            try{
-                LeashNBTTagCompound = ReflectUtil.getFieldFormType(EntityInsentient.class,NBTTagCompound.class);
-                LeashNBTTagCompound.setAccessible(true);
-            }catch (NoSuchFieldException e){
-                e.printStackTrace();
-            }
+//            try{
+//                LeashCompoundTag = ReflectUtil.getFieldFormType(Mob.class,CompoundTag.class);
+//                LeashCompoundTag.setAccessible(true);
+//            }catch (NoSuchFieldException e){
+//                e.printStackTrace();
+//            }
         }
 
         public LeashArrow() {
@@ -117,12 +117,13 @@ public class LeashBow extends CustItem_CustModle implements Listener {
                 array[array.length - 1] = con;
             }
             root.set(LEASH_PATH,PersistentDataType.TAG_CONTAINER_ARRAY,array);
+
 //            var nms = ((CraftLivingEntity) entity).getHandle();
-//            if (nms instanceof EntityInsentient insentient){
-//                NBTTagCompound compound = new NBTTagCompound();
+//            if (nms instanceof Mob insentient){
+//                CompoundTag compound = new CompoundTag();
 //                compound.a("UUID",arrow.getUniqueId());
 //                try{
-//                    LeashNBTTagCompound.set(insentient,compound);
+//                    LeashCompoundTag.set(insentient,compound);
 //                }catch (IllegalAccessException e){
 //                    e.printStackTrace();
 //                }
