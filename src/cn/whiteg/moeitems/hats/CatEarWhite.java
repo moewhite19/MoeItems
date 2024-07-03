@@ -14,19 +14,18 @@ import org.bukkit.entity.Phantom;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.UUID;
-
 public class CatEarWhite extends CustItem_CustModle implements Listener {
     private static final CatEarWhite WHITE = new CatEarWhite();
     private static final CustItem[] hats;
+    private static final NamespacedKey MMODIFIER_KEY = new NamespacedKey(MoeItems.plugin,"cat_speed");
 
     static {
-        hats = new CustItem[]{WHITE,CatEarGolden.get(),CatEarDiamond.get(), KitsuneMasks.get()};
+        hats = new CustItem[]{WHITE,CatEarGolden.get(),CatEarDiamond.get(),KitsuneMasks.get()};
     }
 
     private CatEarWhite() {
@@ -50,7 +49,7 @@ public class CatEarWhite extends CustItem_CustModle implements Listener {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(UUID.randomUUID(),getDisplayName(),0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(MMODIFIER_KEY,0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlotGroup.HEAD));
         item.setItemMeta(im);
         return item;
     }

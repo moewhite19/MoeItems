@@ -126,6 +126,7 @@ public class MoeItems extends PluginBase {
         regItem(new CorrodeDagger());
         regItem(new CorrodeSword());
         regItem(new Reclamation()); //手持海绵x
+        regItem(DaemonEdge.get());
 //        regItem(GuisePotion.get());
 //        regItem(new TestBow());
 //        regItem(PhamtomKiller.get());
@@ -143,7 +144,7 @@ public class MoeItems extends PluginBase {
     }
 
     public void regItem(CustItem item) {
-        if(item == null) return;
+        if (item == null) return;
         items.add(item);
         RPGArmour.plugin.getItemManager().regItem(item);
     }
