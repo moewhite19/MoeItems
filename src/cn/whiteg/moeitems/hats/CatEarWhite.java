@@ -20,11 +20,13 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class CatEarWhite extends CustItem_CustModle implements Listener {
-    private static final CatEarWhite WHITE = new CatEarWhite();
+    private static final CatEarWhite WHITE;
     private static final CustItem[] hats;
-    private static final NamespacedKey MMODIFIER_KEY = new NamespacedKey(MoeItems.plugin,"cat_speed");
+    private static final NamespacedKey MMODIFIER_KEY;
 
     static {
+        MMODIFIER_KEY = new NamespacedKey(MoeItems.plugin,"cat_speed");
+        WHITE = new CatEarWhite();
         hats = new CustItem[]{WHITE,CatEarGolden.get(),CatEarDiamond.get(),KitsuneMasks.get()};
     }
 

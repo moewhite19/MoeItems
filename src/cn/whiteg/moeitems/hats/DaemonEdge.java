@@ -39,22 +39,40 @@ public class DaemonEdge extends CustItem_CustModle implements Listener {
         if (event.getDamage() < 1) return;
         if (event.getEntity() instanceof LivingEntity entity && hasItem(entity)){
 
-            if (event.getDamager() instanceof Mob damager){
+            //如果damager是投掷物把他换成攻击者
+            Entity eventDamager = event.getDamager();
+            if (eventDamager instanceof Projectile projectile && projectile.getShooter() instanceof Mob damagerMob){
+                eventDamager = damagerMob;
+            }
+
+            if (eventDamager instanceof LivingEntity damager){
+                //如果攻击者是玩家，则召唤幻魔者獠牙EvokerFangs.class
                 if (damager instanceof Player player){
-                    final Location location = player.getLocation();
+                    final Location location = damager.getLocation();
                     //在玩家周围召唤一圈幻魔者獠牙EvokerFangs.class
                     for (int i = 0; i < 10; i++) {
-                        Location spawnLoc = location.clone().add(RandomUtil.getRandom().nextDouble(2),0,RandomUtil.getRandom().nextDouble(2));
+                        Location spawnLoc = location.clone().add(RandomUtil.getRandom().nextDouble(2) - 1,0,RandomUtil.getRandom().nextDouble(2) - 1);
                         final EvokerFangs fangs = location.getWorld().spawn(spawnLoc,EvokerFangs.class);
                         fangs.setOwner(entity);
                     }
-                } else if (damager instanceof Monster){
+                } else if (damager instanceof Monster damagerMonster){
                     //遍历玩家周围的其他怪物，把攻击者的仇恨转移到其他怪物上
-                    for (Entity findEntity : damager.getNearbyEntities(10,10,10)) {
-                        if (findEntity instanceof Monster monster && monster != damager){
-                            damager.setTarget(monster);
+                    transferTarget:
+                    {
+                        for (Entity findEntity : damager.getNearbyEntities(10,10,10)) {
+                            if (findEntity instanceof Monster findMonster && findMonster != damager){
+                                damagerMonster.setTarget(findMonster);
+                                break transferTarget;
+                            }
                         }
+
+                        //如果周围没有怪物，则把攻击者的仇恨转移到自己身上
+                        damagerMonster.setTarget(damagerMonster);
+
+
                     }
+
+
                 }
             }
         }
