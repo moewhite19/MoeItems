@@ -15,9 +15,11 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -81,11 +83,13 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
         final ItemStack bow = event.getBow();
         @SuppressWarnings("ConstantConditions") final ItemMeta im = bow.getItemMeta();
         if (im instanceof CrossbowMeta cb){
-            final List<ItemStack> items = cb.getChargedProjectiles();
             Bukkit.getScheduler().runTask(RPGArmour.plugin,() -> {
                 if (!is(bow)) return;
                 CrossbowMeta ncb = (CrossbowMeta) bow.getItemMeta();
-                ncb.setChargedProjectiles(items);
+                ItemStack arrow = new ItemStack(Material.ARROW);
+                ItemStack[] arrows = new ItemStack[6];
+                Arrays.fill(arrows,arrow);
+                ncb.setChargedProjectiles(Arrays.asList(arrows));
                 bow.setItemMeta(ncb);
             });
         }
@@ -145,7 +149,7 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        map.remove(event.getPlayer());
+        map.remove(event.getPlayer().getName());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -156,8 +160,7 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
             var off = event.getMainHandItem();
             if (off == null) return;
             ItemMeta im = main.getItemMeta();
-            if (im instanceof CrossbowMeta){
-                CrossbowMeta crossbowMeta = (CrossbowMeta) im;
+            if (im instanceof CrossbowMeta crossbowMeta){
                 List<ItemStack> list = new ArrayList<>(crossbowMeta.getChargedProjectiles());
                 list.add(off);
                 crossbowMeta.setChargedProjectiles(list);
@@ -176,17 +179,14 @@ public class QuickFiringCrossbow extends CustItem_CustModle implements Listener 
     //    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntitySpwawn(final EntitySpawnEvent event) {
         if (spawnChance <= 0) return;
-        if (!(event.getEntity() instanceof Pillager)) return;
-        final Pillager entity = (Pillager) event.getEntity();
+        if (!(event.getEntity() instanceof Pillager entity)) return;
         final Random random = RandomUtil.getRandom();
         if (random.nextDouble() < spawnChance){
             final EntityEquipment ej = entity.getEquipment();
-            if (ej != null){
-                final ItemStack item = ItemToolUtil.lootDamageItem(createItem(),0.15F);
-                ItemToolUtil.copyEnchat(ej.getItemInMainHand(),item);
-                ej.setItemInMainHand(item);
-                ej.setItemInMainHandDropChance(itemDropChance);
-            }
+            final ItemStack item = ItemToolUtil.lootDamageItem(createItem(),0.15F);
+            ItemToolUtil.copyEnchat(ej.getItemInMainHand(),item);
+            ej.setItemInMainHand(item);
+            ej.setItemInMainHandDropChance(itemDropChance);
         }
     }
 

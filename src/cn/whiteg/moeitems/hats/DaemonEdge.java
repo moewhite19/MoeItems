@@ -41,14 +41,14 @@ public class DaemonEdge extends CustItem_CustModle implements Listener {
 
             //如果damager是投掷物把他换成攻击者
             Entity eventDamager = event.getDamager();
-            if (eventDamager instanceof Projectile projectile && projectile.getShooter() instanceof Mob damagerMob){
+            if (eventDamager instanceof Projectile projectile && projectile.getShooter() instanceof LivingEntity damagerMob){
                 eventDamager = damagerMob;
             }
 
             if (eventDamager instanceof LivingEntity damager){
                 //如果攻击者是玩家，则召唤幻魔者獠牙EvokerFangs.class
                 if (damager instanceof Player player){
-                    final Location location = damager.getLocation();
+                    final Location location = player.getLocation();
                     //在玩家周围召唤一圈幻魔者獠牙EvokerFangs.class
                     for (int i = 0; i < 10; i++) {
                         Location spawnLoc = location.clone().add(RandomUtil.getRandom().nextDouble(2) - 1,0,RandomUtil.getRandom().nextDouble(2) - 1);
@@ -60,6 +60,7 @@ public class DaemonEdge extends CustItem_CustModle implements Listener {
                     transferTarget:
                     {
                         for (Entity findEntity : damager.getNearbyEntities(10,10,10)) {
+                            //如果周围有怪物，则把攻击者的仇恨转移到怪物身上
                             if (findEntity instanceof Monster findMonster && findMonster != damager){
                                 damagerMonster.setTarget(findMonster);
                                 break transferTarget;
@@ -68,10 +69,7 @@ public class DaemonEdge extends CustItem_CustModle implements Listener {
 
                         //如果周围没有怪物，则把攻击者的仇恨转移到自己身上
                         damagerMonster.setTarget(damagerMonster);
-
-
                     }
-
 
                 }
             }

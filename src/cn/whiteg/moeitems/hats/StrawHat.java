@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,8 +45,8 @@ public class StrawHat extends CustItem_CustModle {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),getDisplayName(),2,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
-        im.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE,new AttributeModifier(UUID.randomUUID(),getDisplayName(),0.15,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        im.addAttributeModifier(Attribute.ARMOR,new AttributeModifier(new NamespacedKey("moeitems","armor"),2,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlotGroup.HEAD));
+        im.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE,new AttributeModifier(new NamespacedKey("moeitems","knockback"),0.15,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlotGroup.HEAD));
         item.setItemMeta(im);
         return item;
     }

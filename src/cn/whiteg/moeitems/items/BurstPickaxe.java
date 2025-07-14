@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -129,20 +130,23 @@ public class BurstPickaxe extends CustItem_CustModle implements Listener {
                 }
 
                 //恢复耐久
-                int nowDamage = ((Damageable) item.getItemMeta()).getDamage();
+                final ItemMeta itemMeta1 = item.getItemMeta();
+                if (!(itemMeta1 instanceof Damageable damageable)){
+                    return;
+                }
+                int nowDamage = damageable.getDamage();
 //                player.sendMessage(startDamage + " -> " + nowDamage);
                 if (startDamage < nowDamage){
                     //计算扣耐久的几率(受耐久附魔影响
                     float ratio = (nowDamage - startDamage) / ((float) destroy);
 //                    player.sendMessage(String.valueOf(ratio));
-                    Damageable itemMeta = (Damageable) item.getItemMeta();
                     if (RandomUtil.getRandom().nextFloat() <= ratio){
                         //总共扣一点耐久
-                        itemMeta.setDamage(startDamage + 1);
+                        damageable.setDamage(startDamage + 1);
                     } else {
-                        itemMeta.setDamage(startDamage);
+                        damageable.setDamage(startDamage);
                     }
-                    item.setItemMeta(itemMeta);
+                    item.setItemMeta(damageable);
                 }
             }catch (Throwable e){
                 e.printStackTrace();

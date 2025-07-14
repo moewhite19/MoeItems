@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -40,7 +41,8 @@ public class CatEarGolden extends CustItem_CustModle {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(UUID.randomUUID(),getDisplayName(),0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HEAD));
+        NamespacedKey key = new NamespacedKey("moeitems","attack_speed");
+        im.addAttributeModifier(Attribute.ATTACK_SPEED,new AttributeModifier(key,0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlotGroup.HEAD));
         item.setItemMeta(im);
         return item;
     }

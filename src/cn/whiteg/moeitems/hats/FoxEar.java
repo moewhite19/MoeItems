@@ -125,7 +125,7 @@ public class FoxEar extends CustItem_CustModle implements Listener {
 
     //是否为残血
     public boolean isDisability(LivingEntity entity) {
-        var attr = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        var attr = entity.getAttribute(Attribute.MAX_HEALTH);
         if (attr == null) return false;
         double maxHealth = attr.getValue();
         return entity.getHealth() <= (maxHealth / 2) || (entity instanceof Player && !CoolDownUtil.hasCd(entity.getName(),skull_key));

@@ -51,7 +51,7 @@ public class CatEarWhite extends CustItem_CustModle implements Listener {
     public ItemStack createItem() {
         ItemStack item = super.createItem();
         ItemMeta im = item.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(MMODIFIER_KEY,0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlotGroup.HEAD));
+        im.addAttributeModifier(Attribute.ATTACK_SPEED,new AttributeModifier(MMODIFIER_KEY,0.01,AttributeModifier.Operation.ADD_NUMBER,EquipmentSlotGroup.HEAD));
         item.setItemMeta(im);
         return item;
     }
